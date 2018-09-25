@@ -1,0 +1,116 @@
+// https://stackoverflow.com/questions/43366015/gradle-build-with-fatjar-plugin-and-springboot-application-gives-application-st
+
+buildscript {
+
+    ext {
+
+        springBootVersion = '2.0.2.RELEASE'
+    }
+
+    repositories {
+
+        mavenCentral()
+    }
+
+    dependencies {
+
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+    }
+}
+
+group 'com.pos'
+
+apply plugin: 'groovy'
+apply plugin: 'java'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+sourceCompatibility = 1.8
+
+repositories {
+
+    mavenCentral()
+}
+
+
+configurations {
+
+    providedRuntime
+}
+
+/**
+ * Creates JAR with all dependencies
+ * and moves it to the /bin directory
+ */
+task fatJar(type: Jar) {
+
+    baseName = 'pos'
+
+    manifest {
+
+        attributes 'Implementation-Title' : baseName,
+                   'Main-Class'           : 'com.perfectcomputersolutions.pos.Application'
+    }
+
+    from {
+
+        configurations.compile.collect {
+
+            it.isDirectory() ? it : zipTree(it)
+        }
+
+    }
+
+    with jar
+
+    copy {
+
+        from jar
+        into 'bin'
+    }
+
+}
+
+dependencies {
+
+    // Groovy
+    compile 'org.codehaus.groovy:groovy-all:2.4.7'
+
+    // Apache Commons
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
+
+    // Logging Log4J
+    compile group: 'log4j', name: 'log4j', version: '1.2.17'
+
+    // SpringBoot Web
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-web'
+
+    // MongoDB connector
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-mongodb', version: '2.0.5.RELEASE'
+
+    // JavaServerPages Standard Tag Library
+    compile group: 'javax.servlet', name: 'jstl'
+
+    // Compile JavaServerPages
+    compile group: 'org.apache.tomcat.embed', name: 'tomcat-embed-jasper'
+
+    // Swagger 2
+//    compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.8.0'
+//    compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.8.0'
+
+    // Spock mocking / testing
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
+    testCompile 'org.spockframework:spock-core:1.1-groovy-2.4'
+    testCompile 'org.spockframework:spock-spring:1.1-groovy-2.4'
+    testRuntime 'cglib:cglib-nodep:3.2.4'
+}
+
+bootJar {
+
+    launchScript()
+}
+
+//task execute(type: Exec) {
+//
+//    commandLine './deploy.sh', 'execute'
+//}
