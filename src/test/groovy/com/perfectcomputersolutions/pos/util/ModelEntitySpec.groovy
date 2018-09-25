@@ -4,5 +4,4 @@ import spock.lang.Specification
 
 class ModelEntitySpec extends Specification {
 
-
 }
