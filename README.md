@@ -18,12 +18,12 @@ git clone
 
 cd /pos/src/server
 
-./gradlew build
+./gradlew clean build
 
 java -jar build/libs/server.jar
 ```
 
-This will run the Springboot application on port 8080. It will be
+This will run the API on port 8080. It will be
 accessible from `http://localhost:8080` of the development machine.
 
 ## Setting up the client
@@ -37,4 +37,4 @@ npm install
 npm start
 ```
 
-The user interface should now be available on `localhost:4200`.
+The user interface should now be available on `http://localhost:4200`.
