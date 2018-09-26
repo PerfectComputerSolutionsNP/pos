@@ -27,6 +27,7 @@ class UserSpec extends Specification {
         user.lastName  == null
     }
 
+
     def "Construct a user, change instance variables"() {
 
         when:
