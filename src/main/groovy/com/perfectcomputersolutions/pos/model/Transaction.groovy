@@ -1,8 +1,12 @@
 package com.perfectcomputersolutions.pos.model
 
-import org.springframework.data.mongodb.core.mapping.Document;
+import com.perfectcomputersolutions.pos.util.ModelEntity
+import org.springframework.data.mongodb.core.mapping.Document
 
+/**
+ * ModelEntity that represents a transaction made in the POS system.
+ */
 @Document
-class Transaction {
+class Transaction extends ModelEntity {
 
 }

@@ -12,11 +12,13 @@ import java.security.InvalidParameterException
 
 /**
  * Service for managing transactions in database.
+ *
+ * @see Transaction
  */
 @Service
 class TransactionService {
 
-    private static final Logger = LoggerFactory.getLogger(TransactionService.class)
+    private static final Logger log = LoggerFactory.getLogger(TransactionService.class)
 
     @Autowired
     TransactionRepository repository
@@ -29,7 +31,9 @@ class TransactionService {
 
     List<Transaction> findAll() {
 
-        Log.info("Finding all transactions")
+        log.info("Finding all transactions")
+
+        return repository.findAll()
     }
 
     /**

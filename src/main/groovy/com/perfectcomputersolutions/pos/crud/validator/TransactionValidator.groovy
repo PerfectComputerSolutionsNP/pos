@@ -9,7 +9,7 @@ import com.perfectcomputersolutions.pos.model.Transaction
  */
 class TransactionValidator {
 
-    def statoc valid(Transaction transaction) {
+    def static valid(Transaction transaction) {
 
         //TODO Implement
 

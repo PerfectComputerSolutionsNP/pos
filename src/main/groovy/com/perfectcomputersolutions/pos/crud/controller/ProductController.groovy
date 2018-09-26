@@ -13,6 +13,11 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
+/**
+ * REST controller for API calls related to products.
+ *
+ * @see Product
+ */
 @RestController
 @RequestMapping("/product")
 class ProductController {
@@ -28,7 +33,7 @@ class ProductController {
         Log.info("Receive new POST request")
 
         def message = ("Product successfully created")
-        def body    = new HashMap<>();
+        def body    = new HashMap<>()
 
         body.put("message", message)
         body.put("product", service.create(product))
@@ -41,17 +46,17 @@ class ProductController {
 
         Log.info("Received new GET request")
 
-        def body     = new HasMap<>()
+        def body     = new HashMap<>()
         def entities = service.findAll()
         def message  = "Entities successfully retrieved"
 
-        body.put("message", message)
+        body.put("message",  message)
         body.put("entities", entities)
-        body.put("count", entities.size())
+        body.put("count",    entities.size())
 
         Log.info(message)
 
-        return new ResponseEntity<>(body, HttStatus.OK)
+        return new ResponseEntity<>(body, HttpStatus.OK)
     }
 
 }

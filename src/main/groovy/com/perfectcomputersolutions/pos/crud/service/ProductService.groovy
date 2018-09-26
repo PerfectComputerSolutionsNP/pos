@@ -12,15 +12,16 @@ import java.security.InvalidParameterException
 
 /**
  * Service for managing products in database.
- **/
-
+ *
+ * @see Product
+ */
 @Service
 class ProductService {
 
     private static final Logger Log = LoggerFactory.getLogger(ProductService.class)
 
     @Autowired
-    ProuctRepository repository
+    ProductRepository repository
 
     /**
      * Returns list of all products.
@@ -28,7 +29,7 @@ class ProductService {
      * @return List of all products.
      */
 
-    List<Prodcut> findAll() {
+    List<Product> findAll() {
 
         Log.info("Finding all products")
 

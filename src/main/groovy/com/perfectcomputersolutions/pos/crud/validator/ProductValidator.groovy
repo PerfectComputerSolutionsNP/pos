@@ -7,7 +7,6 @@ import com.perfectcomputersolutions.pos.model.Product
  *
  * @see Product
  */
-
 class ProductValidator {
 
     def static valid(Product product) {

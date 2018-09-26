@@ -12,6 +12,8 @@ import java.security.InvalidParameterException
 
 /**
  * Service for managing users in database.
+ *
+ * @see User
  */
 @Service
 class UserService {

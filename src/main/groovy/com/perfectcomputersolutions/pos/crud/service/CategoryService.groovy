@@ -10,6 +10,11 @@ import org.springframework.stereotype.Service
 
 import java.security.InvalidParameterException
 
+/**
+ * Service for managing categories in database.
+ *
+ * @see Category
+ */
 @Service
 class CategoryService {
 

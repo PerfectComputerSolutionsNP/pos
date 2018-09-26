@@ -13,6 +13,11 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
+/**
+ * REST controller for API calls related to transactions.
+ *
+ * @see Transaction
+ */
 @RestController
 @RequestMapping("/transaction")
 class TransactionController {
@@ -28,7 +33,7 @@ class TransactionController {
         Log.info("Received POST request")
 
         def message = "Transaction successfully created"
-        def body = new HasMap<>()
+        def body = new HashMap<>()
 
         body.put("message", message)
         body.put("transaction", service.create(transaction))
@@ -39,13 +44,13 @@ class TransactionController {
 
         Log.info("Received new GET Request")
 
-        def body     = new HasMap<>()
+        def body     = new HashMap<>()
         def entities = service.findAll()
         def message  = "Entities successfully retrieved"
 
-        body.put("message", message)
+        body.put("message",  message)
         body.put("entities", entities)
-        body.put("count", entities.size())
+        body.put("count",    entities.size())
 
         Log.info(message)
 
