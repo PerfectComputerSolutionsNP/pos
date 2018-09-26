@@ -7,6 +7,7 @@ script:
   # - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   # - docker build -t perfectcomputersolutions/pos .
   # - docker run -d -p 8080:80 perfectcomputersolutions/pos
+  - cd src/server && ./gradlew clean build
   - docker-compose up --build -d
   - sleep 10
   - docker ps -a

@@ -1,4 +1,6 @@
 # Point of Sale (POS)
+[![Build Status](https://travis-ci.com/PerfectComputerSolutionsNP/pos.svg?branch=master)](https://travis-ci.com/PerfectComputerSolutionsNP/pos)
+
 A simple Point-of-Sale (POS) system in the form of a web application.
 
 # Installation for development
