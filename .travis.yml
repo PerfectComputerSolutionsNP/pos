@@ -1,5 +1,10 @@
 sudo: required
 
+language: java
+
+jdk:
+  - oraclejdk8
+
 services:
   - docker
 
@@ -7,7 +12,9 @@ script:
   # - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   # - docker build -t perfectcomputersolutions/pos .
   # - docker run -d -p 8080:80 perfectcomputersolutions/pos
-  - cd src/server && ./gradlew clean build
+  - cd src/server
+  - ./gradlew test -i
+  - ./gradlew clean build
   - docker-compose up --build -d
   - sleep 10
   - docker ps -a
@@ -20,3 +27,12 @@ after_success:
 
 on:
   branch: master
+
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -rf $HOME/.gradle/caches/*/plugin-resolution/
+
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
