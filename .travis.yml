@@ -16,8 +16,8 @@ script:
   - ./ci/travis.sh
 
 after_success:
-  - docker push perfectcomputersolutions/pos-api
-  - docker push perfectcomputersolutions/pos-gui
+  - docker push perfectcomputersolutionsnp/pos-api
+  - docker push perfectcomputersolutionsnp/pos-gui
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock

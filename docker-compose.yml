@@ -11,7 +11,7 @@ services:
           - pos
 
     pos-api:
-        image: jabaridash/pos-api
+        image: perfectcomputersolutionsnp/pos-api
         container_name: pos-api
         build: ./src/server
         ports:
@@ -22,7 +22,7 @@ services:
           - pos-db
 
     pos-gui:
-        image: jabaridash/pos-gui
+        image: perfectcomputersolutionsnp/pos-gui
         container_name: pos-gui
         build: ./src/client
         ports:
