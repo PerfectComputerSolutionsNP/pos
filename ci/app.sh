@@ -4,6 +4,8 @@ docker-compose up --build -d
 
 sleep 10
 
-curl localhost:4200/user
+# TODO - Probe 3 times for healthcheck
+
+curl localhost:4200
 
 docker-compose down
