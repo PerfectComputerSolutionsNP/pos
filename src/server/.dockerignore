@@ -1,0 +1,10 @@
+.git
+.idea
+docs
+src
+.dockerignore
+.gitignore
+.travis.yml
+build.gradle
+docker-compose.yml
+README.md

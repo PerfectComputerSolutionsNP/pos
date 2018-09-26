@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+
+    pos-db:
+        image: mongo:latest
+        container_name: pos-db
+        ports:
+          - "27017:27017"
+        networks:
+          - pos
+
+    pos-api:
+        image: jabaridash/pos-api
+        container_name: pos-api
+        build: ./src/server
+        ports:
+          - "8080:8080"
+        networks:
+          - pos
+        depends_on:
+          - pos-db
+
+    pos-gui:
+        image: jabaridash/pos-gui
+        container_name: pos-gui
+        build: ./src/client
+        ports:
+          - "4200:4200"
+        networks:
+          - pos
+        depends_on:
+          - pos-api
+
+networks:
+  pos:

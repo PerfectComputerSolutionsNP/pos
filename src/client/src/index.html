@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Client</title>
+  <base href="/">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+</head>
+<body>
+  <app-root></app-root>
+
+  <script   src="https://code.jquery.com/jquery-3.3.1.min.js"   integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="   crossorigin="anonymous"></script>
+
+  <div>
+    Users:
+
+    <ul id="users"></ul>
+  </div>
+
+  <script>
+
+    function http(req, done, fail, always) {
+
+      return $.ajax(req)
+        .done(done)
+        .fail(fail)
+        .always(always)
+    }
+
+    var req = {
+      type:"GET",
+      crossDomain: true,
+      url:"http://" + window.location.hostname + ":8080/user"
+    };
+
+    var done = function(data, status, jqXHR) {
+
+      var entities = data.entities;
+
+      var users = $("#users");
+
+      for (var i in entities) {
+
+        var entity = entities[i];
+
+        // console.log(entities[i])
+
+        users.append("<li>" + entity.firstName + ", " + entity.lastName + "</li>");
+      }
+
+    };
+
+    var fail = function(jqXHR, status, error)  {
+
+    };
+
+  http(req, done, fail, function() {})
+
+  </script>
+
+</body>
+</html>
