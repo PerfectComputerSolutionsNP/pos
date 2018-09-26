@@ -13,9 +13,7 @@ services:
 
 script:
   # - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-  - ./ci/server.sh
-  - ./ci/client.sh
-  - ./ci/app.sh
+  - ./ci/travis.sh
 
 after_success:
     - docker ps -a
