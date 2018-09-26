@@ -7,7 +7,7 @@ gradle test -i
 
 java -jar build/libs/server.jar &
 
-pid=$1
+pid=$!
 
 sleep 10
 
