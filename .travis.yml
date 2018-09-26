@@ -5,28 +5,21 @@ language: java
 jdk:
   - oraclejdk8
 
+on:
+  branch: master
+
 services:
   - docker
 
 script:
   # - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-  # - docker build -t perfectcomputersolutions/pos .
-  # - docker run -d -p 8080:80 perfectcomputersolutions/pos
-  - cd src/server
-  - ./gradlew test -i
-  - ./gradlew clean build
-  - docker-compose up --build -d
-  - sleep 10
-  - docker ps -a
-  - curl localhost:4200
-  - curl localhost:8080/user
+  - ./ci/server.sh
+  - ./ci/client.sh
+  - ./ci/app.sh
 
 after_success:
-    - docker-compose down
+    - docker ps -a
 #   - docker push perfectcomputersolutions/pos
-
-on:
-  branch: master
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
