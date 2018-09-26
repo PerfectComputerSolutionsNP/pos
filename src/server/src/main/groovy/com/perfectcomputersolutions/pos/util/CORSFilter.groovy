@@ -1,4 +1,4 @@
-package com.perfectcomputersolutions.pos
+package com.perfectcomputersolutions.pos.util
 
 import org.springframework.web.filter.GenericFilterBean;
 

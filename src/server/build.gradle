@@ -83,3 +83,18 @@ bootJar {
 
     launchScript()
 }
+
+groovydoc {
+//    options.overview = "src/overview.html"
+    source           = sourceSets.main.allJava
+    classpath        = configurations.compile
+    destinationDir   = new File("../${projectDir}/docs/server")
+
+    doLast {
+
+        copy {
+            from "src/main/groovy/doc-files"
+            into "${projectDir}/docs/doc-files"
+        }
+    }
+}

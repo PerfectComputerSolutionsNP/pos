@@ -1,5 +1,6 @@
 package com.perfectcomputersolutions.pos
 
+import com.perfectcomputersolutions.pos.util.CORSFilter
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.web.servlet.FilterRegistrationBean

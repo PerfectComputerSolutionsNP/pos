@@ -1,0 +1,7 @@
+com.perfectcomputersolutions.pos
+com.perfectcomputersolutions.pos.crud.controller
+com.perfectcomputersolutions.pos.crud.repository
+com.perfectcomputersolutions.pos.crud.service
+com.perfectcomputersolutions.pos.crud.validator
+com.perfectcomputersolutions.pos.model
+com.perfectcomputersolutions.pos.util
