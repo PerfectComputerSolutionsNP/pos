@@ -12,12 +12,12 @@ services:
   - docker
 
 script:
-  # - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   - ./ci/travis.sh
 
 after_success:
-    - docker ps -a
-#   - docker push perfectcomputersolutions/pos
+  - docker push perfectcomputersolutions/pos-api
+  - docker push perfectcomputersolutions/pos-gui
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock

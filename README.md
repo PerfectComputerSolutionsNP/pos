@@ -15,7 +15,7 @@ This application has the following dependencies:
 ## Setting up the server
 Execute the following commands:
 
-```
+```bash
 git clone
 
 cd /pos/src/server
@@ -29,9 +29,12 @@ This will run the API on port 8080. It will be
 accessible from `http://localhost:8080` of the development machine.
 
 ## Setting up the client
-Once you have setup the server, execute the following:
+Once you have setup the server, execute the following in a new terminal:
 
-```
+```bash
+
+# Or wherever the pos/src/client directory
+# is relative to your current working directory
 cd ../client
 
 npm install
