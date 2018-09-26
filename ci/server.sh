@@ -13,4 +13,4 @@ sleep 10
 
 curl localhost:8080/user
 
-kill $pid
+kill -9 $pid
