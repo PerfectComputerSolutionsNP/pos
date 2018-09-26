@@ -2,8 +2,8 @@ set -e
 
 cd src/server
 
-./gradle clean build
-./gradle test -i
+gradle clean build
+gradle test -i
 
 java -jar build/libs/server.jar &
 
