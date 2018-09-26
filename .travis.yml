@@ -4,15 +4,18 @@ services:
   - docker
 
 script:
-  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-  - docker build -t perfectcomputersolutions/pos .
-  - docker run -d -p 8080:80 perfectcomputersolutions/pos
-  - sleep 5
+  # - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  # - docker build -t perfectcomputersolutions/pos .
+  # - docker run -d -p 8080:80 perfectcomputersolutions/pos
+  - docker-compose up --build -d
+  - sleep 10
   - docker ps -a
-  - curl localhost:80
+  - curl localhost:4200
+  - curl localhost:8080/user
 
 after_success:
-  - docker push perfectcomputersolutions/pos
+    - docker-compose down
+#   - docker push perfectcomputersolutions/pos
 
 on:
   branch: master
