@@ -59,6 +59,9 @@ dependencies {
     // SpringBoot Web
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-web'
 
+    // Spring Security
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-security'
+
     // MongoDB connector
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-mongodb', version: '2.0.5.RELEASE'
 

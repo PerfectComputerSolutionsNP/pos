@@ -6,9 +6,11 @@ import com.perfectcomputersolutions.pos.model.User
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.security.core.userdetails.UserDetailsService
+import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
-
-import java.security.InvalidParameterException
 
 /**
  * Service for managing users in database.
@@ -16,38 +18,50 @@ import java.security.InvalidParameterException
  * @see User
  */
 @Service
-class UserService {
+class UserService extends CrudService<User, String> implements UserDetailsService {
 
     private static final Logger log = LoggerFactory.getLogger(UserService.class)
 
-    @Autowired
-    UserRepository repository
+    @Autowired UserRepository repository
+    @Autowired UserValidator  validator
 
     /**
-     * Returns list of all users.
+     * Find and return the user by username.
      *
-     * @return List of all users.
+     * @param userName Username to search by.
+     * @return User associated with the username.
      */
-    List<User> findAll() {
+    User findByUsername(String userName) {
 
-        log.info("Finding all users")
+        log.info("Finding user with username: " + userName)
 
-        return repository.findAll()
-    }
+        def user = repository.findByUsername(userName)
 
-    /**
-     * Creates and save a new user to database.
-     *
-     * @param user User to save.
-     * @return Copy of the saved user object with it's user id.
-     */
-    def create(User user) {
-
-        if (UserValidator.valid(user))
-            return repository.save(user)
+        if (user == null)
+            log.info("User not found for username: "+ userName)
 
         else
-            throw new InvalidParameterException("Invalid user")
+            log.info("Found user with username: " + userName)
+
+        return user
     }
+
+    @Override
+    UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
+        User user = findByUsername(username)
+
+        if (user == null)
+            throw new UsernameNotFoundException("User not found")
+
+        def authorities = Arrays.asList(new SimpleGrantedAuthority("user"))
+
+        return new org.springframework.security.core.userdetails.User(
+                user.username,
+                user.password,
+                authorities
+        )
+    }
+
 }
 

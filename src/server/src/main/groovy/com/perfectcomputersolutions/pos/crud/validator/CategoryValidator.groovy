@@ -1,18 +1,17 @@
 package com.perfectcomputersolutions.pos.crud.validator
 
 import com.perfectcomputersolutions.pos.model.Category
+import org.springframework.stereotype.Component
 
 /**
  * This class contains static methods for validating a (@code Category) object.
  *
  * @see Category
  */
-class CategoryValidator {
+@Component
+class CategoryValidator extends Validator<Category> {
 
-    def static valid(Category category) {
+    void valid(Category category) {
 
-        // TODO - Implement
-
-        return true
     }
 }

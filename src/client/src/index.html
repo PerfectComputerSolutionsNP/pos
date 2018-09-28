@@ -32,7 +32,11 @@
     var req = {
       type:"GET",
       crossDomain: true,
-      url:"http://" + window.location.hostname + ":8080/user"
+      url:"http://" + window.location.hostname + ":8080/user",
+
+      beforeSend: function (xhr) {
+        xhr.setRequestHeader ("Authorization", "Basic " + btoa("admin" + ":" + "welcome1"));
+      }
     };
 
     var done = function(data, status, jqXHR) {
@@ -53,6 +57,7 @@
     };
 
     var fail = function(jqXHR, status, error)  {
+
 
     };
 

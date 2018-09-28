@@ -6,6 +6,6 @@ import org.springframework.data.mongodb.repository.MongoRepository
 /**
  * JPA repository that handles database queries related to categories.
  */
-interface CategoryRepository extends MongoRepository<Category, Long> {
+interface CategoryRepository extends MongoRepository<Category, String> {
 
 }

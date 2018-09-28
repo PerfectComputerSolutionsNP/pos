@@ -1,10 +1,15 @@
-package com.perfectcomputersolutions.pos.util
+package com.perfectcomputersolutions.pos.config
 
-import org.springframework.web.filter.GenericFilterBean;
+import org.springframework.boot.web.servlet.FilterRegistrationBean
+import org.springframework.context.annotation.Bean
+import org.springframework.web.filter.GenericFilterBean
 
-import javax.servlet.*;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import javax.servlet.Filter
+import javax.servlet.FilterChain
+import javax.servlet.ServletException
+import javax.servlet.ServletRequest
+import javax.servlet.ServletResponse
+import javax.servlet.http.HttpServletResponse
 
 /**
  * CORS Filter
@@ -14,10 +19,10 @@ import java.io.IOException;
  * which is a mechanism that enables cross-origin requests.
  *
  */
-public class CORSFilter extends GenericFilterBean implements Filter {
+class CORSFilter extends GenericFilterBean implements Filter {
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+    void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
 
         HttpServletResponse httpResponse = (HttpServletResponse) response;
@@ -32,10 +37,21 @@ public class CORSFilter extends GenericFilterBean implements Filter {
         httpResponse.setHeader("Access-Control-Allow-Credentials", "false");
         httpResponse.setHeader("Access-Control-Max-Age", "3600");
 
-//        System.out.println("********** CORS Configuration Completed **********");
-
         chain.doFilter(request, response);
     }
 
+    // https://www.youtube.com/watch?v=l1hazxgwLC0
+
+    @Bean
+    FilterRegistrationBean corsFilterRegistration() {
+
+        def registration = new FilterRegistrationBean(new CORSFilter())
+
+        registration.setName("CORS Filter")
+        registration.addUrlPatterns("/*")
+        registration.setOrder(1)
+
+        return registration
+    }
 
 }

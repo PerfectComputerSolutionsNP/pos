@@ -6,6 +6,6 @@ import org.springframework.data.mongodb.repository.MongoRepository
 /**
  * JPA repository that handles database queries related to transactions.
  */
-interface TransactionRepository extends MongoRepository<Transaction, Long> {
+interface TransactionRepository extends MongoRepository<Transaction, String> {
 
 }

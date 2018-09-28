@@ -1,7 +1,9 @@
-package com.perfectcomputersolutions.pos.util
+package com.perfectcomputersolutions.pos.model
 
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.data.annotation.Id
 
 /**
@@ -11,11 +13,13 @@ import org.springframework.data.annotation.Id
 */
 class ModelEntity {
 
+    private static final Logger log = LoggerFactory.getLogger(ModelEntity.class)
+
     /**
     * Unique entity id number for use with database.
     */
     @Id
-    public String id
+    String id
 
     /**
     * Checks the equality of this object and a specified object. The
@@ -36,18 +40,22 @@ class ModelEntity {
             return true
 
         // Check that the class types are equal via reflection
-        if (!(obj instanceof ModelEntity))
+        if (this.class != obj.class)
             return false
 
         try {
 
-            // Cast to ModelEntity
             ModelEntity entity = (ModelEntity) obj
 
-            // Compare by id
             return this.id == entity.id
 
         } catch (ClassCastException e) {
+
+            def msg = "This object and supplied object are both of type " + this.class + " " +
+                      "a ClassCastException was still thrown. Please report this error to administrator."
+
+            log.error(msg)
+            log.error(e.toString())
 
             return false
         }
