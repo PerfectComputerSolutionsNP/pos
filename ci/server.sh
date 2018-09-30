@@ -13,6 +13,6 @@ pid=$!
 
 sleep 10
 
-curl localhost:8080/user
+# curl localhost:8080/user
 
 kill -9 $pid

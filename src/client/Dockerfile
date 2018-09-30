@@ -18,4 +18,6 @@ RUN yarn install
 
 EXPOSE 4200 49153
 
+# TODO - Run in prod mode, not dev mode
+
 CMD npm start

@@ -1,14 +1,16 @@
 version: '3'
 
+# docker-compose
+
 services:
 
-    pos-db:
-        image: mongo:latest
-        container_name: pos-db
-        ports:
-          - "27017:27017"
-        networks:
-          - pos
+    # pos-db:
+    #     image: mongo:latest
+    #     container_name: pos-db
+    #     ports:
+    #       - "27017:27017"
+    #     networks:
+    #       - pos
 
     pos-api:
         image: perfectcomputersolutionsnp/pos-api
@@ -18,8 +20,8 @@ services:
           - "8080:8080"
         networks:
           - pos
-        depends_on:
-          - pos-db
+        # depends_on:
+        #   - pos-db
 
     pos-gui:
         image: perfectcomputersolutionsnp/pos-gui

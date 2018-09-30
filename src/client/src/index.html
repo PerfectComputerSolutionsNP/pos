@@ -1,69 +1,256 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Client</title>
-  <base href="/">
+  <meta charset="UTF-8">
+  <title>JWT Spring Security Demo</title>
 
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+        integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css"
+        integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+
 </head>
 <body>
-  <app-root></app-root>
+<app-root></app-root>
 
-  <script   src="https://code.jquery.com/jquery-3.3.1.min.js"   integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="   crossorigin="anonymous"></script>
 
-  <div>
-    Users:
+<script src="https://code.jquery.com/jquery-2.2.2.js" integrity="sha256-4/zUCqiq0kqxhZIyp4G0Gk+AOtCJsY1TA00k5ClsZYE="
+        crossorigin="anonymous"></script>
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
+        integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
+        crossorigin="anonymous"></script>
+<!--<script src="jwt-decode.min.js"></script>-->
+<!--<script src="client.js"></script>-->
 
-    <ul id="users"></ul>
-  </div>
+<script>
+  !function a(b,c,d){function e(g,h){if(!c[g]){if(!b[g]){var i="function"==typeof require&&require;if(!h&&i)return i(g,!0);if(f)return f(g,!0);var j=new Error("Cannot find module '"+g+"'");throw j.code="MODULE_NOT_FOUND",j}var k=c[g]={exports:{}};b[g][0].call(k.exports,function(a){var c=b[g][1][a];return e(c?c:a)},k,k.exports,a,b,c,d)}return c[g].exports}for(var f="function"==typeof require&&require,g=0;g<d.length;g++)e(d[g]);return e}({1:[function(a,b,c){function d(a){this.message=a}function e(a){var b=String(a).replace(/=+$/,"");if(b.length%4==1)throw new d("'atob' failed: The string to be decoded is not correctly encoded.");for(var c,e,g=0,h=0,i="";e=b.charAt(h++);~e&&(c=g%4?64*c+e:e,g++%4)?i+=String.fromCharCode(255&c>>(-2*g&6)):0)e=f.indexOf(e);return i}var f="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";d.prototype=new Error,d.prototype.name="InvalidCharacterError",b.exports="undefined"!=typeof window&&window.atob&&window.atob.bind(window)||e},{}],2:[function(a,b,c){function d(a){return decodeURIComponent(e(a).replace(/(.)/g,function(a,b){var c=b.charCodeAt(0).toString(16).toUpperCase();return c.length<2&&(c="0"+c),"%"+c}))}var e=a("./atob");b.exports=function(a){var b=a.replace(/-/g,"+").replace(/_/g,"/");switch(b.length%4){case 0:break;case 2:b+="==";break;case 3:b+="=";break;default:throw"Illegal base64url string!"}try{return d(b)}catch(c){return e(b)}}},{"./atob":1}],3:[function(a,b,c){"use strict";function d(a){this.message=a}var e=a("./base64_url_decode");d.prototype=new Error,d.prototype.name="InvalidTokenError",b.exports=function(a,b){if("string"!=typeof a)throw new d("Invalid token specified");b=b||{};var c=b.header===!0?0:1;try{return JSON.parse(e(a.split(".")[c]))}catch(f){throw new d("Invalid token specified: "+f.message)}},b.exports.InvalidTokenError=d},{"./base64_url_decode":2}],4:[function(a,b,c){(function(b){var c=a("./lib/index");"function"==typeof b.window.define&&b.window.define.amd?b.window.define("jwt_decode",function(){return c}):b.window&&(b.window.jwt_decode=c)}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{"./lib/index":3}]},{},[4]);
+</script>
 
-  <script>
+<script>
+  /**
+   * Created by stephan on 20.03.16.
+   */
 
-    function http(req, done, fail, always) {
+  $(function () {
+    // VARIABLES =============================================================
+    let protocol = window.location.protocol;
+    let host     = window.location.hostname;
+    let port     = "8080";
+    let base     = `${protocol}//${host}:${port}`;
+    let urls = {
+      user     : `${base}/user`,
+      persons  : `${base}/persons`,
+      protect  : `${base}/protected`,
+      auth     : `${base}/auth`
+    };
+    let TOKEN_KEY     = "jwtToken";
+    let $notLoggedIn  = $("#notLoggedIn");
+    let $loggedIn     = $("#loggedIn").hide();
+    let $loggedInBody = $("#loggedInBody");
+    let $response     = $("#response");
+    let $login        = $("#login");
+    let $userInfo     = $("#userInfo").hide();
 
-      return $.ajax(req)
-        .done(done)
-        .fail(fail)
-        .always(always)
+    // FUNCTIONS =============================================================
+    function getJwtToken() {
+      return localStorage.getItem(TOKEN_KEY);
     }
 
-    var req = {
-      type:"GET",
-      crossDomain: true,
-      url:"http://" + window.location.hostname + ":8080/user",
+    function setJwtToken(token) {
+      localStorage.setItem(TOKEN_KEY, token);
+    }
 
-      beforeSend: function (xhr) {
-        xhr.setRequestHeader ("Authorization", "Basic " + btoa("admin" + ":" + "welcome1"));
+    function removeJwtToken() {
+      localStorage.removeItem(TOKEN_KEY);
+    }
+
+    function doLogin(loginData) {
+      $.ajax({
+        // url: "/auth",
+        url:         urls.auth,
+        type:        "POST",
+        data:        JSON.stringify(loginData),
+        contentType: "application/json; charset=utf-8",
+        dataType:    "json",
+
+        success: function (data, textStatus, jqXHR) {
+
+          console.log(data);
+          setJwtToken(data.token);
+          $login.hide();
+          $notLoggedIn.hide();
+          showTokenInformation();
+          showUserInformation();
+        },
+
+        error: function (jqXHR, textStatus, errorThrown) {
+
+          if (jqXHR.status === 401 || jqXHR.status === 403) {
+            $('#loginErrorModal')
+              .modal("show")
+              .find(".modal-body")
+              .empty()
+              .html("<p>Message from server:<br>" + jqXHR.responseText + "</p>");
+          } else {
+            throw new Error("an unexpected error occured: " + errorThrown);
+          }
+        }
+      });
+    }
+
+    function doLogout() {
+
+      removeJwtToken();
+      $login.show();
+      $userInfo
+        .hide()
+        .find("#userInfoBody").empty();
+      $loggedIn.hide();
+      $loggedInBody.empty();
+      $notLoggedIn.show();
+    }
+
+    function createAuthorizationTokenHeader() {
+
+      let token = getJwtToken();
+      if (token) {
+        return {"Authorization": "Bearer " + token};
+      } else {
+        return {};
       }
-    };
+    }
 
-    var done = function(data, status, jqXHR) {
+    function showUserInformation() {
+      $.ajax({
+        // url: "/user",
+        url:         urls.user,
+        type:        "GET",
+        contentType: "application/json; charset=utf-8",
+        dataType:    "json",
+        headers: createAuthorizationTokenHeader(),
 
-      var entities = data.entities;
+        success: function (data, textStatus, jqXHR) {
+          let $userInfoBody = $userInfo.find("#userInfoBody");
 
-      var users = $("#users");
+          $userInfoBody.append($("<div>").text("Username: " + data.username));
+          $userInfoBody.append($("<div>").text("Email: " + data.email));
 
-      for (var i in entities) {
+          let $authorityList = $("<ul>");
+          data.authorities.forEach(function (authorityItem) {
+            $authorityList.append($("<li>").text(authorityItem.authority));
+          });
+          let $authorities = $("<div>").text("Authorities:");
+          $authorities.append($authorityList);
 
-        var entity = entities[i];
+          $userInfoBody.append($authorities);
+          $userInfo.show();
+        }
+      });
+    }
 
-        // console.log(entities[i])
+    function showTokenInformation() {
+      let jwtToken = getJwtToken();
+      let decodedToken = jwt_decode(jwtToken);
 
-        users.append("<li>" + entity.firstName + ", " + entity.lastName + "</li>");
-      }
+      $loggedInBody.append($("<h4>").text("Token"));
+      $loggedInBody.append($("<div>").text(jwtToken).css("word-break", "break-all"));
+      $loggedInBody.append($("<h4>").text("Token claims"));
 
-    };
+      let $table = $("<table>")
+        .addClass("table table-striped");
+      appendKeyValue($table, "sub", decodedToken.sub);
+      appendKeyValue($table, "iat", decodedToken.iat);
+      appendKeyValue($table, "exp", decodedToken.exp);
 
-    var fail = function(jqXHR, status, error)  {
+      $loggedInBody.append($table);
 
+      $loggedIn.show();
+    }
 
-    };
+    function appendKeyValue($table, key, value) {
+      let $row = $("<tr>")
+        .append($("<td>").text(key))
+        .append($("<td>").text(value));
+      $table.append($row);
+    }
 
-  http(req, done, fail, function() {})
+    function showResponse(statusCode, message) {
+      $response
+        .empty()
+        .text("status code: " + statusCode + "\n-------------------------\n" + message);
+    }
 
-  </script>
+    // REGISTER EVENT LISTENERS =============================================================
+    $("#loginForm").submit(function (event) {
+      event.preventDefault();
 
+      let $form = $(this);
+      let formData = {
+        username: $form.find('input[name="username"]').val(),
+        password: $form.find('input[name="password"]').val()
+      };
+
+      doLogin(formData);
+    });
+
+    $("#logoutButton").click(doLogout);
+
+    $("#exampleServiceBtn").click(function () {
+      $.ajax({
+        // url: "/persons",
+        url:         urls.persons,
+        type:        "GET",
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        headers: createAuthorizationTokenHeader(),
+
+        success: function (data, textStatus, jqXHR) {
+          showResponse(jqXHR.status, JSON.stringify(data));
+        },
+
+        error: function (jqXHR, textStatus, errorThrown) {
+          showResponse(jqXHR.status, errorThrown);
+        }
+      });
+    });
+
+    $("#adminServiceBtn").click(function () {
+      $.ajax({
+        // url: "/protected",
+        url:         urls.protect,
+        type:        "GET",
+        contentType: "application/json; charset=utf-8",
+        headers:     createAuthorizationTokenHeader(),
+
+        success: function (data, textStatus, jqXHR) {
+          showResponse(jqXHR.status, data);
+        },
+
+        error: function (jqXHR, textStatus, errorThrown) {
+          showResponse(jqXHR.status, errorThrown);
+        }
+      });
+    });
+
+    $loggedIn.click(function () {
+      $loggedIn
+        .toggleClass("text-hidden")
+        .toggleClass("text-shown");
+    });
+
+    // INITIAL CALLS =============================================================
+    if (getJwtToken()) {
+      $login.hide();
+      $notLoggedIn.hide();
+      showTokenInformation();
+      showUserInformation();
+    }
+  });
+
+</script>
 </body>
 </html>

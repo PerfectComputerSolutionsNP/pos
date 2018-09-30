@@ -25,7 +25,9 @@
             "styles": [
               "src/styles.css"
             ],
-            "scripts": []
+            "scripts": [
+//              "src/jwt-decode.min.js"
+            ]
           },
           "configurations": {
             "production": {
