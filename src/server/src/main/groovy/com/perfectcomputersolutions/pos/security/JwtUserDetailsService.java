@@ -1,4 +1,4 @@
-package com.perfectcomputersolutions.pos.service;
+package com.perfectcomputersolutions.pos.security;
 
 import com.perfectcomputersolutions.pos.model.User;
 import com.perfectcomputersolutions.pos.repository.UserRepository;

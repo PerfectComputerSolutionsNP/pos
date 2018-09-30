@@ -4,13 +4,19 @@ import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.data.annotation.Id
+
+import javax.persistence.Column
+import javax.persistence.GeneratedValue
+import javax.persistence.GenerationType
+import javax.persistence.Id
+import javax.persistence.MappedSuperclass
 
 /**
 * Superclass for all database entities. This class contains base
 * methods that all model entities include such as equality checks,
 * hashing and serialization.
 */
+@MappedSuperclass
 class ModelEntity {
 
     private static final Logger log = LoggerFactory.getLogger(ModelEntity.class)
@@ -19,7 +25,9 @@ class ModelEntity {
     * Unique entity id number for use with database.
     */
     @Id
-    String id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(name = "id", updatable = false, nullable = false)
+    Long id
 
     /**
     * Checks the equality of this object and a specified object. The

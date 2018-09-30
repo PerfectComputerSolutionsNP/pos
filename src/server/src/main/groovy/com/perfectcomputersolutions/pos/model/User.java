@@ -23,6 +23,8 @@ import javax.validation.constraints.Size;
 @Table(name = "USER")
 public class User {
 
+    // TODO - Unique constraint for username, email, join with transaction table
+
     @Id
     @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq")

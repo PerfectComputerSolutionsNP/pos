@@ -15,8 +15,7 @@ import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 
 /**
- * Abstract REST controller that facilitates CRUD operations
- * for basic entities.
+ * Abstract REST controller that facilitates CRUD operations for basic entities.
  *
  * @param <T> Generic ModelEntity type.
  * @param <ID> Id type.
@@ -66,7 +65,7 @@ abstract class CrudController<T extends ModelEntity, ID extends Serializable> {
         return new ResponseEntity(body, HttpStatus.ACCEPTED)
     }
 
-    @PostMapping("/register")
+    @PostMapping
     def save(@RequestBody T entity) {
 
         log.info("Received new POST request")

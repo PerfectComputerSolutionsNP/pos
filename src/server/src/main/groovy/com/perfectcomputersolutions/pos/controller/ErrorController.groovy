@@ -48,7 +48,7 @@ class ErrorController {
 
     static final String VIOLATIONS = "violations"
 
-//    @ExceptionHandler(value = Exception.class)
+    @ExceptionHandler(value = Exception.class)
     def invalid(HttpServletRequest req, Exception ex) {
 
         log.error("Request: " + req.method + " to " + req.requestURL + " raised " + ex.class.name, ex)
@@ -87,10 +87,14 @@ class ErrorController {
 
         } else {
 
+            // TODO - Handle other exceptions that we did not throw
+
             log.error("Unexpected exception thrown", ex)
 
             status  = INTERNAL_SERVER_ERROR
             message = "An unexpected error occurred, please contact your administrator"
+
+            throw ex
         }
 
         body.put(CrudController.MESSAGE, message)
