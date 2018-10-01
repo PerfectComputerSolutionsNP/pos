@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.CrossOrigin
 
 @CrossOrigin
-trait CrudController<T extends ModelEntity, ID extends Serializable> {
+abstract class CrudController<T extends ModelEntity, ID extends Serializable> {
 
     private static final Logger log = LoggerFactory.getLogger(UnprivilegedCrudController.class)
 

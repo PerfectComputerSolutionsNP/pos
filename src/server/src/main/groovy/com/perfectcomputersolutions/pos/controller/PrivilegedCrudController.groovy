@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 
-abstract class PrivilegedCrudController<T extends ModelEntity, ID extends Serializable> implements CrudController<T, ID> {
+abstract class PrivilegedCrudController<T extends ModelEntity, ID extends Serializable> extends CrudController<T, ID> {
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
