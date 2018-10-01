@@ -1,14 +1,14 @@
 package com.perfectcomputersolutions.pos.controller
 
-import com.perfectcomputersolutions.pos.model.Product
-import com.perfectcomputersolutions.pos.service.ProductService
+import com.perfectcomputersolutions.pos.model.User
+import com.perfectcomputersolutions.pos.service.UserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("product")
-class ProductController extends UnprivilegedCrudController<Product, Long> {
+@RequestMapping("users")
+class UserController extends PrivilegedCrudController<User, Long> {
 
-    @Autowired ProductService service
+    @Autowired UserService service
 }

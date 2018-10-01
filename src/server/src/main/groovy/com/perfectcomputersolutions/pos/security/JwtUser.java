@@ -7,6 +7,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.Date;
 
+/**
+ * Created by stephan on 20.03.16.
+ */
 public class JwtUser implements UserDetails {
 
     private final Long id;
@@ -20,24 +23,23 @@ public class JwtUser implements UserDetails {
     private final Date lastPasswordResetDate;
 
     public JwtUser(
-          Long id,
-          String username,
-          String firstname,
-          String lastname,
-          String email,
-          String password, Collection<? extends GrantedAuthority> authorities,
-          boolean enabled,
-          Date lastPasswordResetDate
+            Long id,
+            String username,
+            String firstname,
+            String lastname,
+            String email,
+            String password, Collection<? extends GrantedAuthority> authorities,
+            boolean enabled,
+            Date lastPasswordResetDate
     ) {
-
-        this.id                    = id;
-        this.username              = username;
-        this.firstname             = firstname;
-        this.lastname              = lastname;
-        this.email                 = email;
-        this.password              = password;
-        this.authorities           = authorities;
-        this.enabled               = enabled;
+        this.id = id;
+        this.username = username;
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.email = email;
+        this.password = password;
+        this.authorities = authorities;
+        this.enabled = enabled;
         this.lastPasswordResetDate = lastPasswordResetDate;
     }
 

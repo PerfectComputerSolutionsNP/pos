@@ -1,8 +1,8 @@
-package com.perfectcomputersolutions.pos.exception
+package com.perfectcomputersolutions.pos.security;
 
 class AuthenticationException extends RuntimeException {
 
     AuthenticationException(String message, Throwable cause) {
-        super(message, cause)
+        super(message, cause);
     }
 }

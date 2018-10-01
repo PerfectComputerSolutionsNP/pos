@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("category")
-class CategoryController extends CrudController<Category, Long> {
+class CategoryController extends UnprivilegedCrudController<Category, Long> {
 
     @Autowired CategoryService service;
 }

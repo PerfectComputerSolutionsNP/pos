@@ -97,7 +97,7 @@ class ErrorController {
             throw ex
         }
 
-        body.put(CrudController.MESSAGE, message)
+        body.put(UnprivilegedCrudController.MESSAGE, message)
 
         return new ResponseEntity(body, status)
     }

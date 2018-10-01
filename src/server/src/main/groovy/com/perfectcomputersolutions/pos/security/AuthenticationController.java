@@ -1,10 +1,8 @@
 package com.perfectcomputersolutions.pos.security;
 
-import com.perfectcomputersolutions.pos.exception.AuthenticationException;
 import com.perfectcomputersolutions.pos.security.JwtAuthenticationRequest;
 import com.perfectcomputersolutions.pos.security.JwtTokenUtil;
 import com.perfectcomputersolutions.pos.security.JwtUser;
-import com.perfectcomputersolutions.pos.security.JwtAuthenticationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,7 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Objects;
 
 @RestController
-public class JwtAuthenticationController {
+public class AuthenticationController {
 
     @Value("${jwt.header}")
     private String tokenHeader;
@@ -56,20 +54,15 @@ public class JwtAuthenticationController {
 
     @RequestMapping(value = "${jwt.route.authentication.refresh}", method = RequestMethod.GET)
     public ResponseEntity<?> refreshAndGetAuthenticationToken(HttpServletRequest request) {
-
-        String  authToken    = request.getHeader(tokenHeader);
-        final   String token = authToken.substring(7);
-        String  username     = jwtTokenUtil.getUsernameFromToken(token);
-        JwtUser user         = (JwtUser) userDetailsService.loadUserByUsername(username);
+        String authToken = request.getHeader(tokenHeader);
+        final String token = authToken.substring(7);
+        String username = jwtTokenUtil.getUsernameFromToken(token);
+        JwtUser user = (JwtUser) userDetailsService.loadUserByUsername(username);
 
         if (jwtTokenUtil.canTokenBeRefreshed(token, user.getLastPasswordResetDate())) {
-
             String refreshedToken = jwtTokenUtil.refreshToken(token);
-
             return ResponseEntity.ok(new JwtAuthenticationResponse(refreshedToken));
-
         } else {
-
             return ResponseEntity.badRequest().body(null);
         }
     }
@@ -83,20 +76,14 @@ public class JwtAuthenticationController {
      * Authenticates the user. If something is wrong, an {@link AuthenticationException} will be thrown
      */
     private void authenticate(String username, String password) {
-
         Objects.requireNonNull(username);
         Objects.requireNonNull(password);
 
         try {
-
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-
         } catch (DisabledException e) {
-
             throw new AuthenticationException("User is disabled!", e);
-
         } catch (BadCredentialsException e) {
-
             throw new AuthenticationException("Bad credentials!", e);
         }
     }

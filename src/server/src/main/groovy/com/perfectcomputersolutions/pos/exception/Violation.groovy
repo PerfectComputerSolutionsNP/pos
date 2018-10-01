@@ -2,6 +2,7 @@ package com.perfectcomputersolutions.pos.exception
 
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.perfectcomputersolutions.pos.utility.Utility
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -56,13 +57,6 @@ class Violation {
     @Override
     String toString() {
 
-        try {
-
-            return new ObjectMapper().writeValueAsString(this)
-
-        } catch (JsonProcessingException e) {
-
-            throw new RuntimeException(e)
-        }
+        Utility.serialize(this)
     }
 }

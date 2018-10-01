@@ -5,6 +5,11 @@ import com.perfectcomputersolutions.pos.repository.CategoryRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
+/**
+ * Service responsible for managing the {@code Category} entity.
+ *
+ * @see Category
+ */
 @Service
 class CategoryService extends CrudService<Category, Long> {
 
