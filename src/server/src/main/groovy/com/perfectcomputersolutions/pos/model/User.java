@@ -1,10 +1,7 @@
 package com.perfectcomputersolutions.pos.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import java.util.Date;
 import java.util.List;
@@ -18,6 +15,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -30,38 +28,39 @@ public class User extends ModelEntity {
     // https://stackoverflow.com/questions/17393812/json-and-java-circular-reference
     // https://www.baeldung.com/jackson-bidirectional-relationships-and-infinite-recursion
 
-    @Column(name = "USERNAME", length = 50, unique = true)
     @NotNull
     @Size(min = 4, max = 50)
+    @Column(name = "USERNAME", length = 50, unique = true)
     private String username;
 
-    @Column(name = "PASSWORD", length = 100)
     @NotNull
     @Size(min = 4, max = 100)
+    @Column(name = "PASSWORD", length = 100)
     private String password;
 
-    @Column(name = "FIRSTNAME", length = 50)
     @NotNull
     @Size(min = 4, max = 50)
+    @Column(name = "FIRSTNAME", length = 50)
     private String firstname;
 
-    @Column(name = "LASTNAME", length = 50)
     @NotNull
     @Size(min = 4, max = 50)
+    @Column(name = "LASTNAME", length = 50)
     private String lastname;
 
-    @Column(name = "EMAIL", length = 50)
     @NotNull
+    @Email
     @Size(min = 4, max = 50)
+    @Column(name = "EMAIL", length = 50)
     private String email;
 
-    @Column(name = "ENABLED")
     @NotNull
+    @Column(name = "ENABLED")
     private Boolean enabled;
 
+    @NotNull
     @Column(name = "LASTPASSWORDRESETDATE")
     @Temporal(TemporalType.TIMESTAMP)
-    @NotNull
     private Date lastPasswordResetDate;
 
     @ManyToMany(fetch = FetchType.EAGER)

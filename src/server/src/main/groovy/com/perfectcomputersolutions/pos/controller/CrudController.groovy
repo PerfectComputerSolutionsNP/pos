@@ -1,7 +1,9 @@
 package com.perfectcomputersolutions.pos.controller
 
 import com.perfectcomputersolutions.pos.model.ModelEntity
+import com.perfectcomputersolutions.pos.model.NamedEntity
 import com.perfectcomputersolutions.pos.service.CrudService
+import com.perfectcomputersolutions.pos.service.NamedEntityService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -76,6 +78,28 @@ abstract class CrudController<T extends ModelEntity, ID extends Serializable> {
         ]
 
         respond(body, HttpStatus.ACCEPTED)
+    }
+
+    static <E extends NamedEntity, I extends Serializable> ResponseEntity findByName(String name, NamedEntityService<E, I> service) {
+
+        def body = [
+
+                (MESSAGE) : RETRIEVED,
+                (ENTITY)  : service.findByName(name)
+        ]
+
+        respond(body, HttpStatus.OK)
+    }
+
+    static <E extends NamedEntity, I extends Serializable> ResponseEntity findByNameContaining(String name, NamedEntityService<E, I> service) {
+
+        def body = [
+
+                (MESSAGE) : RETRIEVED,
+                (ENTITY)  : service.findByNameContaining(name)
+        ]
+
+        respond(body, HttpStatus.OK)
     }
 
     static respond(Map<String, ?> body, HttpStatus status) {

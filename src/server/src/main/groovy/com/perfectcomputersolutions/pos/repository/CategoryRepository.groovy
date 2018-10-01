@@ -4,5 +4,5 @@ import com.perfectcomputersolutions.pos.model.Category
 import org.springframework.stereotype.Repository
 
 @Repository
-interface CategoryRepository extends ModelEntityRepository<Category, Long> {
+interface CategoryRepository extends NamedEntityRepository<Category, Long> {
 }

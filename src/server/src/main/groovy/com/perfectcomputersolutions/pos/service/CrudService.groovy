@@ -1,10 +1,11 @@
 package com.perfectcomputersolutions.pos.service
 
-import com.perfectcomputersolutions.pos.repository.ModelEntityRepository
 import com.perfectcomputersolutions.pos.exception.NoSuchEntityException
 import com.perfectcomputersolutions.pos.exception.ValidationException
 import com.perfectcomputersolutions.pos.exception.Violation
 import com.perfectcomputersolutions.pos.model.ModelEntity
+import com.perfectcomputersolutions.pos.model.NamedEntity
+import com.perfectcomputersolutions.pos.repository.NamedEntityRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.data.repository.CrudRepository
@@ -124,17 +125,44 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
 
         E entity = findById(id, repository)
 
-        if (entity == null)
+        if (entity == null) {
+
+            log.info("")
+
             throw new NoSuchEntityException(id)
+        }
 
         repository.deleteById(id)
 
         return entity
     }
 
-    boolean existsById(ID id) {
+    static <E extends NamedEntity, I extends Serializable> E findByName(String name, NamedEntityRepository<E, I> repository) {
 
-        existsById(id, repository)
+        log.info("Finding entity by name: ${name}")
+
+        // TODO - Make sure this works!!!
+        // modify NoSuchEntityException to accept a message, etc
+
+        E entity = repository.findByName(name)
+
+        if (entity == null) {
+
+            throw new NoSuchEntityException()
+        }
+
+        return entity
+    }
+
+    static <E extends NamedEntity, I extends Serializable> Iterable<E> findByNameContaining(String name, NamedEntityRepository<E, I> repository) {
+
+        log.info("Searching for entities containing name: ${name}")
+
+        def entities = repository.findByNameContaining(name)
+
+        log.info("Found ${entities.size()} entities corresponding to search: ${name}")
+
+        return entities
     }
 
     T findById(ID id) {

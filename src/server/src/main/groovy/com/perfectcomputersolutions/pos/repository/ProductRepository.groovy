@@ -4,5 +4,5 @@ import com.perfectcomputersolutions.pos.model.Product
 import org.springframework.stereotype.Repository
 
 @Repository
-interface ProductRepository extends ModelEntityRepository<Product, Long> {
+interface ProductRepository extends NamedEntityRepository<Product, Long> {
 }
