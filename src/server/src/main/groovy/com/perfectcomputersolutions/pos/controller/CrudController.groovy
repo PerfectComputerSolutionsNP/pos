@@ -58,6 +58,17 @@ abstract class CrudController<T extends ModelEntity, ID extends Serializable> {
         respond(body, HttpStatus.ACCEPTED)
     }
 
+    static <E extends ModelEntity, I extends Serializable> ResponseEntity saveAll(Iterable<E> entities, CrudService<E, I> service) {
+
+        def body = [
+
+                (MESSAGE) : CREATED,
+                (ENTITY)  : service.saveAll(entities)
+        ]
+
+        respond(body, HttpStatus.ACCEPTED)
+    }
+
     static <E extends ModelEntity, I extends Serializable> ResponseEntity update(I id, E entity, CrudService<E, I> service) {
 
         def body = [

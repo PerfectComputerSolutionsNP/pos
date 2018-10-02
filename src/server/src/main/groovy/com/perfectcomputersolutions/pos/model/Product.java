@@ -1,5 +1,7 @@
 package com.perfectcomputersolutions.pos.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -15,4 +17,12 @@ public class Product extends NamedEntity {
 
     @NotNull
     public Long cost;
+
+    private Double dollars;
+
+    @JsonProperty
+    public Long getDollars() {
+
+        return cost / 1000;
+    }
 }

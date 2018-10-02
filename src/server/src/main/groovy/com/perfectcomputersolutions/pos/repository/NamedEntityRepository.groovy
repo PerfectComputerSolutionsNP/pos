@@ -9,7 +9,5 @@ interface NamedEntityRepository<T extends NamedEntity, ID extends Serializable> 
 
     T findByName(String name)
 
-    // TODO - find by likename, contains name
-
     Iterable<T> findByNameContaining(String name)
 }

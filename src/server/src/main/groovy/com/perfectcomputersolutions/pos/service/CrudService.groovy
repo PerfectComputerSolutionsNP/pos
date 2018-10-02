@@ -29,6 +29,8 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
 
     abstract CrudRepository<T, ID> getRepository()
 
+    // TODO - Implement batch upload, and batch delete by id
+
     static <E extends ModelEntity, I extends Serializable> boolean existsById(I id, CrudRepository<E, I> repository) {
 
         log.info("Determining if entity is present with id: " + id)
@@ -90,6 +92,21 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
         log.info("Persisting new ${entity.class.simpleName} to storage")
 
         return repository.save(entity)
+    }
+
+    static <E extends ModelEntity, I extends Serializable> Iterable<E> saveAll(Iterable<E> entities, CrudRepository<E, I> repository) {
+
+        int size = entities.size()
+
+        log.info("Creating ${size} new entities")
+
+        log.info(entities.toString())
+
+        validate(entities, false)
+
+        log.info("Persisting ${size} new entities")
+
+        return repository.saveAll(entities)
     }
 
     static <E extends ModelEntity, I extends Serializable> E update(I id, E entity, CrudRepository<E, I> repository) {
@@ -181,6 +198,11 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
         save(entity, repository)
     }
 
+    Iterable<T> saveAll(Iterable<T> entities) {
+
+        saveAll(entities, repository)
+    }
+
     T update(ID id, T entity) {
 
         update(id, entity, repository)
@@ -213,5 +235,13 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
 
         if (violations.size() != 0)
             throw new ValidationException<T>(violations)
+    }
+
+    protected static <E extends ModelEntity> void validate(Iterable<E> entities, boolean update) {
+
+        for (E entity in entities)
+            validate(entity, update)
+
+        // TODO - Capture exact violate?
     }
 }

@@ -1,5 +1,6 @@
 package com.perfectcomputersolutions.pos.controller
 
+import com.perfectcomputersolutions.pos.model.EntityBatch
 import com.perfectcomputersolutions.pos.model.ModelEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -30,6 +31,13 @@ abstract class PrivilegedCrudController<T extends ModelEntity, ID extends Serial
     def save(@RequestBody T entity) {
 
         save(entity, service)
+    }
+
+    @PostMapping("/batch")
+    @PreAuthorize("hasRole('ADMIN')")
+    def saveAll(@RequestBody EntityBatch<T> entities) {
+
+        saveAll(entities, service)
     }
 
     @PutMapping("/{id}")
