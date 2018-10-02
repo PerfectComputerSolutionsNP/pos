@@ -35,19 +35,6 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired private JwtUserDetailsService       jwtUserDetailsService
     @Autowired JwtAuthorizationTokenFilter         authenticationTokenFilter
 
-    def static swagger = [
-
-            "/v2/api-docs",
-            "/configuration/ui",
-            "/swagger-resources",
-            "/configuration/security",
-            "/swagger-ui.html",
-            "/webjars/**",
-            "/swagger-resources/configuration/ui",
-            "/swagger-resources/configuration/security",
-            "/swagger-ui.html"
-    ] as String[]
-
     @Value('${jwt.header}')
     private String tokenHeader
 
@@ -101,30 +88,30 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
         return source
     }
 
-    @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        http.cors()
-            .and()
-            .exceptionHandling()
-            .authenticationEntryPoint(unauthorizedHandler)
-            .and()
-            .sessionManagement()
-            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            .and()
-            .authorizeRequests()
-            .antMatchers(HttpMethod.POST,"/auth")
-            .permitAll()
-            .antMatchers(swagger)
-            .permitAll()
-            .anyRequest()
-            .authenticated()
+        http
+                .cors()
+                .and()
+                .csrf()
+                .disable()
+                .exceptionHandling()
+                .authenticationEntryPoint(unauthorizedHandler)
+                .and()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .authorizeRequests()
+                .antMatchers(HttpMethod.POST, "/auth")
+                .permitAll()
+                .anyRequest()
+                .authenticated();
 
 
-       http.addFilterBefore(
-           authenticationTokenFilter,
-           UsernamePasswordAuthenticationFilter.class
-       )
+        http.addFilterBefore(
+                authenticationTokenFilter,
+                UsernamePasswordAuthenticationFilter.class
+        );
     }
 
     @Override
@@ -139,7 +126,21 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
                 "/**/*.js",
         ] as String[]
 
+        def swagger = [
+
+                "/v2/api-docs",
+                "/configuration/ui",
+                "/swagger-resources",
+                "/configuration/security",
+                "/swagger-ui.html",
+                "/webjars/**",
+                "/swagger-resources/configuration/ui",
+                "/swagger-resources/configuration/security",
+                "/swagger-ui.html"
+        ] as String[]
+
         web.ignoring()
            .antMatchers(patterns)
+           .antMatchers(swagger)
     }
 }

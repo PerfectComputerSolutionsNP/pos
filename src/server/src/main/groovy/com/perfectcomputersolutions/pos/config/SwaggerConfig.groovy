@@ -11,6 +11,9 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2
 @Configuration
 @EnableSwagger2
 class SwaggerConfig {
+
+    // https://stackoverflow.com/questions/37794571/how-do-you-turn-off-swagger-ui-in-production
+
     @Bean
     Docket api() {
 
