@@ -35,6 +35,19 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired private JwtUserDetailsService       jwtUserDetailsService
     @Autowired JwtAuthorizationTokenFilter         authenticationTokenFilter
 
+    def static swagger = [
+
+            "/v2/api-docs",
+            "/configuration/ui",
+            "/swagger-resources",
+            "/configuration/security",
+            "/swagger-ui.html",
+            "/webjars/**",
+            "/swagger-resources/configuration/ui",
+            "/swagger-resources/configuration/security",
+            "/swagger-ui.html"
+    ] as String[]
+
     @Value('${jwt.header}')
     private String tokenHeader
 
@@ -93,8 +106,6 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.cors()
             .and()
-            .csrf()
-            .disable()
             .exceptionHandling()
             .authenticationEntryPoint(unauthorizedHandler)
             .and()
@@ -104,8 +115,11 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
             .authorizeRequests()
             .antMatchers(HttpMethod.POST,"/auth")
             .permitAll()
+            .antMatchers(swagger)
+            .permitAll()
             .anyRequest()
             .authenticated()
+
 
        http.addFilterBefore(
            authenticationTokenFilter,
@@ -122,10 +136,10 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
                 "/favicon.ico",
                 "/**/*.html",
                 "/**/*.css",
-                "/**/*.js"
+                "/**/*.js",
         ] as String[]
 
         web.ignoring()
-           .antMatchers(HttpMethod.GET, patterns)
+           .antMatchers(patterns)
     }
 }
