@@ -23,15 +23,11 @@ import static org.springframework.http.HttpStatus.NOT_FOUND
  * is done in two ways. We have anticipated exceptions and unanticipated
  * exceptions.
  *
- * <p>
- *
  * All anticipated exceptions extend {@code CrudException}. If a
  * {@code CrudException} is thrown, then we will then detect the specific type
  * of Exception (by subclass) and pick the appropriate HTTP status code. The
  * exception's message attribute will then be used as the message that is returned
  * to the user in the {@code message} field of the JSON response body.
- *
- * <p>
  *
  * Unanticipated exceptions do not have their message attribute exposed to the user
  * as there may be sensitive data or information that the exception injects automatically.

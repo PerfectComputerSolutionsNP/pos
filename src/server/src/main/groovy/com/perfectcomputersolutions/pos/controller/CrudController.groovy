@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.CrossOrigin
 
+
 @CrossOrigin
 abstract class CrudController<T extends ModelEntity, ID extends Serializable> {
 

@@ -5,9 +5,11 @@ import com.perfectcomputersolutions.pos.exception.ValidationException
 import com.perfectcomputersolutions.pos.exception.Violation
 import com.perfectcomputersolutions.pos.model.ModelEntity
 import com.perfectcomputersolutions.pos.model.NamedEntity
+import com.perfectcomputersolutions.pos.notifier.EmailSender
 import com.perfectcomputersolutions.pos.repository.NamedEntityRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.CrudRepository
 
 import javax.validation.Validation
@@ -27,6 +29,8 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
     private static final Logger    log       = LoggerFactory.getLogger(CrudService.class)
     private static final Validator validator = Validation.buildDefaultValidatorFactory().getValidator()
 
+    @Autowired EmailSender emailer
+
     abstract CrudRepository<T, ID> getRepository()
 
     // TODO - Implement batch upload, and batch delete by id
@@ -42,6 +46,7 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
 
         if (exists)
             log.info("There is an entity for id: " + id)
+
         else
             log.info("There is no entity for id: " + id)
 
@@ -242,6 +247,6 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
         for (E entity in entities)
             validate(entity, update)
 
-        // TODO - Capture exact violate?
+        // TODO - Capture exact violation?
     }
 }

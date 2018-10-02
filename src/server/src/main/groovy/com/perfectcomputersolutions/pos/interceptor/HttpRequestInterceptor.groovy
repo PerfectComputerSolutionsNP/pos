@@ -32,8 +32,11 @@ class HttpRequestInterceptor extends HandlerInterceptorAdapter {
     }
 
     @Override
-    void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler,
-                         @Nullable Exception ex) throws Exception {
+    void afterCompletion(
+            HttpServletRequest  request,
+            HttpServletResponse response,
+            Object              handler,
+            @Nullable Exception ex) throws Exception {
 
         long start = (long) request.getAttribute("startTime")
         long end   = System.currentTimeMillis()

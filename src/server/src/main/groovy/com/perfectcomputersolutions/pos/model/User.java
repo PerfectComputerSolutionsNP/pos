@@ -23,7 +23,7 @@ import javax.validation.constraints.Size;
 @Table(name = "USER")
 public class User extends ModelEntity {
 
-    // TODO - Unique constraint for username, email, join with transaction table
+    // TODO - Unique constraint for username, notifier, join with transaction table
 
     // https://stackoverflow.com/questions/17393812/json-and-java-circular-reference
     // https://www.baeldung.com/jackson-bidirectional-relationships-and-infinite-recursion

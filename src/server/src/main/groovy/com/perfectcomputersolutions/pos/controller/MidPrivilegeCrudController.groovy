@@ -2,12 +2,24 @@ package com.perfectcomputersolutions.pos.controller
 
 import com.perfectcomputersolutions.pos.model.EntityBatch
 import com.perfectcomputersolutions.pos.model.ModelEntity
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 
+/**
+ * The {@code MidPrivilegeCrudController} is a combination of the {@code PrivilegedCrudController} and the
+ * {@code UnprivilegedCrudController}. All read operations that are mapped to HTTP - GET do not require
+ * any specific role. However, methods such as DELETE, POST, and PUT require the ADMIN role. This creates
+ * creates a controller that has read-only rights for non-admins and read-write access for admins. This is
+ * useful for controllers that manage inventory for example. All users should be able to see inventory,
+ * but only administrators can modify the inventory system.
+ *
+ * @see ModelEntity
+ *
+ * @param <T> Generic type that extends ModelEntity
+ * @param <ID> Generic type for {@code ModelEntity} objects (typically {@code Long)
+ */
 abstract class MidPrivilegeCrudController<T extends ModelEntity, ID extends Serializable> extends UnprivilegedCrudController<T, ID> {
 
     @Override
