@@ -29,6 +29,12 @@ class Utility {
             throw new ValidationException<T>(violations)
     }
 
+    static <T> void validate(List<T> objects) {
+
+        for (T obj : objects)
+            validate(obj)
+    }
+
     /**
      * Serializes an object into JSON.
      *

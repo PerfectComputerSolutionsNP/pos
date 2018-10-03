@@ -117,16 +117,15 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     void configure(WebSecurity web) throws Exception {
 
-        def patterns = [
-                "/",
+        String[] files = [
                 "/*.html",
                 "/favicon.ico",
                 "/**/*.html",
                 "/**/*.css",
                 "/**/*.js",
-        ] as String[]
+        ]
 
-        def swagger = [
+        String[] swagger = [
 
                 "/v2/api-docs",
                 "/configuration/ui",
@@ -137,10 +136,11 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
                 "/swagger-resources/configuration/ui",
                 "/swagger-resources/configuration/security",
                 "/swagger-ui.html"
-        ] as String[]
+        ]
+
+        String[] patterns = files + swagger
 
         web.ignoring()
            .antMatchers(patterns)
-           .antMatchers(swagger)
     }
 }

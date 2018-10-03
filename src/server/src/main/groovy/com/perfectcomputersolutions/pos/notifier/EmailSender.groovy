@@ -24,8 +24,6 @@ import java.beans.Introspector
 @Service
 class EmailSender {
 
-    // TODO - Get CSS path to resolve, currently not working!
-
     private static final Logger log = LoggerFactory.getLogger(EmailSender.class)
 
     @Autowired JavaMailSender sender

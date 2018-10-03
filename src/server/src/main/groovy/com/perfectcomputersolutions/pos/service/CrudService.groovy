@@ -33,33 +33,31 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
 
     abstract CrudRepository<T, ID> getRepository()
 
-    // TODO - Implement batch upload, and batch delete by id
-
     static <E extends ModelEntity, I extends Serializable> boolean existsById(I id, CrudRepository<E, I> repository) {
 
-        log.info("Determining if entity is present with id: " + id)
+        log.info("Determining if entity is present with id: ${id}")
 
         if (id == null)
-            throw new NoSuchEntityException()
+            throw new NoSuchEntityException("The id field must not be null")
 
         def exists = repository.existsById(id)
 
         if (exists)
-            log.info("There is an entity for id: " + id)
+            log.info("There is an entity for id: ${id}")
 
         else
-            log.info("There is no entity for id: " + id)
+            log.info("There is no entity for id: ${id}")
 
         return exists
     }
 
     static <E extends ModelEntity, I extends Serializable> E findById(I id, CrudRepository<E, I> repository) {
 
-        log.info("Finding entity with id: " + id)
+        log.info("Finding entity with id: ${id}")
 
         def optional = repository.findById(id)
 
-        if (optional.isPresent())
+        if (optional.present)
             return optional.get()
 
         else
@@ -72,7 +70,7 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
 
         def entities = repository.findAll()
 
-        log.info("Found " + entities.size() + " entities")
+        log.info("Found ${entities.size()} entities")
 
         return entities
     }
@@ -120,16 +118,22 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
 
         if (id != entity.id) {
 
-            // Path variable id does not match entity id
+            def violation = new Violation()
+
+            violation.field   = "id"
+            violation.entity  = entity.class.simpleName
+            violation.message = "Path variable id ${id} does not match entity id ${entity.id}"
+
+            throw new ValidationException(violation)
         }
 
-        if (entity.id == null || !existsById((I)entity.id, repository)) {
+        if (entity.id == null || !existsById((I) entity.id, repository)) {
 
             def violation = new Violation()
 
             violation.field   = "id"
             violation.entity  = entity.class.simpleName
-            violation.message = "Id either null or no ${entity.class.simpleName} exists id: " + entity.id
+            violation.message = "Id either null or no ${entity.class.simpleName} exists id: ${entity.id}"
 
             throw new ValidationException(violation)
         }
@@ -143,13 +147,13 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
 
     static <E extends ModelEntity, I extends Serializable> E deleteById(I id, CrudRepository<E, I> repository) {
 
-        log.info("Deleting entity with id: " + id)
+        log.info("Deleting entity with id: ${id}")
 
         E entity = findById(id, repository)
 
         if (entity == null) {
 
-            log.info("")
+            log.info("No entity with id ${id} was found")
 
             throw new NoSuchEntityException(id)
         }
@@ -163,15 +167,10 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
 
         log.info("Finding entity by name: ${name}")
 
-        // TODO - Make sure this works!!!
-        // modify NoSuchEntityException to accept a message, etc
-
         E entity = repository.findByName(name)
 
-        if (entity == null) {
-
-            throw new NoSuchEntityException()
-        }
+        if (entity == null)
+            throw new NoSuchEntityException("No entity found with name ${name}")
 
         return entity
     }
