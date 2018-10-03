@@ -37,15 +37,17 @@
    */
 
   $(function () {
+
     // VARIABLES =============================================================
     let protocol = window.location.protocol;
+    // let host     = "104.197.35.46";
     let host     = "api.pos.jabaridash.com";
     let port     = "8080";
     let base     = `${protocol}//${host}:${port}`;
     let urls = {
       user     : `${base}/user`,
-      persons  : `${base}/persons`,
-      protect  : `${base}/protected`,
+      persons  : `${base}/products`,
+      protect  : `${base}/users`,
       auth     : `${base}/auth`
     };
     console.log(urls);
