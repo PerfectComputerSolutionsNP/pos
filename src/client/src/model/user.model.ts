@@ -1,7 +1,9 @@
+import {Authority} from "./authority.model";
+
 export interface User{
 
   // private
-  id : string;
+  id : number;
   // private
   username: string;
   // private
@@ -17,6 +19,7 @@ export interface User{
   // private
   lastPasswordResetDate;
 
+  authorities : Array<Authority>
 
   //Setters
   //
