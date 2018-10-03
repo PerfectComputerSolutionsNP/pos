@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+    <body>
+        <div th:replace="email/header :: header"></div>
+
+        <p>Dear [[${user.firstname}]],</p>
+
+        <p>
+            Thank you for registering with POS system. Below is your username and password recovery token.
+            Please store this information securely as it will be required of you in the event that you lose
+            your password and would like to recover your account.
+        </p>
+
+        <ul>
+            <li><strong>Username:</strong> [[${user.firstname}]]</li>
+            <li><strong>Token:</strong> [[${user.password}]]</li>
+        </ul>
+
+        <p>
+            Confirm your registration by logging into the <a href="http://130.211.237.72:4200" target="_blank">POS system</a>.
+        </p>
+
+        <div th:replace="email/footer :: footer"></div>
+    </body>
+
+</html>
+
+
+
+
+

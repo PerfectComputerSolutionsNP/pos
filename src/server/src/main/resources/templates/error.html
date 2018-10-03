@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+    <div th:replace="head :: head"></div>
+
+    <body>
+
+        <h1 id="title"></h1>
+
+        <p>Redirecting to API documentation after <span id="countdown">10</span> seconds</p>
+
+        <div th:replace="foot :: foot"></div>
+
+        <script>
+
+            const title = $("#title");
+
+            title.text(`URL not found: ${window.location}`);
+
+            history.navigateionMode = 'compatible';
+
+            const number   = document.getElementById("countdown");
+            const SECOND   = 1000;
+            let   seconds  = 15;
+
+            /**
+             * Counts down then redirects.
+             */
+            function countdown() {
+
+                seconds--;
+
+                if (seconds < 0) {
+
+                    redirect();
+
+                } else {
+
+                    number.innerHTML = seconds;
+
+                    window.setTimeout("countdown()", SECOND);
+                }
+            }
+
+            $(document).ready(() => {
+
+                countdown(seconds);
+            });
+
+        </script>
+
+    </body>
+
+</html>

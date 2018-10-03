@@ -1,9 +1,15 @@
 package com.perfectcomputersolutions.pos.model;
 
-import javax.validation.constraints.NotNull;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import java.util.Set;
 
-public class Category extends ModelEntity {
+@Entity(name = "category")
+public class Category extends NamedEntity {
 
-    @NotNull
-    public String name;
+    // https://stackoverflow.com/questions/19112362/spring-hibernate-product-category-relationship
+
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    Set<Product> products;
 }
