@@ -1,4 +1,4 @@
-package com.perfectcomputersolutions.pos.service;
+package com.perfectcomputersolutions.pos.security;
 
 import java.io.Serializable;
 

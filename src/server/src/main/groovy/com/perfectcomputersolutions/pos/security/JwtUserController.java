@@ -1,4 +1,4 @@
-package com.perfectcomputersolutions.pos.controller;
+package com.perfectcomputersolutions.pos.security;
 
 import com.perfectcomputersolutions.pos.security.JwtTokenUtil;
 import com.perfectcomputersolutions.pos.security.JwtUser;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
-public class UserController {
+public class JwtUserController {
 
     @Value("${jwt.header}")
     private String tokenHeader;

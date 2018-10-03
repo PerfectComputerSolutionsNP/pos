@@ -1,90 +1,83 @@
 package com.perfectcomputersolutions.pos.service
 
-import com.perfectcomputersolutions.pos.repository.ModelEntityRepository
 import com.perfectcomputersolutions.pos.exception.NoSuchEntityException
 import com.perfectcomputersolutions.pos.exception.ValidationException
 import com.perfectcomputersolutions.pos.exception.Violation
 import com.perfectcomputersolutions.pos.model.ModelEntity
+import com.perfectcomputersolutions.pos.model.NamedEntity
+import com.perfectcomputersolutions.pos.notifier.EmailSender
+import com.perfectcomputersolutions.pos.repository.NamedEntityRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.repository.CrudRepository
 
 import javax.validation.Validation
+import javax.validation.Validator
 
+/**
+ * Generic service that executes CRUD operation for basic
+ * {@code ModelEntity} objects.
+ *
+ * @see ModelEntity
+ *
+ * @param <T> Generic type that extends {@code ModelEntity}
+ * @param <ID> Generic type for entity types.
+ */
 abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
 
-    private static final Logger log = LoggerFactory.getLogger(CrudService.class)
+    private static final Logger    log       = LoggerFactory.getLogger(CrudService.class)
+    private static final Validator validator = Validation.buildDefaultValidatorFactory().getValidator()
 
-    abstract ModelEntityRepository<T, ID> getRepository()
+    @Autowired EmailSender emailer
 
-    def validator = Validation.buildDefaultValidatorFactory().getValidator()
+    abstract CrudRepository<T, ID> getRepository()
 
-    /**
-     * Determines if an entity exists by id.
-     *
-     * @param id Entity's id.
-     * @return True if an entity exists with the specified id.
-     */
-    boolean existsById(ID id) {
+    static <E extends ModelEntity, I extends Serializable> boolean existsById(I id, CrudRepository<E, I> repository) {
 
-        log.info("Determining if entity is present with id: " + id)
+        log.info("Determining if entity is present with id: ${id}")
 
         if (id == null)
-            throw new NoSuchEntityException()
+            throw new NoSuchEntityException("The id field must not be null")
 
         def exists = repository.existsById(id)
 
         if (exists)
-            log.info("There is an entity for id: " + id)
+            log.info("There is an entity for id: ${id}")
+
         else
-            log.info("There is no entity for id: " + id)
+            log.info("There is no entity for id: ${id}")
 
         return exists
     }
 
-    /**
-     * Find an entity by id.
-     *
-     * @param id Entity's id.
-     * @return Associated entity.
-     */
-    T findById(ID id) {
+    static <E extends ModelEntity, I extends Serializable> E findById(I id, CrudRepository<E, I> repository) {
 
-        log.info("Finding entity with id: " + id)
+        log.info("Finding entity with id: ${id}")
 
         def optional = repository.findById(id)
 
-        if (optional.isPresent())
+        if (optional.present)
             return optional.get()
 
         else
             throw new NoSuchEntityException(id)
     }
 
-    /**
-     * Returns list of all entities.
-     *
-     * @return List of all entities.
-     */
-    Iterable<T> findAll() {
+    static <E extends ModelEntity, I extends Serializable> Iterable<E> findAll(CrudRepository<E, I> repository) {
 
         log.info("Finding all entities")
 
         def entities = repository.findAll()
 
-        log.info("Found " + entities.size() + " entities")
+        log.info("Found ${entities.size()} entities")
 
         return entities
     }
 
-    /**
-     * Persists an entity to storage.
-     *
-     * @param entity Entity to persist.
-     * @return A copy of the persisted entity.
-     */
-    T save(T entity) {
+    static <E extends ModelEntity, I extends Serializable> E save(E entity, CrudRepository<E, I> repository) {
 
-        log.info("Creating new entity")
+        log.info("Creating new ${entity.class.simpleName}")
 
         if (entity.id != null) {
 
@@ -92,43 +85,136 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
 
             violation.field   = "id"
             violation.entity  = entity.class.simpleName
-            violation.message = "Id must be null as it will be automatically assigned"
+            violation.message = "Id must be null as it will be automatically assigned to ${entity.class.simpleName}"
 
             throw new ValidationException(violation)
         }
 
-        validate(entity)
+        validate(entity, false)
 
-        log.info("Persisting new entity to storage")
+        log.info("Persisting new ${entity.class.simpleName} to storage")
 
         return repository.save(entity)
     }
 
-    /**
-     * Updates an entity in database.
-     *
-     * @param entity Entity to update.
-     * @return A copy of the entity.
-     */
-    T update(T entity) {
+    static <E extends ModelEntity, I extends Serializable> Iterable<E> saveAll(Iterable<E> entities, CrudRepository<E, I> repository) {
+
+        int size = entities.size()
+
+        log.info("Creating ${size} new entities")
+
+        log.info(entities.toString())
+
+        validate(entities, false)
+
+        log.info("Persisting ${size} new entities")
+
+        return repository.saveAll(entities)
+    }
+
+    static <E extends ModelEntity, I extends Serializable> E update(I id, E entity, CrudRepository<E, I> repository) {
+
+        log.info("Updating ${entity.class.simpleName}")
+
+        if (id != entity.id) {
+
+            def violation = new Violation()
+
+            violation.field   = "id"
+            violation.entity  = entity.class.simpleName
+            violation.message = "Path variable id ${id} does not match entity id ${entity.id}"
+
+            throw new ValidationException(violation)
+        }
+
+        if (entity.id == null || !existsById((I) entity.id, repository)) {
+
+            def violation = new Violation()
+
+            violation.field   = "id"
+            violation.entity  = entity.class.simpleName
+            violation.message = "Id either null or no ${entity.class.simpleName} exists id: ${entity.id}"
+
+            throw new ValidationException(violation)
+        }
+
+        validate(entity, true)
+
+        log.info("Persisting updated ${entity.class.simpleName} to storage")
+
+        return repository.save(entity)
+    }
+
+    static <E extends ModelEntity, I extends Serializable> E deleteById(I id, CrudRepository<E, I> repository) {
+
+        log.info("Deleting entity with id: ${id}")
+
+        E entity = findById(id, repository)
+
+        if (entity == null) {
+
+            log.info("No entity with id ${id} was found")
+
+            throw new NoSuchEntityException(id)
+        }
+
+        repository.deleteById(id)
 
         return entity
     }
 
-    /**
-     * Deletes an entity by id.
-     *
-     * @param id Entity's id.
-     * @return User that was deleted.
-     */
-    void deleteById(ID id) {
+    static <E extends NamedEntity, I extends Serializable> E findByName(String name, NamedEntityRepository<E, I> repository) {
 
-        log.info("Deleting entity with id: " + id)
+        log.info("Finding entity by name: ${name}")
 
-        if (!existsById(id))
-            throw new NoSuchEntityException(id)
+        E entity = repository.findByName(name)
 
-        repository.deleteById(id)
+        if (entity == null)
+            throw new NoSuchEntityException("No entity found with name ${name}")
+
+        return entity
+    }
+
+    static <E extends NamedEntity, I extends Serializable> Iterable<E> findByNameContaining(String name, NamedEntityRepository<E, I> repository) {
+
+        log.info("Searching for entities containing name: ${name}")
+
+        def entities = repository.findByNameContaining(name)
+
+        log.info("Found ${entities.size()} entities corresponding to search: ${name}")
+
+        return entities
+    }
+
+    T findById(ID id) {
+
+        findById(id, repository)
+    }
+
+
+    Iterable<T> findAll() {
+
+        findAll(repository)
+    }
+
+    T save(T entity) {
+
+        save(entity, repository)
+    }
+
+    Iterable<T> saveAll(Iterable<T> entities) {
+
+        saveAll(entities, repository)
+    }
+
+    T update(ID id, T entity) {
+
+        update(id, entity, repository)
+    }
+
+    T deleteById(ID id) {
+
+        deleteById(id, repository)
     }
 
     /**
@@ -139,12 +225,27 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
      * @see ValidationException
      *
      * @param entity Entity to validate.
+     * @param update Boolean value indicating whether or not the entity
+     *        it to be validated as an update or a new entry.
      */
-    def validate(T entity) {
+    protected static <E extends ModelEntity> void validate(E entity, boolean update) {
 
         def violations = validator.validate(entity)
 
+        if (update) {
+
+            // TODO - Check other stuff if necessary
+        }
+
         if (violations.size() != 0)
             throw new ValidationException<T>(violations)
+    }
+
+    protected static <E extends ModelEntity> void validate(Iterable<E> entities, boolean update) {
+
+        for (E entity in entities)
+            validate(entity, update)
+
+        // TODO - Capture exact violation?
     }
 }

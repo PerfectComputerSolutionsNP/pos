@@ -7,7 +7,5 @@ import org.springframework.data.repository.NoRepositoryBean
 @NoRepositoryBean
 interface ModelEntityRepository<T extends ModelEntity, ID extends Serializable> extends CrudRepository<T, ID> {
 
-    ModelEntity findByName(String name)
-
-    boolean existsByName(String name)
+    // TODO - Implement utility method for bulk deletion by List<Long> id
 }

@@ -10,4 +10,8 @@ class CrudException extends RuntimeException {
         super(msg)
     }
 
+    CrudException(String message, Throwable cause) {
+        super(message, cause)
+    }
+
 }
