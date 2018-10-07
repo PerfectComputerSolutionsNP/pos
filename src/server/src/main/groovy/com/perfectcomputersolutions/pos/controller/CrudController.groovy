@@ -1,118 +1,123 @@
 package com.perfectcomputersolutions.pos.controller
 
-import com.perfectcomputersolutions.pos.service.CrudService
 import com.perfectcomputersolutions.pos.model.ModelEntity
+import com.perfectcomputersolutions.pos.model.NamedEntity
+import com.perfectcomputersolutions.pos.service.CrudService
+import com.perfectcomputersolutions.pos.service.NamedEntityService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.CrossOrigin
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestBody
 
-/**
- * Abstract REST controller that facilitates CRUD operations
- * for basic entities.
- *
- * @param <T> Generic ModelEntity type.
- * @param <ID> Id type.
- */
+
 @CrossOrigin
 abstract class CrudController<T extends ModelEntity, ID extends Serializable> {
 
-    private static final Logger log = LoggerFactory.getLogger(CrudController.class)
+    private static final Logger log = LoggerFactory.getLogger(UnprivilegedCrudController.class)
 
-    static final String ENTITIES = "entities"
-    static final String ENTITY   = "entity"
-    static final String MESSAGE  = "message"
+    static final String ENTITIES  = "entities"
+    static final String ENTITY    = "entity"
+    static final String MESSAGE   = "message"
+    static final String CREATED   = "Entity successfully created"
+    static final String UPDATED   = "Entity successfully updated"
+    static final String DELETED   = "Entity successfully deleted"
+    static final String RETRIEVED = "Entity(ies) successfully retrieved"
 
     abstract CrudService<T, ID> getService()
 
-    @GetMapping
-    def findAll() {
+    static <E extends ModelEntity, I extends Serializable> ResponseEntity findAll(CrudService<E, I> service) {
 
-        log.info("Received new GET request")
+        def body = [
 
-        def body     = new HashMap<>()
-        def entities = service.findAll()
-        def message  = "Entities successfully retrieved"
+                (MESSAGE)   : RETRIEVED,
+                (ENTITIES)  : service.findAll()
+        ]
 
-        body.put(MESSAGE,  message)
-        body.put(ENTITIES, entities)
-
-        log.info(message)
-
-        return new ResponseEntity(body, HttpStatus.ACCEPTED)
+        respond(body, HttpStatus.OK)
     }
 
-    @GetMapping("/{id}")
-    def findById(@PathVariable ID id) {
+    static <E extends ModelEntity, I extends Serializable> ResponseEntity findById(I id, CrudService<E, I> service) {
 
-        log.info("Received new GET request")
+        def body = [
 
-        def body    = new HashMap<>()
-        def entity  = service.findById(id)
-        def message = "Entity successfully retrieved"
+                (MESSAGE) : RETRIEVED,
+                (ENTITY)  : service.findById(id)
+        ]
 
-        body.put(MESSAGE, message)
-        body.put(ENTITY,  entity)
-
-        log.info(message)
-
-        return new ResponseEntity(body, HttpStatus.ACCEPTED)
+        respond(body, HttpStatus.OK)
     }
 
-    @PostMapping("/register")
-    def save(@RequestBody T entity) {
+    static <E extends ModelEntity, I extends Serializable> ResponseEntity save(E entity, CrudService<E, I> service) {
 
-        log.info("Received new POST request")
+        def body = [
 
-        def message = "Entity successfully created"
-        def body    = new HashMap<>()
+                (MESSAGE) : CREATED,
+                (ENTITY)  : service.save(entity)
+        ]
 
-        body.put(MESSAGE, message)
-        body.put(ENTITY,  service.save(entity))
-
-        log.info(message)
-
-        return new ResponseEntity(body, HttpStatus.ACCEPTED)
+        respond(body, HttpStatus.ACCEPTED)
     }
 
-    @PutMapping("/{id}")
-    def update(@PathVariable ID id, @RequestBody T entity) {
+    static <E extends ModelEntity, I extends Serializable> ResponseEntity saveAll(Iterable<E> entities, CrudService<E, I> service) {
 
-        log.info("Received new PUT request")
+        def body = [
 
-        def message = "Entity successfully updated"
-        def body    = new HashMap<>()
+                (MESSAGE) : CREATED,
+                (ENTITY)  : service.saveAll(entities)
+        ]
 
-        body.put(MESSAGE, message)
-        body.put(ENTITY,  service.update(entity))
-
-        log.info(message)
-
-        return new ResponseEntity(body, HttpStatus.ACCEPTED)
+        respond(body, HttpStatus.ACCEPTED)
     }
 
-    @DeleteMapping("/{id}")
-    def deleteById(@PathVariable ID id) {
+    static <E extends ModelEntity, I extends Serializable> ResponseEntity update(I id, E entity, CrudService<E, I> service) {
 
-        log.info("Received new DELETE request")
+        def body = [
 
-        def body    = new HashMap<>()
-        def entity  = service.deleteById(id)
-        def message = "Entity successfully deleted"
+                (MESSAGE) : UPDATED,
+                (ENTITY)  : service.update(id, entity)
+        ]
 
-        body.put(MESSAGE, message)
-        body.put(ENTITY,  entity)
-
-        log.info(message)
-
-        return new ResponseEntity(body, HttpStatus.ACCEPTED)
+        respond(body, HttpStatus.ACCEPTED)
     }
 
+    static <E extends ModelEntity, I extends Serializable> ResponseEntity deleteById(I id, CrudService<E, I> service) {
+
+        def body = [
+
+                (MESSAGE) : DELETED,
+                (ENTITY)  : service.deleteById(id)
+        ]
+
+        respond(body, HttpStatus.ACCEPTED)
+    }
+
+    static <E extends NamedEntity, I extends Serializable> ResponseEntity findByName(String name, NamedEntityService<E, I> service) {
+
+        def body = [
+
+                (MESSAGE) : RETRIEVED,
+                (ENTITY)  : service.findByName(name)
+        ]
+
+        respond(body, HttpStatus.OK)
+    }
+
+    static <E extends NamedEntity, I extends Serializable> ResponseEntity findByNameContaining(String name, NamedEntityService<E, I> service) {
+
+        def body = [
+
+                (MESSAGE) : RETRIEVED,
+                (ENTITY)  : service.findByNameContaining(name)
+        ]
+
+        respond(body, HttpStatus.OK)
+    }
+
+    static respond(Map<String, ?> body, HttpStatus status) {
+
+        log.info(body.get(MESSAGE) as String)
+
+        return new ResponseEntity(body, status)
+    }
 }

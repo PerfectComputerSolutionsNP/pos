@@ -1,10 +1,5 @@
-package com.perfectcomputersolutions.pos.controller;
+package com.perfectcomputersolutions.pos.security;
 
-import com.perfectcomputersolutions.pos.exception.AuthenticationException;
-import com.perfectcomputersolutions.pos.security.JwtAuthenticationRequest;
-import com.perfectcomputersolutions.pos.security.JwtTokenUtil;
-import com.perfectcomputersolutions.pos.security.JwtUser;
-import com.perfectcomputersolutions.pos.service.JwtAuthenticationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,7 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Objects;
 
 @RestController
-public class AuthenticationController {
+public class JwtAuthenticationController {
 
     @Value("${jwt.header}")
     private String tokenHeader;
@@ -42,7 +37,7 @@ public class AuthenticationController {
     private UserDetailsService userDetailsService;
 
     @RequestMapping(value = "${jwt.route.authentication.path}", method = RequestMethod.POST)
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtAuthenticationRequest authenticationRequest) throws AuthenticationException {
+    public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtAuthenticationRequest authenticationRequest) throws JwtAuthenticationException {
 
         authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
 
@@ -69,13 +64,13 @@ public class AuthenticationController {
         }
     }
 
-    @ExceptionHandler({AuthenticationException.class})
-    public ResponseEntity<String> handleAuthenticationException(AuthenticationException e) {
+    @ExceptionHandler({JwtAuthenticationException.class})
+    public ResponseEntity<String> handleAuthenticationException(JwtAuthenticationException e) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
     }
 
     /**
-     * Authenticates the user. If something is wrong, an {@link AuthenticationException} will be thrown
+     * Authenticates the user. If something is wrong, an {@link JwtAuthenticationException} will be thrown
      */
     private void authenticate(String username, String password) {
         Objects.requireNonNull(username);
@@ -84,9 +79,9 @@ public class AuthenticationController {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
         } catch (DisabledException e) {
-            throw new AuthenticationException("User is disabled!", e);
+            throw new JwtAuthenticationException("User is disabled!", e);
         } catch (BadCredentialsException e) {
-            throw new AuthenticationException("Bad credentials!", e);
+            throw new JwtAuthenticationException("Bad credentials!", e);
         }
     }
 }

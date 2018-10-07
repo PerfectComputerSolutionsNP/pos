@@ -1,7 +1,6 @@
 package com.perfectcomputersolutions.pos.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
+import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
@@ -9,6 +8,7 @@ import java.util.List;
 /**
  * ModelEntity that represents a transaction made in the POS system.
  */
+@Entity
 public class Transaction extends ModelEntity {
 
     @NotNull
@@ -21,16 +21,11 @@ public class Transaction extends ModelEntity {
     public Date date;
 
     @NotNull
-    public List<Product> products;
-
-    @NotNull
     long paid;
 
     @NotNull
     long cost;
 
-    @JsonIgnore
-    public String getName() {
-        return super.getId();
-    }
+    @NotNull
+    String name;
 }

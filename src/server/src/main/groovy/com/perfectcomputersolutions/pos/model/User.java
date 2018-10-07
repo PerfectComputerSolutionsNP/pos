@@ -1,66 +1,66 @@
 package com.perfectcomputersolutions.pos.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "USER")
-public class User {
+public class User extends ModelEntity {
 
-    @Id
-    @Column(name = "ID")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq")
-    @SequenceGenerator(name = "user_seq", sequenceName = "user_seq", allocationSize = 1)
-    private Long id;
+    // TODO - Unique constraint for username, notifier, join with transaction table
 
-    @Column(name = "USERNAME", length = 50, unique = true)
+    // https://stackoverflow.com/questions/17393812/json-and-java-circular-reference
+    // https://www.baeldung.com/jackson-bidirectional-relationships-and-infinite-recursion
+
     @NotNull
     @Size(min = 4, max = 50)
+    @Column(name = "USERNAME", length = 50, unique = true)
     private String username;
 
-    @Column(name = "PASSWORD", length = 100)
     @NotNull
     @Size(min = 4, max = 100)
+    @Column(name = "PASSWORD", length = 100)
     private String password;
 
-    @Column(name = "FIRSTNAME", length = 50)
     @NotNull
     @Size(min = 4, max = 50)
+    @Column(name = "FIRSTNAME", length = 50)
     private String firstname;
 
-    @Column(name = "LASTNAME", length = 50)
     @NotNull
     @Size(min = 4, max = 50)
+    @Column(name = "LASTNAME", length = 50)
     private String lastname;
 
-    @Column(name = "EMAIL", length = 50)
     @NotNull
+    @Email
     @Size(min = 4, max = 50)
+    @Column(name = "EMAIL", length = 50)
     private String email;
 
-    @Column(name = "ENABLED")
     @NotNull
+    @Column(name = "ENABLED")
     private Boolean enabled;
 
+    @NotNull
     @Column(name = "LASTPASSWORDRESETDATE")
     @Temporal(TemporalType.TIMESTAMP)
-    @NotNull
     private Date lastPasswordResetDate;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -69,14 +69,6 @@ public class User {
             joinColumns = {@JoinColumn(name = "USER_ID", referencedColumnName = "ID")},
             inverseJoinColumns = {@JoinColumn(name = "AUTHORITY_ID", referencedColumnName = "ID")})
     private List<Authority> authorities;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getUsername() {
         return username;
@@ -126,10 +118,12 @@ public class User {
         this.enabled = enabled;
     }
 
+    @JsonIgnore
     public List<Authority> getAuthorities() {
         return authorities;
     }
 
+    @JsonProperty
     public void setAuthorities(List<Authority> authorities) {
         this.authorities = authorities;
     }

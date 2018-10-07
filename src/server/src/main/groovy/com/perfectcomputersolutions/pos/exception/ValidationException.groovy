@@ -13,7 +13,7 @@ import javax.validation.ConstraintViolation
  *
  * @param <T> Generic type of exception.
  */
-class ValidationException<T extends ModelEntity> extends CrudException {
+class ValidationException<T> extends CrudException {
 
     /**
      * Set of violation objects that detail why
