@@ -1,13 +1,22 @@
 import {Authority} from "./authority.model";
 
-export interface User{
+// let bcrypt: { genSaltSync; genSalt; hashSync; hash; compareSync; compare; getRounds };
+//
+// let hash = bcrypt.hash(this.password);
+//
+// bcrypt.genSaltSync(10, function (err, salt) {
+//   bcrypt.hash(this.password,salt,function(err, hash){});
+
+
+export interface User {
 
   // private
-  id : number;
+  id: number;
   // private
   username: string;
   // private
   password: string;
+
   // private
   firstname: string;
   // private
@@ -19,7 +28,9 @@ export interface User{
   // private
   lastPasswordResetDate;
 
-  authorities : Array<Authority>
+
+  authorities: Array<Authority>
+
 
   //Setters
   //
@@ -88,4 +99,5 @@ export interface User{
   // public getLastPasswordReset() {
   //   return this.lastPasswordResetDate;
   // }
+
 }

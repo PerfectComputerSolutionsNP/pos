@@ -71,8 +71,8 @@
           <form name="form" (ngSubmit)="f.form.valid && onSubmit()" #f="ngForm" novalidate>
             <div class="form-group">
               <label for="userName">Username</label>
-              <input type="text" class="form-control" name="userName" [(ngModel)]="model.userName" #lastName="ngModel" [ngClass]="{ 'is-invalid': f.submitted && lastName.invalid }" required />
-              <div *ngIf="f.submitted && lastName.invalid" class="invalid-feedback">
+              <input type="text" class="form-control" name="userName" [(ngModel)]="model.userName" #userName="ngModel" [ngClass]="{ 'is-invalid': f.submitted && userName.invalid }" required />
+              <div *ngIf="f.submitted && userName.invalid" class="invalid-feedback">
                 <div *ngIf="userName.errors.required">Username is required</div>
               </div>
             </div>
