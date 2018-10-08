@@ -7,7 +7,3 @@ export interface Authority {
   users?: Set<User>
 }
 
-// export class Authority implements AuthorityInterface {
-//
-//   public id : number
-// }
