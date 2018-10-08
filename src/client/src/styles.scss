@@ -1,34 +1,33 @@
-/* You can add global styles to this file, and also import other style files */
+body {
+
+  background: radial-gradient(transparent 50%,rgba(0,0,0,.3) 100%),linear-gradient(#D77A6B,#d2c09c 60%,#876d54);
+  background-repeat: no-repeat;
+}
 
 .full-height {
-  height      : 90vh;
+
+  height : 80vh;
 }
 
 .page-panel {
 
   @extend .full-height;
   padding       : 2%;
-  border        : solid;
-  border-radius : 25px  ;
+  border-width  : thin;
+  border-radius : 5px;
+  box-shadow    : 5px 5px #36454f;
 
+  background-color: white;
 }
 
-.left-panel {
+.page {
 
-  @extend .page-panel;
-
+  margin:2%;
 }
-
-.right-panel {
-
-  @extend .page-panel;
-
-}
-
-
 
 .center {
-  text-align  : center;
+
+  text-align : center;
 }
 
 

@@ -7,7 +7,10 @@ import { FormsModule }              from "@angular/forms";
 import { AppRoutingModule}          from "./app-routing.module";
 import { routingComponents}         from "./app-routing.module";
 import { MenuComponent }            from './partial/menu/menu.component';
-import { FooterComponent } from './partial/footer/footer.component';
+import { FooterComponent }          from './partial/footer/footer.component';
+import { TwoPageComponent } from './partial/two-page/two-page.component';
+import { OnePageComponent } from './partial/one-page/one-page.component';
+import { CardPageComponent } from './partial/card-page/card-page.component';
 
 
 
@@ -16,7 +19,10 @@ import { FooterComponent } from './partial/footer/footer.component';
     AppComponent,
     routingComponents,
     MenuComponent,
-    FooterComponent
+    FooterComponent,
+    TwoPageComponent,
+    OnePageComponent,
+    CardPageComponent
   ],
   imports: [
     BrowserModule,
