@@ -17,9 +17,7 @@ export class UserRegistrationComponent implements OnInit {
 
   createUser(data : User) {
 
-
-    let headers = new HttpHeaders().set('Authorization', 'Bearer ' + "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTUzOTA2NTg5MiwiaWF0IjoxNTM4NDYxMDkyfQ.LdK2UHQ6rNXWbqee8GLFPZJ5F3pnVxQMN6A_ZL4xzMnQ-NMJtkbUezGqVQGyd36N36XaeRgKtoXgyXtWk35g8A");
-    let obs = this.newUser = this.http.post( config.api.endpoint.users, data, {headers});
+    let obs = this.newUser = this.http.post( config.api.endpoint.users, data, {});
 
     obs.subscribe( (response) => {
 
@@ -41,7 +39,7 @@ export class UserRegistrationComponent implements OnInit {
 
   onSubmit() {
 
-    const data : User = {
+    const data    : User = {
       "id"        : null,
       "username"  : this.model.userName,
       "firstname" : this.model.firstName,

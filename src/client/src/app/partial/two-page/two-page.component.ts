@@ -9,9 +9,8 @@ const max   = 12;
 })
 export class TwoPageComponent implements OnInit {
 
-  @Input() inverse : boolean;
-  @Input() left    : number;
-  @Input() right   : number;
+  @Input() left  : number;
+  @Input() right : number;
 
   constructor() { }
 

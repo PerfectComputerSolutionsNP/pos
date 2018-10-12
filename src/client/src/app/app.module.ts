@@ -1,6 +1,6 @@
 import { BrowserModule }            from '@angular/platform-browser';
 import { NgModule }                 from '@angular/core';
-import { HttpClientModule }         from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import { APIService }               from "./api.service";
 import { AppComponent }             from './app.component';
 import { FormsModule }              from "@angular/forms";
@@ -11,7 +11,10 @@ import { FooterComponent }          from './partial/footer/footer.component';
 import { TwoPageComponent } from './partial/two-page/two-page.component';
 import { OnePageComponent } from './partial/one-page/one-page.component';
 import { CardPageComponent } from './partial/card-page/card-page.component';
-
+import { ReactiveFormsModule } from "@angular/forms";
+import {AuthGuard} from "./guard/auth.guard";
+import {AuthenticationService} from "./service/authentication.service";
+import {JwtInterceptor} from "./service/jwt.interceptor";
 
 
 @NgModule({
@@ -28,11 +31,19 @@ import { CardPageComponent } from './partial/card-page/card-page.component';
     BrowserModule,
     HttpClientModule,
     FormsModule,
-    AppRoutingModule
+    AppRoutingModule,
+    ReactiveFormsModule
 
   ],
   providers: [
-  APIService
+    APIService,
+    AuthGuard,
+    AuthenticationService,
+    {
+      provide  : HTTP_INTERCEPTORS,
+      useClass : JwtInterceptor,
+      multi    : true
+    }
   ],
   bootstrap: [AppComponent]
 })

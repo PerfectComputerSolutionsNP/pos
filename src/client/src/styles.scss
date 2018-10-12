@@ -2,6 +2,7 @@ body {
 
   background: radial-gradient(transparent 50%,rgba(0,0,0,.3) 100%),linear-gradient(#D77A6B,#d2c09c 60%,#876d54);
   background-repeat: no-repeat;
+  background-attachment: fixed;
 }
 
 .full-height {
@@ -30,4 +31,8 @@ body {
   text-align : center;
 }
 
+.center-vertical {
 
+  display       : table-cell;
+  vertical-align: middle;
+}
