@@ -28,7 +28,7 @@ abstract class PrivilegedCrudController<T extends ModelEntity, ID extends Serial
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    def findAll(
+    def final findAll(
             @RequestParam int               page,
             @RequestParam int               size,
             @RequestParam Optional<Boolean> sorted,
@@ -40,35 +40,35 @@ abstract class PrivilegedCrudController<T extends ModelEntity, ID extends Serial
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    def findById(@PathVariable ID id) {
+    def final findById(@PathVariable ID id) {
 
         findById(id, service)
     }
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    def save(@RequestBody T entity) {
+    def final save(@RequestBody T entity) {
 
         save(entity, service)
     }
 
     @PostMapping("/batch")
     @PreAuthorize("hasRole('ADMIN')")
-    def saveAll(@RequestBody EntityBatch<T> entities) {
+    def final saveAll(@RequestBody EntityBatch<T> entities) {
 
         saveAll(entities, service)
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    def update(@PathVariable ID id, @RequestBody T entity) {
+    def final update(@PathVariable ID id, @RequestBody T entity) {
 
         update(id, entity, service)
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    def deleteById(@PathVariable ID id) {
+    def final deleteById(@PathVariable ID id) {
 
         deleteById(id, service)
     }

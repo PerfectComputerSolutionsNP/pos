@@ -9,6 +9,8 @@ import org.springframework.boot.web.servlet.server.ServletWebServerFactory
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
+// TODO - Uncomment @Configuration to enable http to https forwarding from port 8080 to port 8443
+
 //@Configuration
 class HttpConnectorConfig {
 

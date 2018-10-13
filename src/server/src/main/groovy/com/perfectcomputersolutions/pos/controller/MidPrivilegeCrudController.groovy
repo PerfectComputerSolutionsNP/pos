@@ -24,28 +24,28 @@ abstract class MidPrivilegeCrudController<T extends ModelEntity, ID extends Seri
 
     @Override
     @PreAuthorize("hasRole('ADMIN')")
-    def deleteById(@PathVariable ID id) {
+    def final deleteById(@PathVariable ID id) {
 
         return super.deleteById(id)
     }
 
     @Override
     @PreAuthorize("hasRole('ADMIN')")
-    def save(@RequestBody T entity) {
+    def final save(@RequestBody T entity) {
 
         return super.save(entity)
     }
 
     @PostMapping("/batch")
     @PreAuthorize("hasRole('ADMIN')")
-    def saveAll(@RequestBody EntityBatch<T> entities) {
+    def final saveAll(@RequestBody EntityBatch<T> entities) {
 
         return saveAll(entities, service)
     }
 
     @Override
     @PreAuthorize("hasRole('ADMIN')")
-    def update(@PathVariable ID id, @RequestBody T entity) {
+    def final update(@PathVariable ID id, @RequestBody T entity) {
 
         return super.update(id, entity)
     }

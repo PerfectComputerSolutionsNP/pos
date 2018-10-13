@@ -1,8 +1,6 @@
-package com.perfectcomputersolutions.pos.exception
+package com.perfectcomputersolutions.pos.utility
 
-import com.perfectcomputersolutions.pos.utility.Utility
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import javax.validation.ConstraintViolation
 
 /**
  * Auxiliary object for use with returning user-friendly
@@ -15,11 +13,31 @@ import org.slf4j.LoggerFactory
  */
 class Violation {
 
-    private static final Logger log = LoggerFactory.getLogger(Violation.class)
-
     String field
     String message
     String entity
+
+    Violation(ConstraintViolation<?> violation) {
+
+        if (violation == null)
+            throw new IllegalArgumentException("ConstraintViolation argument must not be null")
+
+        this.field   = violation.propertyPath.toString()
+        this.message = violation.message
+        this.entity  = violation.rootBeanClass.simpleName
+    }
+
+    Violation (
+            String field,
+            String message,
+            String entity) {
+
+        // TODO - Null check!?
+
+        this.field   = field
+        this.message = message
+        this.entity  = entity
+    }
 
     @Override
     boolean equals(Object obj) {
@@ -27,20 +45,20 @@ class Violation {
         if (this == obj)
             return true
 
-        else if (!(obj instanceof  Violation))
+        else if (!(obj instanceof Violation))
             return false
 
         try {
 
             def violation = (Violation) obj
 
-            return field   == violation.field   &&
+            return field    == violation.field   &&
                     message == violation.message &&
                     entity  == violation.entity
 
         } catch(ClassCastException ex) {
 
-            log.error("Unexpected CastClassException", ex)
+            BugRecorder.record(ex)
 
             return false
         }

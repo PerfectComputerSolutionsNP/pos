@@ -23,17 +23,25 @@ import org.springframework.web.bind.annotation.RequestParam
  */
 abstract class InventoryCrudController<T extends NamedEntity, ID extends Serializable> extends MidPrivilegeCrudController<T, ID> {
 
+    // TODO - Abstract to NamedEntityController
+
     abstract NamedEntityService getService()
 
     @GetMapping("/name")
-    def findByName(@RequestParam(required = true) String name) {
+    def findByName(@RequestParam String name) {
 
         return findByName(name, service)
     }
 
     @GetMapping("/search")
-    def search(@RequestParam(required = true) String name) {
+    def search(
+            @RequestParam String            name,
+            @RequestParam int               page,
+            @RequestParam int               size,
+            @RequestParam Optional<Boolean> sorted,
+            @RequestParam Optional<String>  property
+    ) {
 
-        return findByNameContaining(name, service)
+        return findByNameContaining(name, page, size, sorted, property, service)
     }
 }

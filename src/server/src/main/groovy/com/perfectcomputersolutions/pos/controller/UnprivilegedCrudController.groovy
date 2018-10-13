@@ -26,6 +26,8 @@ abstract class UnprivilegedCrudController<T extends ModelEntity, ID extends Seri
 
     // TODO - Implement batch upload, and batch delete by id
 
+    // Perhaps implement batch delete as a /delete path and POST with list in @RequestBody
+
     @GetMapping
     def findAll(
             @RequestParam int               page,

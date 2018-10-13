@@ -4,7 +4,6 @@ package com.perfectcomputersolutions.pos.model;
 import com.perfectcomputersolutions.pos.utility.Utility;
 
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -12,10 +11,6 @@ public class EntityBatch<T extends ModelEntity> implements Iterable<T> {
 
     @NotNull
     private List<T> entities;
-
-//    public EntityBatch() {
-//        this.entities = new ArrayList<>();
-//    }
 
     @Override
     public String toString() {

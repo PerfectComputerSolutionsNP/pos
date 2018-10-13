@@ -16,25 +16,45 @@ class Utility {
 
     // TODO - Write function to verify a Date is in Greenwich Mean Time
 
-    static <T> boolean valid(T obj) {
+    static Set<Violation> violations(Object entity) {
 
-        def violations = validator.validate(obj)
+        def violations = validator.validate(entity)
+        def set        = new HashSet<Violation>()
 
-        return violations.size() == 0
+        violations.forEach({v ->
+
+            set.add(new Violation(v))
+        })
+
+        return set
     }
 
-    static <T> void validate(T obj) {
+    static void validate(Object entity) {
 
-        def violations = validator.validate(obj)
+        def violations = violations(entity)
 
         if (violations.size() != 0)
-            throw new ValidationException<T>(violations)
+            throw new ValidationException(violations)
     }
 
-    static <T> void validate(List<T> objects) {
+    static void validate(Iterable<?> objects) {
 
-        for (T obj : objects)
-            validate(obj)
+        def map = new HashMap<Integer, Set<Violation>>()
+
+        Set<Violation> violations
+
+        int size = objects.size()
+
+        for (int i = 0; i < size; i++) {
+
+            violations = this.violations(objects[i])
+
+            if (violations.size() != 0)
+                map.put(i, violations)
+        }
+
+        if (!map.isEmpty())
+            throw new ValidationException(new BatchViolation(map))
     }
 
     /**

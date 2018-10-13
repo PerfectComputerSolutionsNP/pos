@@ -1,8 +1,8 @@
 package com.perfectcomputersolutions.pos.exception
 
 import com.perfectcomputersolutions.pos.model.ModelEntity
-
-import javax.validation.ConstraintViolation
+import com.perfectcomputersolutions.pos.utility.BatchViolation
+import com.perfectcomputersolutions.pos.utility.Violation
 
 /**
  * Exception that is thrown when a validation error occurs
@@ -13,48 +13,37 @@ import javax.validation.ConstraintViolation
  *
  * @param <T> Generic type of exception.
  */
-class ValidationException<T> extends CrudException {
+final class ValidationException extends ThrownException {
 
-    /**
-     * Set of violation objects that detail why
-     * validation failed for a particular entity.
-     */
-    final violations = new HashSet<Violation>()
+    final violations = new HashMap<Integer, Set<Violation>>()
 
-    /**
-     * Constructs the exception from a set of {@code ConstraintViolation}
-     * objects that will eventually be converted into simplified {@code Violation}
-     * objects for use in HTTP responses from the exception handler.
-     *
-     * @see ConstraintViolation
-     * @see Violation
-     *
-     * @param violations Set of {@code ConstraintViolation} objects to construct from.
-     */
-    ValidationException(Set<ConstraintViolation<T>> violations) {
+    ValidationException(Set<Violation> violations) {
 
         super("Validation failed")
 
         if (violations.size() == 0)
             throw new IllegalArgumentException("ViolationException thrown without any actual violations")
 
-        for (def violation : violations) {
+        this.violations.put(0, violations)
+    }
 
-            def v = new Violation()
+    ValidationException(BatchViolation batch) {
 
-            v.message = violation.message
-            v.field   = violation.propertyPath
-            v.entity  = violation.rootBeanClass.simpleName
+        super("Batch validation failed")
 
-            this.violations.add(v)
-        }
+        if (batch == null)
+            throw new IllegalArgumentException("BatchViolation argument must not be null")
+
+        violations.putAll(batch.violations)
     }
 
     ValidationException(Violation violation) {
 
-        if (violation == null)
-            throw new IllegalArgumentException("Violation object is null")
+        super(violation.message)
 
-        this.violations.add(violation)
+        if (violation == null)
+            throw new IllegalArgumentException("Violation object must not be null")
+
+        this.violations.put(0, [violation] as Set<Violation>)
     }
 }

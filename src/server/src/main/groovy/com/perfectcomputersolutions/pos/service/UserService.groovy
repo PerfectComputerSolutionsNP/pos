@@ -18,8 +18,6 @@ class UserService extends CrudService<User, Long> {
 
         entity.password = encoder.encode(entity.password)
 
-        System.out.println(entity)
-
         def user    = (User) super.save(entity)
         def subject = "Registration confirmation"
         def email   = new TemplateEmail(user, user.email, subject, "email/user-registered")

@@ -2,7 +2,7 @@ package com.perfectcomputersolutions.pos.exception
 
 import com.perfectcomputersolutions.pos.model.ModelEntity
 
-class NoSuchEntityException<T extends ModelEntity, ID extends Serializable> extends CrudException {
+final class NoSuchEntityException<T extends ModelEntity, ID extends Serializable> extends ThrownException {
 
     NoSuchEntityException(String msg) {
 
@@ -11,6 +11,6 @@ class NoSuchEntityException<T extends ModelEntity, ID extends Serializable> exte
 
     NoSuchEntityException(ID id) {
 
-        super(id == null ? "Null id" : "No entity for id: " + id)
+        super("No entity for id: " + id)
     }
 }
