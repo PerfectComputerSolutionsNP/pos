@@ -15,9 +15,16 @@ public class Product extends NamedEntity {
     @JoinColumn(name = "category_id", nullable = false)
     public Category category;
 
+//    @NotNull
+    public String description;
+
     @NotNull
     public Long cost;
 
+    // This is purposely private with only a getter
+    // so that we do not deserialize a JSON field called
+    // dollars by accident. The getter does the conversion
+    // and converts the cost from mills to cents
     private Double dollars;
 
     @JsonProperty

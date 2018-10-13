@@ -91,27 +91,27 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
 
         http
-                .cors()
-                .and()
-                .csrf()
-                .disable()
-                .exceptionHandling()
-                .authenticationEntryPoint(unauthorizedHandler)
-                .and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/auth")
-                .permitAll()
-                .anyRequest()
-                .authenticated();
+            .cors()
+            .and()
+            .csrf()
+            .disable()
+            .exceptionHandling()
+            .authenticationEntryPoint(unauthorizedHandler)
+            .and()
+            .sessionManagement()
+            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            .and()
+            .authorizeRequests()
+            .antMatchers(HttpMethod.POST, authenticationPath)
+            .permitAll()
+            .anyRequest()
+            .authenticated()
 
 
         http.addFilterBefore(
                 authenticationTokenFilter,
                 UsernamePasswordAuthenticationFilter.class
-        );
+        )
     }
 
     @Override

@@ -14,6 +14,8 @@ class Utility {
 
     private static final Validator validator = Validation.buildDefaultValidatorFactory().getValidator()
 
+    // TODO - Write function to verify a Date is in Greenwich Mean Time
+
     static <T> boolean valid(T obj) {
 
         def violations = validator.validate(obj)

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestParam
 
 /**
  * The {@code PrivilegedCrudController} exposes CRUD operations with on an endpoint that requires the
@@ -27,9 +28,14 @@ abstract class PrivilegedCrudController<T extends ModelEntity, ID extends Serial
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    def findAll() {
+    def findAll(
+            @RequestParam int               page,
+            @RequestParam int               size,
+            @RequestParam Optional<Boolean> sorted,
+            @RequestParam Optional<String>  property
+    ) {
 
-        findAll(service)
+        findAll(service, page, size, sorted, property)
     }
 
     @GetMapping("/{id}")

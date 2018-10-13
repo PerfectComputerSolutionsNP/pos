@@ -5,7 +5,7 @@ import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.NoRepositoryBean
 
 @NoRepositoryBean
-interface NamedEntityRepository<T extends NamedEntity, ID extends Serializable> extends CrudRepository<T, ID> {
+interface NamedEntityRepository<T extends NamedEntity, ID extends Serializable> extends ModelEntityRepository<T, ID> {
 
     T findByName(String name)
 

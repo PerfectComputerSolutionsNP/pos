@@ -1,5 +1,6 @@
 package com.perfectcomputersolutions.pos.service
 
+import com.perfectcomputersolutions.pos.exception.CrudException
 import com.perfectcomputersolutions.pos.exception.NoSuchEntityException
 import com.perfectcomputersolutions.pos.exception.ValidationException
 import com.perfectcomputersolutions.pos.exception.Violation
@@ -10,7 +11,10 @@ import com.perfectcomputersolutions.pos.repository.NamedEntityRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.data.repository.CrudRepository
+import org.springframework.data.repository.PagingAndSortingRepository
 
 import javax.validation.Validation
 import javax.validation.Validator
@@ -31,7 +35,7 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
 
     @Autowired EmailSender emailer
 
-    abstract CrudRepository<T, ID> getRepository()
+    abstract PagingAndSortingRepository<T, ID> getRepository()
 
     static <E extends ModelEntity, I extends Serializable> boolean existsById(I id, CrudRepository<E, I> repository) {
 
@@ -64,11 +68,29 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
             throw new NoSuchEntityException(id)
     }
 
-    static <E extends ModelEntity, I extends Serializable> Iterable<E> findAll(CrudRepository<E, I> repository) {
+    static <E extends ModelEntity, I extends Serializable> Iterable<E> findAll(
+            PagingAndSortingRepository<E, I> repository,
+            int page,
+            int size,
+            Optional<Boolean> sorted,
+            Optional<String> property
+            ) {
 
         log.info("Finding all entities")
 
-        def entities = repository.findAll()
+
+        // TODO - Change runtime type
+        if (sorted.present && !property.present)
+            throw new CrudException("If the sorted parameter is declared, the property parameter must also be declared")
+
+        def pageRequest = sorted.present &&
+                          sorted.get()   &&
+                          property.present ?
+                    new PageRequest(page, size, Sort.Direction.ASC, property.get()) :
+                    new PageRequest(page, size)
+
+
+        def entities = repository.findAll(pageRequest)
 
         log.info("Found ${entities.size()} entities")
 
@@ -192,9 +214,9 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
     }
 
 
-    Iterable<T> findAll() {
+    Iterable<T> findAll(int page, int size, Optional<Boolean> sorted, Optional<String> property) {
 
-        findAll(repository)
+        findAll(repository, page, size, sorted, property)
     }
 
     T save(T entity) {

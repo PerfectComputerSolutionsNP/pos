@@ -1,8 +1,12 @@
 package com.perfectcomputersolutions.pos
 
-import org.springframework.beans.factory.annotation.Value
+import com.perfectcomputersolutions.pos.repository.CategoryRepository
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.scheduling.annotation.EnableAsync
 
 /**
@@ -10,14 +14,21 @@ import org.springframework.scheduling.annotation.EnableAsync
  */
 @EnableAsync
 @SpringBootApplication
-class Application {
+class Application implements CommandLineRunner {
+
+  @Autowired CategoryRepository repository
 
   /**
    * Main event loop.
    */
-  static void main(String[] args) {
+  static void main(String... args) {
 
     SpringApplication.run(Application.class, args)
   }
 
+  @Override
+  void run(String... args) throws Exception {
+
+    // Do stuff once application is fully initialized
+  }
 }

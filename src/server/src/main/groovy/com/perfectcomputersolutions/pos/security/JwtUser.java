@@ -30,8 +30,8 @@ public class JwtUser implements UserDetails {
             String email,
             String password, Collection<? extends GrantedAuthority> authorities,
             boolean enabled,
-            Date lastPasswordResetDate
-    ) {
+            Date lastPasswordResetDate) {
+
         this.id = id;
         this.username = username;
         this.firstname = firstname;
