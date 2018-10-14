@@ -1,5 +1,7 @@
 package com.perfectcomputersolutions.pos.utility
 
+import org.apache.commons.lang3.StringUtils
+
 import javax.validation.ConstraintViolation
 
 /**
@@ -32,7 +34,13 @@ class Violation {
             String message,
             String entity) {
 
-        // TODO - Null check!?
+        if (
+            StringUtils.isBlank(field)   ||
+            StringUtils.isBlank(message) ||
+            StringUtils.isBlank(entity)) {
+
+            throw new IllegalArgumentException("All fields must not be null or empty")
+        }
 
         this.field   = field
         this.message = message

@@ -1,10 +1,9 @@
 package com.perfectcomputersolutions.pos.controller
 
-import com.perfectcomputersolutions.pos.model.EntityBatch
+import com.perfectcomputersolutions.pos.utility.EntityBatch
 import com.perfectcomputersolutions.pos.model.ModelEntity
-import com.perfectcomputersolutions.pos.model.NamedEntity
 import com.perfectcomputersolutions.pos.service.CrudService
-import com.perfectcomputersolutions.pos.service.NamedEntityService
+import com.perfectcomputersolutions.pos.utility.IdBatch
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.CrossOrigin
@@ -12,6 +11,9 @@ import org.springframework.web.bind.annotation.CrossOrigin
 @CrossOrigin
 abstract class CrudController<T extends ModelEntity, ID extends Serializable> {
 
+    static final String CONTENT   = "content"
+    static final String EXISTS    = "exists"
+    static final String COUNT     = "count"
     static final String ENTITY    = "entity"
     static final String MESSAGE   = "message"
     static final String CREATED   = "Entity successfully created"
@@ -20,6 +22,19 @@ abstract class CrudController<T extends ModelEntity, ID extends Serializable> {
     static final String RETRIEVED = "Entity(ies) successfully retrieved"
 
     abstract CrudService<T, ID> getService()
+
+    static <E extends ModelEntity, I extends Serializable> ResponseEntity count(CrudService<E, I> service) {
+
+        def count = service.count()
+
+        def body = [
+
+                (MESSAGE) : 'There are ' + count + ' entities',
+                (COUNT)   : count
+        ]
+
+        respond(body, HttpStatus.OK)
+    }
 
     static <E extends ModelEntity, I extends Serializable> ResponseEntity save(
             E                 entity,
@@ -72,7 +87,21 @@ abstract class CrudController<T extends ModelEntity, ID extends Serializable> {
                 (ENTITY)  : service.deleteById(id)
         ]
 
-        respond(body, HttpStatus.ACCEPTED)
+        respond(body, HttpStatus.OK)
+    }
+
+    static <E extends ModelEntity, I extends Serializable> ResponseEntity deleteByIds(
+            IdBatch<I>        ids,
+            CrudService<E, I> service) {
+
+        service.deleteByIds(ids)
+
+        def body = [
+
+                (MESSAGE) : DELETED
+        ]
+
+        respond(body, HttpStatus.OK)
     }
 
     static <E extends ModelEntity, I extends Serializable> ResponseEntity findAll(
@@ -83,32 +112,6 @@ abstract class CrudController<T extends ModelEntity, ID extends Serializable> {
             Optional<String>  property) {
 
         def body = service.findAll(page, size, sorted, property)
-
-        respond(body, HttpStatus.OK)
-    }
-
-    static <E extends NamedEntity, I extends Serializable> ResponseEntity findByName(
-            String                   name,
-            NamedEntityService<E, I> service) {
-
-        def body = [
-
-                (MESSAGE) : RETRIEVED,
-                (ENTITY)  : service.findByName(name)
-        ]
-
-        respond(body, HttpStatus.OK)
-    }
-
-    static <E extends NamedEntity, I extends Serializable> ResponseEntity findByNameContaining(
-            String                   name,
-            int                      page,
-            int                      size,
-            Optional<Boolean>        sorted,
-            Optional<String>         property,
-            NamedEntityService<E, I> service) {
-
-        def body = service.findByNameContaining(name, page, size, sorted, property)
 
         respond(body, HttpStatus.OK)
     }

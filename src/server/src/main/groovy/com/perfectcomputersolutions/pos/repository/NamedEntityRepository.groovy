@@ -8,6 +8,8 @@ import org.springframework.data.repository.NoRepositoryBean
 @NoRepositoryBean
 interface NamedEntityRepository<T extends NamedEntity, ID extends Serializable> extends ModelEntityRepository<T, ID> {
 
+    boolean existsByName(String name)
+
     T findByName(String name)
 
     Page<T> findByNameContaining(String name, Pageable pageable)

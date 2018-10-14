@@ -1,6 +1,7 @@
-package com.perfectcomputersolutions.pos.model;
+package com.perfectcomputersolutions.pos.utility;
 
 
+import com.perfectcomputersolutions.pos.model.ModelEntity;
 import com.perfectcomputersolutions.pos.utility.Utility;
 
 import javax.validation.constraints.NotNull;

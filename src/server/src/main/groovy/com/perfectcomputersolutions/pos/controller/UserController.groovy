@@ -3,7 +3,11 @@ package com.perfectcomputersolutions.pos.controller
 import com.perfectcomputersolutions.pos.model.User
 import com.perfectcomputersolutions.pos.service.UserService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
+import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -11,4 +15,40 @@ import org.springframework.web.bind.annotation.RestController
 class UserController extends PrivilegedCrudController<User, Long> {
 
     @Autowired UserService service
+
+    // TODO - Use CriteriaBuilder instead to abstract concept to ALL entities
+
+    @GetMapping("/exists/username")
+    @PreAuthorize("hasRole('ADMIN')")
+    def existsByUsername(@RequestParam String username) {
+
+        boolean exists = service.existsByUsername(username)
+
+        def body = [
+
+                (MESSAGE) : exists ?
+                        "A user exists with the username: "         + username :
+                        "A user does not exist with the username: " + username,
+                (EXISTS) : exists
+        ]
+
+        respond(body, HttpStatus.OK)
+    }
+
+    @GetMapping("/exists/email")
+    @PreAuthorize("hasRole('ADMIN')")
+    def existsByEmail(@RequestParam String email) {
+
+        boolean exists = service.existsByEmail(email)
+
+        def body = [
+
+                (MESSAGE) : exists ?
+                        "A user exists with the email: "         + email :
+                        "A user does not exist with the email: " + email,
+                (EXISTS) : exists
+        ]
+
+        respond(body, HttpStatus.OK)
+    }
 }

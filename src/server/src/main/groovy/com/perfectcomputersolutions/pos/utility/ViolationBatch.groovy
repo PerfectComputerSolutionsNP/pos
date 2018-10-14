@@ -1,10 +1,10 @@
 package com.perfectcomputersolutions.pos.utility
 
-class BatchViolation {
+class ViolationBatch {
 
     final Map<Integer, Set<Violation>> violations
 
-    BatchViolation(Map<Integer, Set<Violation>> violations) {
+    ViolationBatch(Map<Integer, Set<Violation>> violations) {
 
         this.violations = new HashMap<>()
 

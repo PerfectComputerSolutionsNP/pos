@@ -6,5 +6,5 @@ import org.springframework.data.repository.PagingAndSortingRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface CustomerRepository extends PagingAndSortingRepository<Customer, Long> {
+interface CustomerRepository extends ModelEntityRepository<Customer, Long> {
 }

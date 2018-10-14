@@ -1,8 +1,10 @@
 package com.perfectcomputersolutions.pos.controller
 
-import com.perfectcomputersolutions.pos.model.EntityBatch
+import com.perfectcomputersolutions.pos.utility.EntityBatch
 import com.perfectcomputersolutions.pos.model.ModelEntity
+import com.perfectcomputersolutions.pos.utility.IdBatch
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -24,29 +26,36 @@ abstract class MidPrivilegeCrudController<T extends ModelEntity, ID extends Seri
 
     @Override
     @PreAuthorize("hasRole('ADMIN')")
-    def final deleteById(@PathVariable ID id) {
+    def final save(@RequestBody T entity) {
 
-        return super.deleteById(id)
+        super.save(entity)
     }
 
     @Override
     @PreAuthorize("hasRole('ADMIN')")
-    def final save(@RequestBody T entity) {
-
-        return super.save(entity)
-    }
-
-    @PostMapping("/batch")
-    @PreAuthorize("hasRole('ADMIN')")
     def final saveAll(@RequestBody EntityBatch<T> entities) {
 
-        return saveAll(entities, service)
+        super.saveAll(entities)
     }
 
     @Override
     @PreAuthorize("hasRole('ADMIN')")
     def final update(@PathVariable ID id, @RequestBody T entity) {
 
-        return super.update(id, entity)
+        super.update(id, entity)
+    }
+
+    @Override
+    @PreAuthorize("hasRole('ADMIN')")
+    def final deleteById(@PathVariable ID id) {
+
+        super.deleteById(id)
+    }
+
+    @Override
+    @PreAuthorize("hasRole('ADMIN')")
+    def final deleteByIds(@RequestBody IdBatch<ID> ids) {
+
+        super.deleteByIds(ids)
     }
 }

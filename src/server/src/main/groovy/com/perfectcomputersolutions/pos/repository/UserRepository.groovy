@@ -1,10 +1,15 @@
 package com.perfectcomputersolutions.pos.repository
 
-import org.springframework.data.jpa.repository.JpaRepository
 import com.perfectcomputersolutions.pos.model.User
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.stereotype.Repository
 
 @Repository
-interface UserRepository extends JpaRepository<User, Long> {
+interface UserRepository extends ModelEntityRepository<User, Long> {
+
+    boolean existsByUsername(String username)
+
+    boolean existsByEmail(String email)
+
     User findByUsername(String username)
 }

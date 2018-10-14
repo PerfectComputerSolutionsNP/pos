@@ -10,6 +10,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.http.HttpStatus
+import org.springframework.web.bind.MissingServletRequestParameterException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 
@@ -28,6 +29,8 @@ class ErrorController {
     private static final Logger log = LoggerFactory.getLogger(ErrorController.class)
 
     static final String VIOLATIONS = "violations"
+
+    // MissingServletRequestParameterException
 
     @ExceptionHandler(Exception.class)
     def handleException(HttpServletRequest req, Exception ex) {
@@ -64,6 +67,7 @@ class ErrorController {
 
                 default:
                     status = INTERNAL_SERVER_ERROR
+                    break
             }
 
             message = ex.message
@@ -81,11 +85,12 @@ class ErrorController {
                     break
 
                 case IllegalArgumentException:
-                    status = NOT_ACCEPTABLE
+                    status = INTERNAL_SERVER_ERROR
                     break
 
                 default:
                     status = INTERNAL_SERVER_ERROR
+                    break
             }
 
             message = ex.message

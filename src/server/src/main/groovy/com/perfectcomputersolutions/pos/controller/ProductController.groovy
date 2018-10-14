@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("product")
-class ProductController extends InventoryCrudController<Product, Long> {
+class ProductController extends InventoryController<Product, Long> {
 
     @Autowired ProductService service
 

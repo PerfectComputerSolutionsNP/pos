@@ -1,7 +1,8 @@
 package com.perfectcomputersolutions.pos.controller
 
-import com.perfectcomputersolutions.pos.model.EntityBatch
+import com.perfectcomputersolutions.pos.utility.EntityBatch
 import com.perfectcomputersolutions.pos.model.ModelEntity
+import com.perfectcomputersolutions.pos.utility.IdBatch
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -24,9 +25,11 @@ import org.springframework.web.bind.annotation.RequestParam
  */
 abstract class UnprivilegedCrudController<T extends ModelEntity, ID extends Serializable> extends CrudController<T, ID> {
 
-    // TODO - Implement batch upload, and batch delete by id
+    @GetMapping("/count")
+    def count() {
 
-    // Perhaps implement batch delete as a /delete path and POST with list in @RequestBody
+        count(service)
+    }
 
     @GetMapping
     def findAll(
@@ -69,4 +72,9 @@ abstract class UnprivilegedCrudController<T extends ModelEntity, ID extends Seri
         deleteById(id, service)
     }
 
+    @DeleteMapping("/batch")
+    def deleteByIds(@RequestBody IdBatch<ID> ids) {
+
+        deleteByIds(ids, service)
+    }
 }

@@ -4,9 +4,9 @@
     <body>
         <div th:replace="email/header :: header"></div>
 
-        <p>Dear [[${user.firstname}]],</p>
+        <p>Dear User,</p>
 
-        <p>Message</p>
+        <p>[[${text}]]</p>
 
         <div th:replace="email/footer :: footer"></div>
     </body>

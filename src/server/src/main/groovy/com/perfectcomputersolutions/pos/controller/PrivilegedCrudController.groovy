@@ -1,7 +1,8 @@
 package com.perfectcomputersolutions.pos.controller
 
-import com.perfectcomputersolutions.pos.model.EntityBatch
+import com.perfectcomputersolutions.pos.utility.EntityBatch
 import com.perfectcomputersolutions.pos.model.ModelEntity
+import com.perfectcomputersolutions.pos.utility.IdBatch
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -25,6 +26,13 @@ import org.springframework.web.bind.annotation.RequestParam
  * @param <ID> Generic type for {@code ModelEntity} objects (typically {@code Long)
  */
 abstract class PrivilegedCrudController<T extends ModelEntity, ID extends Serializable> extends CrudController<T, ID> {
+
+    @GetMapping("/count")
+    @PreAuthorize("hasRole('ADMIN')")
+    def count() {
+
+        count(service)
+    }
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
@@ -71,5 +79,12 @@ abstract class PrivilegedCrudController<T extends ModelEntity, ID extends Serial
     def final deleteById(@PathVariable ID id) {
 
         deleteById(id, service)
+    }
+
+    @DeleteMapping("/batch")
+    @PreAuthorize("hasRole('ADMIN')")
+    def final deleteByIds(@RequestBody IdBatch<ID> ids) {
+
+        deleteByIds(ids, service)
     }
 }

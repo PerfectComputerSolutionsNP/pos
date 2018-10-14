@@ -3,6 +3,11 @@ package com.perfectcomputersolutions.pos.utility
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.perfectcomputersolutions.pos.exception.ValidationException
+import org.springframework.security.core.Authentication
+import org.springframework.security.core.context.SecurityContext
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.stereotype.Component
 
 import javax.validation.Validation
 import javax.validation.Validator
@@ -10,6 +15,7 @@ import javax.validation.Validator
 /**
  * Utility functions for reuse throughout the application.
  */
+@Component
 class Utility {
 
     private static final Validator validator = Validation.buildDefaultValidatorFactory().getValidator()
@@ -54,7 +60,7 @@ class Utility {
         }
 
         if (!map.isEmpty())
-            throw new ValidationException(new BatchViolation(map))
+            throw new ValidationException(new ViolationBatch(map))
     }
 
     /**
@@ -74,4 +80,20 @@ class Utility {
             throw new RuntimeException("Could not serialize object", e)
         }
     }
+
+    static UserDetails getCurrentUserDetails() {
+
+        def securityContext = SecurityContextHolder.getContext()
+        def authentication  = securityContext.getAuthentication()
+
+        if (authentication != null) {
+
+            def principal = authentication.getPrincipal()
+
+            return principal instanceof UserDetails ? (UserDetails) principal : null
+        }
+
+        return null
+    }
+
 }

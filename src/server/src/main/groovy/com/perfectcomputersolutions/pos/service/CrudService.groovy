@@ -4,10 +4,11 @@ import com.perfectcomputersolutions.pos.exception.CaughtException
 import com.perfectcomputersolutions.pos.exception.MalformedRequestException
 import com.perfectcomputersolutions.pos.exception.NoSuchEntityException
 import com.perfectcomputersolutions.pos.exception.ValidationException
+import com.perfectcomputersolutions.pos.repository.ModelEntityRepository
+import com.perfectcomputersolutions.pos.utility.IdBatch
 import com.perfectcomputersolutions.pos.utility.Violation
-import com.perfectcomputersolutions.pos.model.EntityBatch
+import com.perfectcomputersolutions.pos.utility.EntityBatch
 import com.perfectcomputersolutions.pos.model.ModelEntity
-import com.perfectcomputersolutions.pos.notifier.EmailSender
 import com.perfectcomputersolutions.pos.utility.Utility
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -31,9 +32,9 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
 
     private static final Logger log = LoggerFactory.getLogger(CrudService.class)
 
-    @Autowired EmailSender emailer
+    @Autowired EmailService emailer
 
-    abstract PagingAndSortingRepository<T, ID> getRepository()
+    abstract ModelEntityRepository<T, ID> getRepository()
 
     static <E extends ModelEntity, I extends Serializable> E findById(
             I id,
@@ -125,16 +126,16 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
 
             repository.saveAll(entities)
 
+            log.info("Successfully saved ${size} entities")
+
         } catch (DataIntegrityViolationException ex) {
 
-            log.error("")
+            def msg = "Could not save entities"
 
-            def msg = ""
+            log.error(msg)
 
             throw new CaughtException(msg, ex)
         }
-
-        log.info("Successfully saved ${size} entities")
     }
 
     static <E extends ModelEntity, I extends Serializable> E update(I id, E entity, CrudRepository<E, I> repository) {
@@ -143,14 +144,11 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
 
         if (id != entity.id) {
 
-            def violation = new Violation(
+            def msg = "Path variable id ${id} does not match entity id ${entity.id}"
 
-                    "id",
-                    entity.class.simpleName,
-                    "Path variable id ${id} does not match entity id ${entity.id}"
-            )
+            log.error(msg)
 
-            throw new ValidationException(violation)
+            throw new MalformedRequestException(msg)
         }
 
         if (entity.id == null || !existsById((I) entity.id, repository)) {
@@ -176,6 +174,9 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
 
         log.info("Deleting entity with id: ${id}")
 
+        if (id == null)
+            throw new IllegalArgumentException("Argument id must not be null")
+
         E entity = findById(id, repository)
 
         if (entity == null) {
@@ -185,17 +186,32 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
             throw new NoSuchEntityException(id)
         }
 
-        try {
-
-            repository.deleteById(id)
-
-        } catch (Exception ex) {
-
-            log.info("")
-
-        }
+        repository.deleteById(id)
 
         return entity
+    }
+
+    static <E extends ModelEntity, I extends Serializable> void deleteByIds(IdBatch<I> ids, ModelEntityRepository<E, I> repository) {
+
+        if (ids == null || ids.ids.empty)
+            throw new IllegalArgumentException("Set of ids must be not be null or empty")
+
+        int size = ids.size()
+
+        log.info("Deleting ${size} entities by id")
+
+        repository.deleteByIdIn(ids.ids)
+    }
+
+    static <E extends ModelEntity, I extends Serializable> long count(CrudRepository<E, I> repository) {
+
+        log.info("Counting entities")
+
+        long count = repository.count()
+
+        log.info("Found ${count} entities")
+
+        return count
     }
 
     protected static <E extends ModelEntity, I extends Serializable> boolean existsById(
@@ -204,13 +220,16 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
 
         log.info("Determining if entity is present with id: ${id}")
 
+        if (id == null)
+            throw new IllegalArgumentException("Argument id must not be null")
+
         def exists = repository.existsById(id)
 
-        if (id != null && exists)
-            log.info("There is an entity for id: ${id}")
+        def msg = exists ?
+                "There is an entity for id: ${id}" :
+                "There is no entity for id: ${id}"
 
-        else
-            log.info("There is no entity for id: ${id}")
+        log.info(msg)
 
         return exists
     }
@@ -220,6 +239,11 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
         return sorted.present && sorted.get() && property.present ?
                 new PageRequest(page, size, Sort.Direction.ASC, property.get()) :
                 new PageRequest(page, size)
+    }
+
+    long count() {
+
+        return count(repository)
     }
 
     T findById(ID id) {
@@ -250,5 +274,10 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
     T deleteById(ID id) {
 
         deleteById(id, repository)
+    }
+
+    void deleteByIds(IdBatch<ID> ids) {
+
+        deleteByIds(ids, repository)
     }
 }

@@ -1,7 +1,7 @@
 package com.perfectcomputersolutions.pos.exception
 
 import com.perfectcomputersolutions.pos.model.ModelEntity
-import com.perfectcomputersolutions.pos.utility.BatchViolation
+import com.perfectcomputersolutions.pos.utility.ViolationBatch
 import com.perfectcomputersolutions.pos.utility.Violation
 
 /**
@@ -27,7 +27,7 @@ final class ValidationException extends ThrownException {
         this.violations.put(0, violations)
     }
 
-    ValidationException(BatchViolation batch) {
+    ValidationException(ViolationBatch batch) {
 
         super("Batch validation failed")
 
