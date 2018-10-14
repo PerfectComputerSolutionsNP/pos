@@ -1,38 +1,31 @@
-package com.perfectcomputersolutions.pos.interceptor
+package com.perfectcomputersolutions.pos.filter
 
 import com.perfectcomputersolutions.pos.exception.ValidationException
+import com.perfectcomputersolutions.pos.utility.MultiReadHttpServletRequest
 import com.perfectcomputersolutions.pos.utility.Violation
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.safety.Whitelist
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter
 
+import javax.servlet.Filter
+import javax.servlet.FilterChain
+import javax.servlet.FilterConfig
+import javax.servlet.ServletException
+import javax.servlet.ServletRequest
+import javax.servlet.ServletResponse
 import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
 
 @Component
-class XssInterceptor extends HandlerInterceptorAdapter {
+@Order(1)
+class XssFilter implements Filter {
 
-    private static final Logger log = LoggerFactory.getLogger(XssInterceptor.class)
+    // https://www.javacodeexamples.com/jsoup-preserve-new-lines-example/799
 
-    static String getBody(HttpServletRequest request) throws IOException {
-
-        def builder = new StringBuilder()
-        def reader  = request.getReader()
-
-        if (reader == null)
-            return ""
-
-        String line
-
-        while ((line = reader.readLine()) != null)
-            builder.append(line)
-
-        return builder.toString()
-    }
+    private static final Logger log = LoggerFactory.getLogger(XssFilter.class)
 
     static String clean(String body) {
 
@@ -59,15 +52,15 @@ class XssInterceptor extends HandlerInterceptorAdapter {
         compare(field, value, clean(value))
     }
 
-    static void processBody(HttpServletRequest request) {
+    static void processBody(MultiReadHttpServletRequest request) {
 
-        def original = getBody(request)
+        def original = request.body
         def cleaned  = clean(original)
 
         compare("request-body", original, cleaned)
     }
 
-    static void processHeaders(HttpServletRequest request) {
+    static void processHeaders(MultiReadHttpServletRequest request) {
 
         def keys = request.headerNames.toSet()
 
@@ -75,23 +68,32 @@ class XssInterceptor extends HandlerInterceptorAdapter {
 
             sanitize(key, request.getHeader(key))
         })
+    }
+
+    @Override
+    void init(FilterConfig filterConfig) throws ServletException {
 
     }
 
     @Override
-    boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 
-        // Must restore byte[] to request body because otherwise the
-        // stream has already been closed and is in an illegal state
-        // after processing the body
+        def req = (HttpServletRequest) request
 
         log.info("Checking request for cross-site scripting attack")
 
-        processHeaders(request)
-//        processBody(request)
+        def wrapper = new MultiReadHttpServletRequest(req)
 
-        log.info("No cross-site scripting detected")
+        processHeaders(wrapper)
+        processBody(wrapper)
 
-        return true
+        log.info("No cross-site scripting detected, forwarding request to next filter in filter chain")
+
+        chain.doFilter(wrapper, response)
+    }
+
+    @Override
+    void destroy() {
+
     }
 }

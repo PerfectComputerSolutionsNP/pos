@@ -24,6 +24,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND
 @ControllerAdvice
 class ErrorController {
 
+    // https://www.toptal.com/java/spring-boot-rest-api-error-handling
     // https://stackoverflow.com/questions/48991353/how-to-catch-all-unhandled-exceptions-without-exceptionhandler-in-spring-mvc
 
     private static final Logger log = LoggerFactory.getLogger(ErrorController.class)
