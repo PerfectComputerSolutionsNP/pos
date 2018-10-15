@@ -2,6 +2,7 @@ package com.perfectcomputersolutions.pos.controller
 
 import com.perfectcomputersolutions.pos.model.NamedEntity
 import com.perfectcomputersolutions.pos.service.NamedEntityService
+import io.swagger.annotations.ApiOperation
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -12,18 +13,21 @@ abstract class InventoryController<T extends NamedEntity, ID extends Serializabl
     abstract NamedEntityService getService()
 
     @GetMapping("/exists")
+    @ApiOperation(value = "Determine if an entity exists by name. This operation does not requires any role.")
     def final existsByName(@RequestParam String name) {
 
         existsByName(name, service)
     }
 
     @GetMapping("/name")
+    @ApiOperation(value = "Find an entity by it's name. This operation does not requires any role.")
     def final findByName(@RequestParam String name) {
 
         findByName(name, service)
     }
 
     @GetMapping("/search")
+    @ApiOperation(value = "Search for entities that contain a give name. This operation does not requires any role.")
     def final search(
             @RequestParam String            name,
             @RequestParam int               page,

@@ -66,8 +66,6 @@ class Violation {
 
         } catch(ClassCastException ex) {
 
-            BugRecorder.record(ex)
-
             return false
         }
     }

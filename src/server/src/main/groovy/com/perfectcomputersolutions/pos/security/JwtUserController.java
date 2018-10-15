@@ -1,7 +1,7 @@
 package com.perfectcomputersolutions.pos.security;
 
-import com.perfectcomputersolutions.pos.security.JwtTokenUtil;
-import com.perfectcomputersolutions.pos.security.JwtUser;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,6 +13,12 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
+@Api(
+        value = "jwtUserController",
+        description =
+                "This controller's sole purpose it to return the current user's user details " +
+                "such as username, email, and user roles. This endpoint does not require any particular roles"
+)
 public class JwtUserController {
 
     @Value("${jwt.header}")
@@ -26,10 +32,13 @@ public class JwtUserController {
     private UserDetailsService userDetailsService;
 
     @RequestMapping(value = "user", method = RequestMethod.GET)
+    @ApiOperation(value = "Returns current user's user details. This operation does not requires any role.")
     public JwtUser getAuthenticatedUser(HttpServletRequest request) {
-        String token = request.getHeader(tokenHeader).substring(7);
-        String username = jwtTokenUtil.getUsernameFromToken(token);
-        JwtUser user = (JwtUser) userDetailsService.loadUserByUsername(username);
+
+        String  token    = request.getHeader(tokenHeader).substring(7);
+        String  username = jwtTokenUtil.getUsernameFromToken(token);
+        JwtUser user     = (JwtUser) userDetailsService.loadUserByUsername(username);
+
         return user;
     }
 

@@ -1,6 +1,7 @@
 package com.perfectcomputersolutions.pos.factory
 
 import com.perfectcomputersolutions.pos.model.Email
+import com.perfectcomputersolutions.pos.utility.Utility
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -30,7 +31,7 @@ class EmailFactory {
         return engine.process(template, context)
     }
 
-    Email email(String to, String subject, String template, Map<String, ?> variables) {
+    private Email email(String to, String subject, String template, Map<String, ?> variables) {
 
         log.info("Building email for ${to} from template: ${template}")
 

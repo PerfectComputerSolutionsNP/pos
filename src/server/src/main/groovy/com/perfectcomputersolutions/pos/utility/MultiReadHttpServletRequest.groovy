@@ -1,5 +1,7 @@
 package com.perfectcomputersolutions.pos.utility
 
+import com.perfectcomputersolutions.pos.exception.CaughtException
+
 import javax.servlet.ReadListener
 import javax.servlet.ServletInputStream
 import javax.servlet.http.HttpServletRequest
@@ -17,34 +19,35 @@ class MultiReadHttpServletRequest extends HttpServletRequestWrapper {
 
         super(request)
 
-        BufferedReader bufferedReader = request.getReader()
-
-        def sb = new StringBuilder()
+        def reader = request.getReader()
+        def sb     = new StringBuilder()
 
         try {
 
+            // TODO - Ready by 128-byte byte arrays instead of by line in case lines are really long
+
             String line
 
-            while ((line = bufferedReader.readLine()) != null)
+            while ((line = reader.readLine()) != null)
                 sb.append(line)
 
             body = sb.toString()
 
         } catch (IOException ex1) {
 
-            throw ex1
+            throw new CaughtException("Failed to read HTTP request body", ex1)
 
         } finally {
 
-            if (bufferedReader != null) {
+            if (reader != null) {
 
                 try {
 
-                    bufferedReader.close()
+                    reader.close()
 
                 } catch (IOException ex2) {
 
-                    throw ex2
+                    throw new CaughtException("Failed to finish reading HTTP request body", ex2)
                 }
             }
 

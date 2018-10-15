@@ -3,11 +3,12 @@ package com.perfectcomputersolutions.pos.service
 import com.perfectcomputersolutions.pos.factory.EmailFactory
 import com.perfectcomputersolutions.pos.model.Email
 import com.perfectcomputersolutions.pos.repository.EmailRepository
-import com.perfectcomputersolutions.pos.utility.IdBatch
+import com.perfectcomputersolutions.pos.payload.IdBatch
+import com.perfectcomputersolutions.pos.payload.SimpleMessage
+import com.perfectcomputersolutions.pos.utility.Utility
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.mail.MailException
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.MimeMessageHelper
 import org.springframework.mail.javamail.MimeMessagePreparator
@@ -54,22 +55,7 @@ class EmailService {
         CrudService.deleteByIds(ids, repository)
     }
 
-    @Async
-    void sendEmail(String to, String subject, String text) {
-
-        log.info("Sending simple message to: ${to}")
-
-        def email = factory.getEmail(to, subject, text)
-
-        send(email)
-
-        log.info("Message sent")
-    }
-
-    @Async
-    void send(Email email) throws MailException {
-
-        log.info("Sending HTML email to: ${email.to}")
+    private void sendAsync(Email email) {
 
         MimeMessagePreparator preparator = { msg ->
 
@@ -80,10 +66,34 @@ class EmailService {
             helper.setText(email.text, true)
         }
 
+        // TODO - Try, catch?
+
         sender.send(preparator)
 
         CrudService.save(email, repository)
+    }
 
-        log.info("Successfully sent HTML email to ${email.to}")
+    @Async
+    void send(Email email) {
+
+        log.info("Sending email to: ${email.to}")
+
+        Utility.validate(email)
+
+        sendAsync(email)
+
+        log.info("Successfully sent email to ${email.to}")
+    }
+
+    @Async
+    void send(SimpleMessage message) {
+
+        def email = factory.getEmail(
+                message.to,
+                message.subject,
+                message.text
+        )
+
+        send(email)
     }
 }

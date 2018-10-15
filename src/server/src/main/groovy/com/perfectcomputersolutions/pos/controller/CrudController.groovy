@@ -1,9 +1,10 @@
 package com.perfectcomputersolutions.pos.controller
 
-import com.perfectcomputersolutions.pos.utility.EntityBatch
+import com.perfectcomputersolutions.pos.payload.EntityBatch
 import com.perfectcomputersolutions.pos.model.ModelEntity
 import com.perfectcomputersolutions.pos.service.CrudService
-import com.perfectcomputersolutions.pos.utility.IdBatch
+import com.perfectcomputersolutions.pos.payload.IdBatch
+import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.CrossOrigin
@@ -112,6 +113,18 @@ abstract class CrudController<T extends ModelEntity, ID extends Serializable> {
             Optional<String>  property) {
 
         def body = service.findAll(page, size, sorted, property)
+
+        respond(body, HttpStatus.OK)
+    }
+
+    static <E extends ModelEntity, I extends Serializable> ResponseEntity findAllSorted(
+            CrudService<E, I> service,
+            int               page,
+            int               size,
+            Sort.Direction    direction,
+            String...         properties) {
+
+        def body = service.findAllSorted(page, size, direction, properties)
 
         respond(body, HttpStatus.OK)
     }

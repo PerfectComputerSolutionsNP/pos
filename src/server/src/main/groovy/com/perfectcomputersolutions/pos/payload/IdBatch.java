@@ -1,4 +1,6 @@
-package com.perfectcomputersolutions.pos.utility;
+package com.perfectcomputersolutions.pos.payload;
+
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -11,6 +13,7 @@ public class IdBatch<T extends Serializable> implements Iterable<T> {
 
     @NotNull
     @NotEmpty
+    @ApiModelProperty(notes = "Set of entities.")
     private Set<T> ids;
 
     public Set<T> getIds() {

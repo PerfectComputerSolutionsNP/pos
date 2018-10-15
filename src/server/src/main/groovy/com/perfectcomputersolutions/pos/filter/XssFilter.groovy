@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletRequest
 @Order(1)
 class XssFilter implements Filter {
 
+    // https://www.baeldung.com/spring-boot-add-filter
     // https://www.javacodeexamples.com/jsoup-preserve-new-lines-example/799
 
     private static final Logger log = LoggerFactory.getLogger(XssFilter.class)

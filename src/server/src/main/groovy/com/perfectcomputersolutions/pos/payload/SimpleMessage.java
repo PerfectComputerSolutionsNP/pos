@@ -1,4 +1,4 @@
-package com.perfectcomputersolutions.pos.utility;
+package com.perfectcomputersolutions.pos.payload;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;

@@ -1,19 +1,24 @@
 package com.perfectcomputersolutions.pos.controller
 
+import com.fasterxml.jackson.core.JsonProcessingException
 import com.perfectcomputersolutions.pos.exception.CaughtException
 import com.perfectcomputersolutions.pos.exception.MalformedRequestException
-import com.perfectcomputersolutions.pos.utility.BugRecorder
 import com.perfectcomputersolutions.pos.exception.ThrownException
 import com.perfectcomputersolutions.pos.exception.NoSuchEntityException
 import com.perfectcomputersolutions.pos.exception.ValidationException
+import io.swagger.annotations.Api
+import org.hibernate.HibernateException
+import org.hibernate.exception.DataException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.dao.DataIntegrityViolationException
+import org.springframework.dao.DataAccessException
 import org.springframework.http.HttpStatus
-import org.springframework.web.bind.MissingServletRequestParameterException
+import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 
+import javax.persistence.PersistenceException
+import javax.servlet.ServletException
 import javax.servlet.http.HttpServletRequest
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST
@@ -31,7 +36,6 @@ class ErrorController {
 
     static final String VIOLATIONS = "violations"
 
-    // MissingServletRequestParameterException
 
     @ExceptionHandler(Exception.class)
     def handleException(HttpServletRequest req, Exception ex) {
@@ -81,13 +85,14 @@ class ErrorController {
 
             switch (cause) {
 
-                case DataIntegrityViolationException:
+                case DataAccessException:
                     status = NOT_ACCEPTABLE
                     break
 
+                case JsonProcessingException:
                 case IllegalArgumentException:
-                    status = INTERNAL_SERVER_ERROR
-                    break
+                case NullPointerException:
+                case IOException:
 
                 default:
                     status = INTERNAL_SERVER_ERROR
@@ -103,17 +108,32 @@ class ErrorController {
         // to the administrator.
         } else {
 
-            BugRecorder.record(ex)
+            switch (ex) {
 
-            status  = INTERNAL_SERVER_ERROR
-            message = "An unexpected error occurred, please contact your administrator"
+                case ServletException:
+                case HibernateException:
+                case PersistenceException:
+                case DataException:
+                    status  = BAD_REQUEST
+                    message = ex.message
+                    break
+
+                default:
+                    status  = INTERNAL_SERVER_ERROR
+                    message = "An unexpected error occurred, please contact your administrator"
+
+                    // TODO - Send back contact info from Sentry??
+            }
+
         }
+
+        // TODO - Date should be UTC time
 
         body.put("message",   message)
         body.put("timestamp", new Date())
         body.put("status",    status.value())
         body.put("error",     status.reasonPhrase)
-        body.put("exception", ex.class)
+        body.put("exception", ex.class.simpleName)
 
         return CrudController.respond(body, status)
     }

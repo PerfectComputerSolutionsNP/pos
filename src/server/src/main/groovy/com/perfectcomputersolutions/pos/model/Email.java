@@ -19,9 +19,12 @@ public class Email extends ModelEntity {
     private Timestamp created;
 
     @NotNull
+    @NotEmpty
     @Transient
     private String template;
 
+    @NotNull
+    @NotEmpty
     @Column(name = "email")
     @javax.validation.constraints.Email
     private String to;
@@ -33,6 +36,7 @@ public class Email extends ModelEntity {
     private String subject;
 
     @NotNull
+    @NotEmpty
     @Column(name = "content", columnDefinition = "TEXT")
     private String text;
 

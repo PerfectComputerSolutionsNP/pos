@@ -1,8 +1,10 @@
 package com.perfectcomputersolutions.pos.controller
 
 import com.perfectcomputersolutions.pos.service.EmailService
-import com.perfectcomputersolutions.pos.utility.IdBatch
-import com.perfectcomputersolutions.pos.utility.SimpleMessage
+import com.perfectcomputersolutions.pos.payload.IdBatch
+import com.perfectcomputersolutions.pos.payload.SimpleMessage
+import io.swagger.annotations.Api
+import io.swagger.annotations.ApiOperation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
@@ -17,12 +19,15 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/email")
+@Api(value="category",
+        description='Operations pertaining to emails. From here emails can be sent, viewed, or deleted by a user with ADMIN rights.')
 class EmailController {
 
     @Autowired EmailService service
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "Find a sent email by id. This operation requires the ADMIN role.")
     def findById(@PathVariable Long id) {
 
         def body = [
@@ -35,6 +40,7 @@ class EmailController {
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "Find all (paginated) sent emails specifying page number and page size. This operation requires the ADMIN role.")
     def findAll(
             @RequestParam int page,
             @RequestParam int size) {
@@ -46,13 +52,10 @@ class EmailController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "Send a simple email message. This operation requires the ADMIN role.")
     def send(@RequestBody SimpleMessage message) {
 
-        service.sendEmail(
-                message.to ,
-                message.subject,
-                message.text
-        )
+        service.send(message)
 
         def body = [
 
@@ -65,6 +68,7 @@ class EmailController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "Delete an email by id. This operation requires the ADMIN role.")
     def deleteById(@PathVariable Long id) {
 
         service.deleteById(id)
@@ -79,6 +83,7 @@ class EmailController {
 
     @DeleteMapping("/batch")
     @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "Delete several emails by id. This operation requires the ADMIN role.")
     def deleteByIds(@RequestBody IdBatch<Long> ids) {
 
         service.deleteByIds(ids)

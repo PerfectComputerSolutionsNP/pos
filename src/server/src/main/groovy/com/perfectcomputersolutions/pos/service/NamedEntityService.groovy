@@ -32,7 +32,7 @@ abstract class NamedEntityService<T extends NamedEntity, ID extends Serializable
 
     static <E extends NamedEntity, I extends Serializable> E findByName(
             String                      name,
-            NamedEntityRepository<E, I> repository) throws NoSuchEntityException {
+            NamedEntityRepository<E, I> repository) {
 
         log.info("Finding entity by name: ${name}")
 
@@ -75,7 +75,7 @@ abstract class NamedEntityService<T extends NamedEntity, ID extends Serializable
         existsByName(name, repository)
     }
 
-    def findByName(String name) throws NoSuchEntityException {
+    def findByName(String name) {
 
         findByName(name, repository)
     }

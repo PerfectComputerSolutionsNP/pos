@@ -70,6 +70,9 @@ dependencies {
     // JSoup
     compile group: 'org.jsoup', name: 'jsoup', version: '1.8.3'
 
+    // Sentry
+    compile 'io.sentry:sentry-spring:1.7.10'
+
 
     // JWT
     compile group: 'io.jsonwebtoken', name: 'jjwt', version:'0.9.1'

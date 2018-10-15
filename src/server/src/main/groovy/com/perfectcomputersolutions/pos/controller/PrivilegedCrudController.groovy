@@ -1,8 +1,9 @@
 package com.perfectcomputersolutions.pos.controller
 
-import com.perfectcomputersolutions.pos.utility.EntityBatch
+import com.perfectcomputersolutions.pos.payload.EntityBatch
 import com.perfectcomputersolutions.pos.model.ModelEntity
-import com.perfectcomputersolutions.pos.utility.IdBatch
+import com.perfectcomputersolutions.pos.payload.IdBatch
+import io.swagger.annotations.ApiOperation
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -29,6 +30,7 @@ abstract class PrivilegedCrudController<T extends ModelEntity, ID extends Serial
 
     @GetMapping("/count")
     @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "Count the number of entities associated with resource name. This operation requires the ADMIN role.")
     def count() {
 
         count(service)
@@ -36,6 +38,7 @@ abstract class PrivilegedCrudController<T extends ModelEntity, ID extends Serial
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "Find all (paginated) entities by specifying page number, size. This operation requires the ADMIN role.")
     def final findAll(
             @RequestParam int               page,
             @RequestParam int               size,
@@ -48,6 +51,7 @@ abstract class PrivilegedCrudController<T extends ModelEntity, ID extends Serial
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "Find an entity by it's id. This operation requires the ADMIN role.")
     def final findById(@PathVariable ID id) {
 
         findById(id, service)
@@ -55,6 +59,7 @@ abstract class PrivilegedCrudController<T extends ModelEntity, ID extends Serial
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "Persist an entity to storage. This operation requires the ADMIN role.")
     def final save(@RequestBody T entity) {
 
         save(entity, service)
@@ -62,6 +67,7 @@ abstract class PrivilegedCrudController<T extends ModelEntity, ID extends Serial
 
     @PostMapping("/batch")
     @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "Persist several entities to storage. This operation requires the ADMIN role.")
     def final saveAll(@RequestBody EntityBatch<T> entities) {
 
         saveAll(entities, service)
@@ -69,6 +75,7 @@ abstract class PrivilegedCrudController<T extends ModelEntity, ID extends Serial
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "Update an entity. This operation requires the ADMIN role.")
     def final update(@PathVariable ID id, @RequestBody T entity) {
 
         update(id, entity, service)
@@ -76,6 +83,7 @@ abstract class PrivilegedCrudController<T extends ModelEntity, ID extends Serial
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "Delete an entity by it's id. This operation requires the ADMIN role.")
     def final deleteById(@PathVariable ID id) {
 
         deleteById(id, service)
@@ -83,6 +91,7 @@ abstract class PrivilegedCrudController<T extends ModelEntity, ID extends Serial
 
     @DeleteMapping("/batch")
     @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "Delete several entities by their ids. This operation requires the ADMIN role.")
     def final deleteByIds(@RequestBody IdBatch<ID> ids) {
 
         deleteByIds(ids, service)

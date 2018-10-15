@@ -2,9 +2,8 @@ package com.perfectcomputersolutions.pos.utility
 
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.perfectcomputersolutions.pos.exception.CaughtException
 import com.perfectcomputersolutions.pos.exception.ValidationException
-import org.springframework.security.core.Authentication
-import org.springframework.security.core.context.SecurityContext
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Component
@@ -77,7 +76,7 @@ class Utility {
 
         } catch (JsonProcessingException e) {
 
-            throw new RuntimeException("Could not serialize object", e)
+            throw new CaughtException("Could not serialize object", e)
         }
     }
 

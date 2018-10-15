@@ -5,15 +5,15 @@ import com.perfectcomputersolutions.pos.exception.MalformedRequestException
 import com.perfectcomputersolutions.pos.exception.NoSuchEntityException
 import com.perfectcomputersolutions.pos.exception.ValidationException
 import com.perfectcomputersolutions.pos.repository.ModelEntityRepository
-import com.perfectcomputersolutions.pos.utility.IdBatch
+import com.perfectcomputersolutions.pos.payload.IdBatch
 import com.perfectcomputersolutions.pos.utility.Violation
-import com.perfectcomputersolutions.pos.utility.EntityBatch
+import com.perfectcomputersolutions.pos.payload.EntityBatch
 import com.perfectcomputersolutions.pos.model.ModelEntity
 import com.perfectcomputersolutions.pos.utility.Utility
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.dao.DataIntegrityViolationException
+import org.springframework.dao.DataAccessException
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.data.repository.CrudRepository
@@ -38,7 +38,7 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
 
     static <E extends ModelEntity, I extends Serializable> E findById(
             I id,
-            CrudRepository<E, I> repository) throws NoSuchEntityException {
+            CrudRepository<E, I> repository) {
 
         log.info("Finding entity with id: ${id}")
 
@@ -73,6 +73,25 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
         return entities
     }
 
+    // TODO - Abstract to single method to avoid redundant code!
+
+    static <E extends ModelEntity, I extends Serializable> Iterable<E> findAllSorted(
+            PagingAndSortingRepository<E, I> repository,
+            int               page,
+            int               size,
+            Sort.Direction    direction,
+            String...         properties) {
+
+        log.info("Finding all entities for ${page} and size ${size} sorted by properties: ${Arrays.toString(properties)}")
+
+        def request  = new PageRequest(page, size, direction, properties)
+        def entities = repository.findAll(request)
+
+        log.info("Found ${entities.size()} entities")
+
+        return entities
+    }
+
     static <E extends ModelEntity, I extends Serializable> E save(E entity, CrudRepository<E, I> repository) {
 
         log.info("Creating new ${entity.class.simpleName}")
@@ -98,7 +117,7 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
 
             result = repository.save(entity)
 
-        } catch (DataIntegrityViolationException ex) {
+        } catch (DataAccessException ex) {
 
             log.error("Failed to persist ${entity.class.simpleName} to storage")
 
@@ -128,7 +147,7 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
 
             log.info("Successfully saved ${size} entities")
 
-        } catch (DataIntegrityViolationException ex) {
+        } catch (DataAccessException ex) {
 
             def msg = "Could not save entities"
 
@@ -254,6 +273,11 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
     Iterable<T> findAll(int page, int size, Optional<Boolean> sorted, Optional<String> property) {
 
         findAll(repository, page, size, sorted, property)
+    }
+
+    Iterable<T> findAllSorted(int page, int size, Sort.Direction direction, String... properties) {
+
+        findAllSorted(repository, page, size, direction, properties)
     }
 
     T save(T entity) {

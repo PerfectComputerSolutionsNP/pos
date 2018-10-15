@@ -1,7 +1,7 @@
 package com.perfectcomputersolutions.pos.model;
 
-import com.perfectcomputersolutions.pos.utility.BugRecorder;
 import com.perfectcomputersolutions.pos.utility.Utility;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
@@ -24,6 +24,7 @@ public class ModelEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)
+    @ApiModelProperty(notes = "The database generated ID. This should only be specified when performing HTTP - UPDATE.")
     private Long id;
 
     /**
@@ -67,8 +68,6 @@ public class ModelEntity {
             return this.id.equals(entity.id);
 
         } catch (ClassCastException e) {
-
-            BugRecorder.record(e);
 
             return false;
         }

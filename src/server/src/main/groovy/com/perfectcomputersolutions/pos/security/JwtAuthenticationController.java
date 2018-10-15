@@ -1,5 +1,7 @@
 package com.perfectcomputersolutions.pos.security;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,6 +23,13 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Objects;
 
 @RestController
+@Api(value="category",
+        description=
+                "All operations pertaining to user authentication occurs here. There are not particular "     +
+                "access rights required for any of the end points because this is the endpoint that is "      +
+                "responsible for determining whether or not a user is valid or not. All HTTP requests will " +
+                "automatically be forwarded to this endpoint unless otherwise specified."
+)
 public class JwtAuthenticationController {
 
     @Value("${jwt.header}")
@@ -37,6 +46,7 @@ public class JwtAuthenticationController {
     private UserDetailsService userDetailsService;
 
     @RequestMapping(value = "${jwt.route.authentication.path}", method = RequestMethod.POST)
+    @ApiOperation(value = "Creates and returns an authentication token. This operation does not requires any role.")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtAuthenticationRequest authenticationRequest) throws JwtAuthenticationException {
 
         authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
@@ -50,6 +60,7 @@ public class JwtAuthenticationController {
     }
 
     @RequestMapping(value = "${jwt.route.authentication.refresh}", method = RequestMethod.GET)
+    @ApiOperation(value = "Gets and refreshes the current user's authentication token. This operation does not requires any role.")
     public ResponseEntity<?> refreshAndGetAuthenticationToken(HttpServletRequest request) {
         String authToken = request.getHeader(tokenHeader);
         final String token = authToken.substring(7);
@@ -77,10 +88,15 @@ public class JwtAuthenticationController {
         Objects.requireNonNull(password);
 
         try {
+
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+
         } catch (DisabledException e) {
+
             throw new JwtAuthenticationException("User is disabled!", e);
+
         } catch (BadCredentialsException e) {
+
             throw new JwtAuthenticationException("Bad credentials!", e);
         }
     }

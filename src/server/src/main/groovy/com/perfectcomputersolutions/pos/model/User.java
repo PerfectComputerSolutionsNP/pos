@@ -2,6 +2,7 @@ package com.perfectcomputersolutions.pos.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.annotations.ApiModelProperty;
 
 import java.util.Date;
 import java.util.List;
@@ -28,26 +29,34 @@ public class User extends PersonEntity {
 
     // TODO - notifier, join with Transaction table (lazy association)
 
+    // https://springframework.guru/spring-boot-restful-api-documentation-with-swagger-2/
     // https://stackoverflow.com/questions/17393812/json-and-java-circular-reference
     // https://www.baeldung.com/jackson-bidirectional-relationships-and-infinite-recursion
 
     @NotNull
     @Size(min = 4, max = 50)
     @Column(name = "USERNAME", length = 50, unique = true)
+    @ApiModelProperty(notes = "User's unique username should be a string between 4 and 50 characters inclusive.")
     private String username;
 
     @NotNull
     @Size(min = 4, max = 100)
     @Column(name = "PASSWORD", length = 100)
+    @ApiModelProperty(notes = "User's password should be a string between 4 and 100 characters inclusive.")
     private String password;
 
     @NotNull
     @Column(name = "ENABLED")
+    @ApiModelProperty(
+            notes = "Boolean value to indicate whether or not the user is enabled. If the user is disabled, " +
+                    "then the user will not be authenticated and cannot log in until it is reactivated."
+    )
     private Boolean enabled;
 
     @NotNull
     @Column(name = "LASTPASSWORDRESETDATE")
     @Temporal(TemporalType.TIMESTAMP)
+    @ApiModelProperty(notes = "Timestamp to indicate the last time the user's password was changed (or created).")
     private Date lastPasswordResetDate;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -55,6 +64,7 @@ public class User extends PersonEntity {
             name = "USER_AUTHORITY",
             joinColumns = {@JoinColumn(name = "USER_ID", referencedColumnName = "ID")},
             inverseJoinColumns = {@JoinColumn(name = "AUTHORITY_ID", referencedColumnName = "ID")})
+    @ApiModelProperty(notes = "List of authorities or privileges assigned to the user.")
     private List<Authority> authorities;
 
     public String getUsername() {
