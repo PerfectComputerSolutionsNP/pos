@@ -13,7 +13,9 @@ services:
 
 script:
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-  - ./ci/travis.sh
+  - ./ci/server.sh
+  - ./ci/client.sh
+  - ./ci/app.sh
 
 after_success:
   - docker push perfectcomputersolutionsnp/pos-api

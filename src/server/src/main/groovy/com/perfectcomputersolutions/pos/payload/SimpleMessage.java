@@ -7,6 +7,8 @@ import javax.validation.constraints.Size;
 
 public class SimpleMessage {
 
+    // TODO - Swagger annotations
+
     @NotNull
     @NotEmpty
     @Email
