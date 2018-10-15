@@ -18,6 +18,8 @@ script:
   - ./ci/app.sh
 
 after_success:
+  - docker build -t perfectcomputersolutionsnp/pos-api .
+  - docker build -t perfectcomputersolutionsnp/pos-gui .
   - docker push perfectcomputersolutionsnp/pos-api
   - docker push perfectcomputersolutionsnp/pos-gui
 
