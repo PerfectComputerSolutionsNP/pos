@@ -18,6 +18,7 @@ script:
   - ./ci/app.sh
 
 after_success:
+  if: branch = master
   - docker build -t perfectcomputersolutionsnp/pos-api src/server
   - docker build -t perfectcomputersolutionsnp/pos-gui src/client
   - docker push perfectcomputersolutionsnp/pos-api
