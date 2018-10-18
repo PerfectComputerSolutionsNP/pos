@@ -26,6 +26,8 @@ class MultiReadHttpServletRequest extends HttpServletRequestWrapper {
 
             // TODO - Ready by 128-byte byte arrays instead of by line in case lines are really long
 
+            // TODO - Throwing IOException with "Stream closed" in testing!!
+
             String line
 
             while ((line = reader.readLine()) != null)

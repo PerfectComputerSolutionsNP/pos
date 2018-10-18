@@ -1,5 +1,7 @@
 package com.perfectcomputersolutions.pos.payload;
 
+import io.swagger.annotations.ApiModelProperty;
+
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -12,15 +14,18 @@ public class SimpleMessage {
     @NotNull
     @NotEmpty
     @Email
+    @ApiModelProperty(notes = "A valid destination email")
     private String to;
 
     @NotNull
     @NotEmpty
     @Size(min = 1, max = 78)
+    @ApiModelProperty(notes = "Non-empty email subject")
     private String subject;
 
     @NotNull
     @NotEmpty
+    @ApiModelProperty(notes = "Non-empty email body")
     private String text;
 
     public String getTo() {

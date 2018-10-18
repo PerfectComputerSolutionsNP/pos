@@ -3,6 +3,7 @@ package com.perfectcomputersolutions.pos.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.perfectcomputersolutions.pos.utility.Utility;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,6 +17,10 @@ import java.sql.Timestamp;
 public class Email extends ModelEntity {
 
     @NotNull
+    @ApiModelProperty(
+            notes = "UTC timestamp at which the email was sent. "      +
+                    "This value should NOT be sent in a POST request " +
+                    "as it will be automatically generated")
     private Timestamp created;
 
     @NotNull
@@ -27,17 +32,20 @@ public class Email extends ModelEntity {
     @NotEmpty
     @Column(name = "email")
     @javax.validation.constraints.Email
+    @ApiModelProperty(notes = "A valid destination email")
     private String to;
 
     @NotNull
     @NotEmpty
     @Size(min = 1, max = 78)
     @Column(name = "title")
+    @ApiModelProperty(notes = "Non-empty email subject")
     private String subject;
 
     @NotNull
     @NotEmpty
     @Column(name = "content", columnDefinition = "TEXT")
+    @ApiModelProperty(notes = "The body of the email as a string")
     private String text;
 
     @Override
