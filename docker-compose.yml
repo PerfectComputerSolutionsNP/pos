@@ -13,7 +13,6 @@ services:
     pos-api:
         image: perfectcomputersolutionsnp/pos-api
         container_name: pos-api
-        build: ./src/server
         ports:
           - "8080:8080"
         networks:
@@ -24,7 +23,6 @@ services:
     pos-gui:
         image: perfectcomputersolutionsnp/pos-gui
         container_name: pos-gui
-        build: ./src/client
         ports:
           - "4200:4200"
         networks:

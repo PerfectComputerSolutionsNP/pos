@@ -88,6 +88,9 @@ dependencies {
     testCompile group: 'org.springframework.security', name: 'spring-security-test', version:'5.0.6.RELEASE'
 
     // Spock
+    // H2
+    testCompile 'com.h2database:h2:1.4.190'
+    testCompile 'junit:junit:4.12'
     testCompile 'org.spockframework:spock-core:1.1-groovy-2.4'
     testCompile 'org.spockframework:spock-spring:1.1-groovy-2.4'
     testRuntime 'cglib:cglib-nodep:3.2.4'
