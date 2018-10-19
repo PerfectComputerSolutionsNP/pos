@@ -1,11 +1,11 @@
-import {environment} from "../../environments/environment";
+import {environment} from '../../environments/environment';
 
 
 export const config = {
 
   api  : {
 
-    endpoint :{
+    endpoint : {
       user      : `${environment.apiBaseUrl}/user`,
       users     : `${environment.apiBaseUrl}/users`,
       product   : `${environment.apiBaseUrl}/product`,

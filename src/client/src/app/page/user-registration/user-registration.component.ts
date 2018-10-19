@@ -13,11 +13,11 @@ export class UserRegistrationComponent implements OnInit {
 
   newUser: any;
   // // headers= new HttpHeaders().set('Authorization', 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTUzOTA2NTg5MiwiaWF0IjoxNTM4NDYxMDkyfQ.LdK2UHQ6rNXWbqee8GLFPZJ5F3pnVxQMN6A_ZL4xzMnQ-NMJtkbUezGqVQGyd36N36XaeRgKtoXgyXtWk35g8A');
-  constructor(private svc:APIService, private http: HttpClient) {}
+  constructor(private svc: APIService, private http: HttpClient) {}
 
-  createUser(data : User) {
+  createUser(data: User) {
 
-    let obs = this.newUser = this.http.post( config.api.endpoint.users, data, {});
+    const obs = this.newUser = this.http.post( config.api.endpoint.users, data, {});
 
     obs.subscribe( (response) => {
 

@@ -1,6 +1,9 @@
 
-export class Category {
-  private id  : number;
-  private name: string;
 
-}
+ export class Category {
+
+   constructor(
+     public id,
+     public name
+   ) {}
+  }
