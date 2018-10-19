@@ -5,19 +5,19 @@ language: java
 jdk:
   - oraclejdk8
 
-on:
-  branch: master
-
 services:
   - docker
 
 script:
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-  - ./ci/travis.sh
+  - ./ci/database.sh
+  - ./ci/server.sh
+  - ./ci/client.sh
 
 after_success:
-  - docker push perfectcomputersolutionsnp/pos-api
-  - docker push perfectcomputersolutionsnp/pos-gui
+  - ./ci/upload.sh
+
+# TODO - cache node_module for client code to decrease build time
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock

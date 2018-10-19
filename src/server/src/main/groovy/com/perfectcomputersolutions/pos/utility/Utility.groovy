@@ -2,7 +2,11 @@ package com.perfectcomputersolutions.pos.utility
 
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.perfectcomputersolutions.pos.exception.CaughtException
 import com.perfectcomputersolutions.pos.exception.ValidationException
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.stereotype.Component
 
 import javax.validation.Validation
 import javax.validation.Validator
@@ -10,29 +14,52 @@ import javax.validation.Validator
 /**
  * Utility functions for reuse throughout the application.
  */
+@Component
 class Utility {
 
     private static final Validator validator = Validation.buildDefaultValidatorFactory().getValidator()
 
-    static <T> boolean valid(T obj) {
+    // TODO - Write function to verify a Date is in Greenwich Mean Time
 
-        def violations = validator.validate(obj)
+    static Set<Violation> violations(Object entity) {
 
-        return violations.size() == 0
+        def violations = validator.validate(entity)
+        def set        = new HashSet<Violation>()
+
+        violations.forEach({v ->
+
+            set.add(new Violation(v))
+        })
+
+        return set
     }
 
-    static <T> void validate(T obj) {
+    static void validate(Object entity) {
 
-        def violations = validator.validate(obj)
+        def violations = violations(entity)
 
         if (violations.size() != 0)
-            throw new ValidationException<T>(violations)
+            throw new ValidationException(violations)
     }
 
-    static <T> void validate(List<T> objects) {
+    static void validate(Iterable<?> objects) {
 
-        for (T obj : objects)
-            validate(obj)
+        def map = new HashMap<Integer, Set<Violation>>()
+
+        Set<Violation> violations
+
+        int size = objects.size()
+
+        for (int i = 0; i < size; i++) {
+
+            violations = this.violations(objects[i])
+
+            if (violations.size() != 0)
+                map.put(i, violations)
+        }
+
+        if (!map.isEmpty())
+            throw new ValidationException(new ViolationBatch(map))
     }
 
     /**
@@ -49,7 +76,23 @@ class Utility {
 
         } catch (JsonProcessingException e) {
 
-            throw new RuntimeException("Could not serialize object", e)
+            throw new CaughtException("Could not serialize object", e)
         }
     }
+
+    static UserDetails getCurrentUserDetails() {
+
+        def securityContext = SecurityContextHolder.getContext()
+        def authentication  = securityContext.getAuthentication()
+
+        if (authentication != null) {
+
+            def principal = authentication.getPrincipal()
+
+            return principal instanceof UserDetails ? (UserDetails) principal : null
+        }
+
+        return null
+    }
+
 }

@@ -1,8 +1,7 @@
 package com.perfectcomputersolutions.pos.model;
 
 import com.perfectcomputersolutions.pos.utility.Utility;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
@@ -19,20 +18,27 @@ import java.util.Objects;
 @MappedSuperclass
 public class ModelEntity {
 
-    private static final Logger log = LoggerFactory.getLogger(ModelEntity.class);
-
     /**
     * Unique entity id number for use with database.
     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)
+    @ApiModelProperty(notes = "The database generated ID. This should only be specified when performing HTTP - UPDATE.")
     private Long id;
 
+    /**
+     * Returns the numeric id for this entity.
+     *
+     * @return This entity's id.
+     */
     public Long getId() {
         return this.id;
     }
 
+    /**
+     * Sets the numeric id for this entity.
+     */
     public void setId(Long id) {
         this.id = id;
     }
@@ -49,13 +55,9 @@ public class ModelEntity {
     @Override
     public boolean equals(Object obj) {
 
-        // TODO - Make sure we compare by reference not implicit call to equals() via Groovy, otherwise infinite recursion
-
-        // Compare by reference
         if (this == obj)
             return true;
 
-        // Check that the class types are equal via reflection
         if (!this.getClass().equals(obj.getClass()))
             return false;
 
@@ -66,12 +68,6 @@ public class ModelEntity {
             return this.id.equals(entity.id);
 
         } catch (ClassCastException e) {
-
-            String msg = "This object and supplied object are both of type " + this.getClass() + " " +
-                      "a ClassCastException was still thrown. Please report this error to administrator.";
-
-            log.error(msg);
-            log.error(e.toString());
 
             return false;
         }

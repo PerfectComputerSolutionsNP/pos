@@ -1,35 +1,30 @@
 version: '3'
 
-# docker-compose
-
 services:
 
-    # pos-db:
-    #     image: mongo:latest
-    #     container_name: pos-db
-    #     ports:
-    #       - "27017:27017"
-    #     networks:
-    #       - pos
+    pos-db:
+        image: mysql:5.7
+        container_name: pos-db
+        ports:
+          - "3306:3306"
+        networks:
+          - pos
 
     pos-api:
         image: perfectcomputersolutionsnp/pos-api
         container_name: pos-api
-        build: ./src/server
         ports:
           - "8080:8080"
         networks:
           - pos
-        # depends_on:
-        #   - pos-db
+        depends_on:
+          - pos-db
 
     pos-gui:
         image: perfectcomputersolutionsnp/pos-gui
         container_name: pos-gui
-        build: ./src/client
         ports:
           - "4200:4200"
-          # - "80:4200"
         networks:
           - pos
         depends_on:

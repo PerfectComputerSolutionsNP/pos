@@ -1,5 +1,7 @@
 package com.perfectcomputersolutions.pos.model;
 
+import io.swagger.annotations.ApiModelProperty;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -22,14 +24,17 @@ public class Authority {
     @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "authority_seq")
     @SequenceGenerator(name = "authority_seq", sequenceName = "authority_seq", allocationSize = 1)
+    @ApiModelProperty(notes = "Unique authority id")
     private Long id;
 
     @Column(name = "NAME", length = 50)
     @NotNull
     @Enumerated(EnumType.STRING)
+    @ApiModelProperty(notes = "Name of the authority")
     private AuthorityName name;
 
     @ManyToMany(mappedBy = "authorities", fetch = FetchType.LAZY)
+    @ApiModelProperty(notes = "Users that have this particular authority")
     private List<User> users;
 
     public Long getId() {

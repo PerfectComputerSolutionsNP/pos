@@ -1,25 +1,40 @@
 package com.perfectcomputersolutions.pos.security;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiModelProperty;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Date;
 
-/**
- * Created by stephan on 20.03.16.
- */
 public class JwtUser implements UserDetails {
 
+    @ApiModelProperty(notes = "User's unique identifier")
     private final Long id;
+
+    @ApiModelProperty(notes = "User's unique username")
     private final String username;
+
+    @ApiModelProperty(notes = "User's first name")
     private final String firstname;
+
+    @ApiModelProperty(notes = "User's last name")
     private final String lastname;
+
+    @ApiModelProperty(notes = "User's password")
     private final String password;
+
+    @ApiModelProperty(notes = "User's email")
     private final String email;
+
+    @ApiModelProperty(notes = "Collection of authorities granted to this user")
     private final Collection<? extends GrantedAuthority> authorities;
+
+    @ApiModelProperty(notes = "Boolean flag indicating whether or not the user is enabled")
     private final boolean enabled;
+
+    @ApiModelProperty(notes = "UTC timestamp indicating the last time the user's password was changed")
     private final Date lastPasswordResetDate;
 
     public JwtUser(
@@ -30,8 +45,8 @@ public class JwtUser implements UserDetails {
             String email,
             String password, Collection<? extends GrantedAuthority> authorities,
             boolean enabled,
-            Date lastPasswordResetDate
-    ) {
+            Date lastPasswordResetDate) {
+
         this.id = id;
         this.username = username;
         this.firstname = firstname;

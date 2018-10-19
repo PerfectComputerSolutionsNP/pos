@@ -1,10 +1,11 @@
 package com.perfectcomputersolutions.pos.controller
 
-import com.perfectcomputersolutions.pos.model.EntityBatch
+import com.perfectcomputersolutions.pos.payload.EntityBatch
 import com.perfectcomputersolutions.pos.model.ModelEntity
+import com.perfectcomputersolutions.pos.payload.IdBatch
+import io.swagger.annotations.ApiOperation
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 
 /**
@@ -24,29 +25,41 @@ abstract class MidPrivilegeCrudController<T extends ModelEntity, ID extends Seri
 
     @Override
     @PreAuthorize("hasRole('ADMIN')")
-    def deleteById(@PathVariable ID id) {
+    @ApiOperation(value = "Persist an entity to storage. This operation requires the ADMIN role.")
+    def final save(@RequestBody T entity) {
 
-        return super.deleteById(id)
+        super.save(entity)
     }
 
     @Override
     @PreAuthorize("hasRole('ADMIN')")
-    def save(@RequestBody T entity) {
+    @ApiOperation(value = "Persist several entities to storage. This operation requires the ADMIN role.")
+    def final saveAll(@RequestBody EntityBatch<T> entities) {
 
-        return super.save(entity)
-    }
-
-    @PostMapping("/batch")
-    @PreAuthorize("hasRole('ADMIN')")
-    def saveAll(@RequestBody EntityBatch<T> entities) {
-
-        return saveAll(entities, service)
+        super.saveAll(entities)
     }
 
     @Override
     @PreAuthorize("hasRole('ADMIN')")
-    def update(@PathVariable ID id, @RequestBody T entity) {
+    @ApiOperation(value = "Update an entity. This operation requires the ADMIN role.")
+    def final update(@PathVariable ID id, @RequestBody T entity) {
 
-        return super.update(id, entity)
+        super.update(id, entity)
+    }
+
+    @Override
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "Delete an entity by id. This operation requires the ADMIN role.")
+    def final deleteById(@PathVariable ID id) {
+
+        super.deleteById(id)
+    }
+
+    @Override
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "Delete several entities by their id. This operation requires the ADMIN role.")
+    def final deleteByIds(@RequestBody IdBatch<ID> ids) {
+
+        super.deleteByIds(ids)
     }
 }

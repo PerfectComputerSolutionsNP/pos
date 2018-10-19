@@ -1,13 +1,16 @@
 package com.perfectcomputersolutions.pos.repository
 
 import com.perfectcomputersolutions.pos.model.NamedEntity
-import org.springframework.data.repository.CrudRepository
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.NoRepositoryBean
 
 @NoRepositoryBean
-interface NamedEntityRepository<T extends NamedEntity, ID extends Serializable> extends CrudRepository<T, ID> {
+interface NamedEntityRepository<T extends NamedEntity, ID extends Serializable> extends ModelEntityRepository<T, ID> {
+
+    boolean existsByName(String name)
 
     T findByName(String name)
 
-    Iterable<T> findByNameContaining(String name)
+    Page<T> findByNameContaining(String name, Pageable pageable)
 }

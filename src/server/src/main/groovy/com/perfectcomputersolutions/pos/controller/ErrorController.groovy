@@ -1,67 +1,59 @@
 package com.perfectcomputersolutions.pos.controller
 
-import com.perfectcomputersolutions.pos.exception.CrudException
-import com.perfectcomputersolutions.pos.exception.DuplicateEntityException
+import com.fasterxml.jackson.core.JsonProcessingException
+import com.perfectcomputersolutions.pos.exception.CaughtException
+import com.perfectcomputersolutions.pos.exception.MalformedRequestException
+import com.perfectcomputersolutions.pos.exception.ThrownException
 import com.perfectcomputersolutions.pos.exception.NoSuchEntityException
 import com.perfectcomputersolutions.pos.exception.ValidationException
+import io.swagger.annotations.Api
+import org.hibernate.HibernateException
+import org.hibernate.exception.DataException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.http.ResponseEntity
+import org.springframework.dao.DataAccessException
+import org.springframework.http.HttpStatus
+import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 
+import javax.persistence.PersistenceException
+import javax.servlet.ServletException
 import javax.servlet.http.HttpServletRequest
 
-import static org.springframework.http.HttpStatus.CONFLICT
+import static org.springframework.http.HttpStatus.BAD_REQUEST
 import static org.springframework.http.HttpStatus.NOT_ACCEPTABLE
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
 import static org.springframework.http.HttpStatus.NOT_FOUND
 
-/**
- * Global exception handler that sends the appropriate HTTP status code
- * and message depending on the type of Exception thrown. Exception handling
- * is done in two ways. We have anticipated exceptions and unanticipated
- * exceptions.
- *
- * All anticipated exceptions extend {@code CrudException}. If a
- * {@code CrudException} is thrown, then we will then detect the specific type
- * of Exception (by subclass) and pick the appropriate HTTP status code. The
- * exception's message attribute will then be used as the message that is returned
- * to the user in the {@code message} field of the JSON response body.
- *
- * Unanticipated exceptions do not have their message attribute exposed to the user
- * as there may be sensitive data or information that the exception injects automatically.
- * Instead, a default generic message is sent to the user that notifies them to contact the
- * administrator. Ideally, this should never run. The error will be logged and we
- * can use these logs to help debug and fix the error such that the exception is
- * not thrown again. The default status code for unanticipated exceptions is 500 to
- * indicate that an internal server error has occurred.
- */
 @ControllerAdvice
 class ErrorController {
+
+    // https://www.toptal.com/java/spring-boot-rest-api-error-handling
+    // https://stackoverflow.com/questions/48991353/how-to-catch-all-unhandled-exceptions-without-exceptionhandler-in-spring-mvc
 
     private static final Logger log = LoggerFactory.getLogger(ErrorController.class)
 
     static final String VIOLATIONS = "violations"
 
-    @ExceptionHandler(value = Exception.class)
-    def invalid(HttpServletRequest req, Exception ex) {
 
-        log.error("Request: " + req.method + " to " + req.requestURL + " raised " + ex.class.name, ex)
+    @ExceptionHandler(Exception.class)
+    def handleException(HttpServletRequest req, Exception ex) {
 
-        def body
-        def status
-        def message
+        log.error("${req.method} request to ${req.requestURL} threw ${ex.class.simpleName}", ex)
+
+        final Map<?, ?>  body
+        final HttpStatus status
+        final String     message
 
         body = new HashMap<>()
 
-        if (ex instanceof CrudException) {
+        // All exceptions that are explicitly thrown
+        // by the API that are NOT wrappers around previously
+        // thrown (anticipated) exceptions should extend CrudException
+        if (ex instanceof ThrownException) {
 
             switch (ex) {
-
-                case DuplicateEntityException:
-                    status = CONFLICT
-                    break
 
                 case NoSuchEntityException:
                     status = NOT_FOUND
@@ -72,30 +64,77 @@ class ErrorController {
                     ex     = (ValidationException) ex
 
                     body.put(VIOLATIONS, ex.violations)
+                    break
 
+                case MalformedRequestException:
+                    status = BAD_REQUEST
                     break
 
                 default:
                     status = INTERNAL_SERVER_ERROR
+                    break
             }
 
             message = ex.message
 
+        // All other exceptions that were anticipated, caught, and
+        // re-thrown should be an instance of the CaughtException class
+        } else if (ex instanceof CaughtException) {
+
+            Throwable cause = ex.cause
+
+            switch (cause) {
+
+                case DataAccessException:
+                    status = NOT_ACCEPTABLE
+                    break
+
+                case JsonProcessingException:
+                case IllegalArgumentException:
+                case NullPointerException:
+                case IOException:
+
+                default:
+                    status = INTERNAL_SERVER_ERROR
+                    break
+            }
+
+            message = ex.message
+
+        // All other Exceptions that are caught will be considered
+        // bugs as they were not thrown or expected by the developer.
+        // This block returns a generic error message with a 500 status
+        // and the internal server error is be logged and reported
+        // to the administrator.
         } else {
 
-            // TODO - Handle other exceptions that we did not throw
+            switch (ex) {
 
-            log.error("Unexpected exception thrown", ex)
+                case ServletException:
+                case HibernateException:
+                case PersistenceException:
+                case DataException:
+                    status  = BAD_REQUEST
+                    message = ex.message
+                    break
 
-            status  = INTERNAL_SERVER_ERROR
-            message = "An unexpected error occurred, please contact your administrator"
+                default:
+                    status  = INTERNAL_SERVER_ERROR
+                    message = "An unexpected error occurred, please contact your administrator"
 
-            throw ex
+                    // TODO - Send back contact info from Sentry??
+            }
+
         }
 
-        body.put(UnprivilegedCrudController.MESSAGE, message)
+        // TODO - Date should be UTC time
 
-        return new ResponseEntity(body, status)
+        body.put("message",   message)
+        body.put("timestamp", new Date())
+        body.put("status",    status.value())
+        body.put("error",     status.reasonPhrase)
+        body.put("exception", ex.class.simpleName)
+
+        return CrudController.respond(body, status)
     }
-
 }

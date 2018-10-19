@@ -3,6 +3,7 @@ package com.perfectcomputersolutions.pos.interceptor
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.lang.Nullable
+import org.springframework.stereotype.Component
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter
 
 import javax.servlet.http.HttpServletRequest
@@ -12,6 +13,7 @@ import javax.servlet.http.HttpServletResponse
  * HTTP request interceptor that logs the HTTP method
  * being executed and the status code after the call is complete.
  */
+@Component
 class HttpRequestInterceptor extends HandlerInterceptorAdapter {
 
     // https://stackoverflow.com/questions/46954110/how-to-execute-a-filter-on-specific-request-in-spring-mvc
@@ -28,7 +30,7 @@ class HttpRequestInterceptor extends HandlerInterceptorAdapter {
 
         request.setAttribute("startTime", start)
 
-        return super.preHandle(request, response, handler)
+        true
     }
 
     @Override
@@ -47,7 +49,5 @@ class HttpRequestInterceptor extends HandlerInterceptorAdapter {
         log.info("Returning status code ${response.status} to client")
 
         // TODO - Persist transaction time for statistics by endpoint?
-
-        super.afterCompletion(request, response, handler, ex)
     }
 }

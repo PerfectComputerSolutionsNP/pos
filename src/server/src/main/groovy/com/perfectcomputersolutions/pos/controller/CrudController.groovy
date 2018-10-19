@@ -1,22 +1,20 @@
 package com.perfectcomputersolutions.pos.controller
 
+import com.perfectcomputersolutions.pos.payload.EntityBatch
 import com.perfectcomputersolutions.pos.model.ModelEntity
-import com.perfectcomputersolutions.pos.model.NamedEntity
 import com.perfectcomputersolutions.pos.service.CrudService
-import com.perfectcomputersolutions.pos.service.NamedEntityService
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import com.perfectcomputersolutions.pos.payload.IdBatch
+import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.CrossOrigin
 
-
 @CrossOrigin
 abstract class CrudController<T extends ModelEntity, ID extends Serializable> {
 
-    private static final Logger log = LoggerFactory.getLogger(UnprivilegedCrudController.class)
-
-    static final String ENTITIES  = "entities"
+    static final String CONTENT   = "content"
+    static final String EXISTS    = "exists"
+    static final String COUNT     = "count"
     static final String ENTITY    = "entity"
     static final String MESSAGE   = "message"
     static final String CREATED   = "Entity successfully created"
@@ -26,29 +24,22 @@ abstract class CrudController<T extends ModelEntity, ID extends Serializable> {
 
     abstract CrudService<T, ID> getService()
 
-    static <E extends ModelEntity, I extends Serializable> ResponseEntity findAll(CrudService<E, I> service) {
+    static <E extends ModelEntity, I extends Serializable> ResponseEntity count(CrudService<E, I> service) {
+
+        def count = service.count()
 
         def body = [
 
-                (MESSAGE)   : RETRIEVED,
-                (ENTITIES)  : service.findAll()
+                (MESSAGE) : 'There are ' + count + ' entities',
+                (COUNT)   : count
         ]
 
         respond(body, HttpStatus.OK)
     }
 
-    static <E extends ModelEntity, I extends Serializable> ResponseEntity findById(I id, CrudService<E, I> service) {
-
-        def body = [
-
-                (MESSAGE) : RETRIEVED,
-                (ENTITY)  : service.findById(id)
-        ]
-
-        respond(body, HttpStatus.OK)
-    }
-
-    static <E extends ModelEntity, I extends Serializable> ResponseEntity save(E entity, CrudService<E, I> service) {
+    static <E extends ModelEntity, I extends Serializable> ResponseEntity save(
+            E                 entity,
+            CrudService<E, I> service) {
 
         def body = [
 
@@ -59,18 +50,24 @@ abstract class CrudController<T extends ModelEntity, ID extends Serializable> {
         respond(body, HttpStatus.ACCEPTED)
     }
 
-    static <E extends ModelEntity, I extends Serializable> ResponseEntity saveAll(Iterable<E> entities, CrudService<E, I> service) {
+    static <E extends ModelEntity, I extends Serializable> ResponseEntity saveAll(
+            EntityBatch<E>    entities,
+            CrudService<E, I> service) {
+
+        service.saveAll(entities)
 
         def body = [
 
-                (MESSAGE) : CREATED,
-                (ENTITY)  : service.saveAll(entities)
+                (MESSAGE) : CREATED
         ]
 
         respond(body, HttpStatus.ACCEPTED)
     }
 
-    static <E extends ModelEntity, I extends Serializable> ResponseEntity update(I id, E entity, CrudService<E, I> service) {
+    static <E extends ModelEntity, I extends Serializable> ResponseEntity update(
+            I                 id,
+            E                 entity,
+            CrudService<E, I> service) {
 
         def body = [
 
@@ -81,7 +78,9 @@ abstract class CrudController<T extends ModelEntity, ID extends Serializable> {
         respond(body, HttpStatus.ACCEPTED)
     }
 
-    static <E extends ModelEntity, I extends Serializable> ResponseEntity deleteById(I id, CrudService<E, I> service) {
+    static <E extends ModelEntity, I extends Serializable> ResponseEntity deleteById(
+            I                 id,
+            CrudService<E, I> service) {
 
         def body = [
 
@@ -89,34 +88,61 @@ abstract class CrudController<T extends ModelEntity, ID extends Serializable> {
                 (ENTITY)  : service.deleteById(id)
         ]
 
-        respond(body, HttpStatus.ACCEPTED)
+        respond(body, HttpStatus.OK)
     }
 
-    static <E extends NamedEntity, I extends Serializable> ResponseEntity findByName(String name, NamedEntityService<E, I> service) {
+    static <E extends ModelEntity, I extends Serializable> ResponseEntity deleteByIds(
+            IdBatch<I>        ids,
+            CrudService<E, I> service) {
+
+        service.deleteByIds(ids)
 
         def body = [
 
-                (MESSAGE) : RETRIEVED,
-                (ENTITY)  : service.findByName(name)
+                (MESSAGE) : DELETED
         ]
 
         respond(body, HttpStatus.OK)
     }
 
-    static <E extends NamedEntity, I extends Serializable> ResponseEntity findByNameContaining(String name, NamedEntityService<E, I> service) {
+    static <E extends ModelEntity, I extends Serializable> ResponseEntity findAll(
+            CrudService<E, I> service,
+            int               page,
+            int               size,
+            Optional<Boolean> sorted,
+            Optional<String>  property) {
+
+        def body = service.findAll(page, size, sorted, property)
+
+        respond(body, HttpStatus.OK)
+    }
+
+    static <E extends ModelEntity, I extends Serializable> ResponseEntity findAllSorted(
+            CrudService<E, I> service,
+            int               page,
+            int               size,
+            Sort.Direction    direction,
+            String...         properties) {
+
+        def body = service.findAllSorted(page, size, direction, properties)
+
+        respond(body, HttpStatus.OK)
+    }
+
+    static <E extends ModelEntity, I extends Serializable> ResponseEntity findById(
+            I                 id,
+            CrudService<E, I> service) {
 
         def body = [
 
                 (MESSAGE) : RETRIEVED,
-                (ENTITY)  : service.findByNameContaining(name)
+                (ENTITY)  : service.findById(id)
         ]
 
         respond(body, HttpStatus.OK)
     }
 
-    static respond(Map<String, ?> body, HttpStatus status) {
-
-        log.info(body.get(MESSAGE) as String)
+    static respond(Object body, HttpStatus status) {
 
         return new ResponseEntity(body, status)
     }

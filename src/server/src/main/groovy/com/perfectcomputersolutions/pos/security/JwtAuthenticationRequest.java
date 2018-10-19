@@ -1,15 +1,17 @@
 package com.perfectcomputersolutions.pos.security;
 
+import io.swagger.annotations.ApiModelProperty;
+
 import java.io.Serializable;
 
-/**
- * Created by stephan on 20.03.16.
- */
 public class  JwtAuthenticationRequest implements Serializable {
 
     private static final long serialVersionUID = -8445943548965154778L;
 
+    @ApiModelProperty(notes = "Usename of user to authenticate")
     private String username;
+
+    @ApiModelProperty(notes = "Password of user to authenticate")
     private String password;
 
     public JwtAuthenticationRequest() {

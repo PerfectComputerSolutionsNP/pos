@@ -1,19 +1,23 @@
 package com.perfectcomputersolutions.pos.service
 
+import com.perfectcomputersolutions.pos.exception.CaughtException
+import com.perfectcomputersolutions.pos.exception.MalformedRequestException
 import com.perfectcomputersolutions.pos.exception.NoSuchEntityException
 import com.perfectcomputersolutions.pos.exception.ValidationException
-import com.perfectcomputersolutions.pos.exception.Violation
+import com.perfectcomputersolutions.pos.repository.ModelEntityRepository
+import com.perfectcomputersolutions.pos.payload.IdBatch
+import com.perfectcomputersolutions.pos.utility.Violation
+import com.perfectcomputersolutions.pos.payload.EntityBatch
 import com.perfectcomputersolutions.pos.model.ModelEntity
-import com.perfectcomputersolutions.pos.model.NamedEntity
-import com.perfectcomputersolutions.pos.notifier.EmailSender
-import com.perfectcomputersolutions.pos.repository.NamedEntityRepository
+import com.perfectcomputersolutions.pos.utility.Utility
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.dao.DataAccessException
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.data.repository.CrudRepository
-
-import javax.validation.Validation
-import javax.validation.Validator
+import org.springframework.data.repository.PagingAndSortingRepository
 
 /**
  * Generic service that executes CRUD operation for basic
@@ -26,34 +30,20 @@ import javax.validation.Validator
  */
 abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
 
-    private static final Logger    log       = LoggerFactory.getLogger(CrudService.class)
-    private static final Validator validator = Validation.buildDefaultValidatorFactory().getValidator()
+    private static final Logger log = LoggerFactory.getLogger(CrudService.class)
 
-    @Autowired EmailSender emailer
+    @Autowired EmailService emailer
 
-    abstract CrudRepository<T, ID> getRepository()
+    abstract ModelEntityRepository<T, ID> getRepository()
 
-    static <E extends ModelEntity, I extends Serializable> boolean existsById(I id, CrudRepository<E, I> repository) {
-
-        log.info("Determining if entity is present with id: ${id}")
-
-        if (id == null)
-            throw new NoSuchEntityException("The id field must not be null")
-
-        def exists = repository.existsById(id)
-
-        if (exists)
-            log.info("There is an entity for id: ${id}")
-
-        else
-            log.info("There is no entity for id: ${id}")
-
-        return exists
-    }
-
-    static <E extends ModelEntity, I extends Serializable> E findById(I id, CrudRepository<E, I> repository) {
+    static <E extends ModelEntity, I extends Serializable> E findById(
+            I id,
+            CrudRepository<E, I> repository) {
 
         log.info("Finding entity with id: ${id}")
+
+        if (id == null)
+            throw new IllegalArgumentException("Id argument must not be null")
 
         def optional = repository.findById(id)
 
@@ -64,11 +54,38 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
             throw new NoSuchEntityException(id)
     }
 
-    static <E extends ModelEntity, I extends Serializable> Iterable<E> findAll(CrudRepository<E, I> repository) {
+    static <E extends ModelEntity, I extends Serializable> Iterable<E> findAll(
+            PagingAndSortingRepository<E, I> repository,
+            int               page,
+            int               size,
+            Optional<Boolean> sorted,
+            Optional<String> property) {
 
         log.info("Finding all entities")
 
-        def entities = repository.findAll()
+        if (sorted.present && !property.present)
+            throw new MalformedRequestException("If the sorted parameter is declared, the property parameter must also be declared")
+
+        def entities = repository.findAll(getPageRequest(page, size, sorted, property))
+
+        log.info("Found ${entities.size()} entities")
+
+        return entities
+    }
+
+    // TODO - Abstract to single method to avoid redundant code!
+
+    static <E extends ModelEntity, I extends Serializable> Iterable<E> findAllSorted(
+            PagingAndSortingRepository<E, I> repository,
+            int               page,
+            int               size,
+            Sort.Direction    direction,
+            String...         properties) {
+
+        log.info("Finding all entities for ${page} and size ${size} sorted by properties: ${Arrays.toString(properties)}")
+
+        def request  = new PageRequest(page, size, direction, properties)
+        def entities = repository.findAll(request)
 
         log.info("Found ${entities.size()} entities")
 
@@ -81,35 +98,63 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
 
         if (entity.id != null) {
 
-            def violation = new Violation()
-
-            violation.field   = "id"
-            violation.entity  = entity.class.simpleName
-            violation.message = "Id must be null as it will be automatically assigned to ${entity.class.simpleName}"
+            def violation = new Violation(
+                    "id",
+                    entity.class.simpleName,
+                    "Id must be null as it will be automatically assigned to ${entity.class.simpleName}"
+            )
 
             throw new ValidationException(violation)
         }
 
-        validate(entity, false)
+        Utility.validate(entity)
 
         log.info("Persisting new ${entity.class.simpleName} to storage")
 
-        return repository.save(entity)
+        E result
+
+        try {
+
+            result = repository.save(entity)
+
+        } catch (DataAccessException ex) {
+
+            log.error("Failed to persist ${entity.class.simpleName} to storage")
+
+            def msg = "Constraint violation: Make sure the record abides by all unique field constraints"
+
+            throw new CaughtException(msg, ex)
+        }
+
+        log.info("Successfully saved ${entity.class.simpleName}")
+
+        return result
     }
 
-    static <E extends ModelEntity, I extends Serializable> Iterable<E> saveAll(Iterable<E> entities, CrudRepository<E, I> repository) {
+    static <E extends ModelEntity, I extends Serializable> void saveAll(EntityBatch<E> entities, CrudRepository<E, I> repository) {
 
         int size = entities.size()
 
         log.info("Creating ${size} new entities")
 
-        log.info(entities.toString())
-
-        validate(entities, false)
+        Utility.validate(entities.entities)
 
         log.info("Persisting ${size} new entities")
 
-        return repository.saveAll(entities)
+        try {
+
+            repository.saveAll(entities)
+
+            log.info("Successfully saved ${size} entities")
+
+        } catch (DataAccessException ex) {
+
+            def msg = "Could not save entities"
+
+            log.error(msg)
+
+            throw new CaughtException(msg, ex)
+        }
     }
 
     static <E extends ModelEntity, I extends Serializable> E update(I id, E entity, CrudRepository<E, I> repository) {
@@ -118,27 +163,26 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
 
         if (id != entity.id) {
 
-            def violation = new Violation()
+            def msg = "Path variable id ${id} does not match entity id ${entity.id}"
 
-            violation.field   = "id"
-            violation.entity  = entity.class.simpleName
-            violation.message = "Path variable id ${id} does not match entity id ${entity.id}"
+            log.error(msg)
 
-            throw new ValidationException(violation)
+            throw new MalformedRequestException(msg)
         }
 
         if (entity.id == null || !existsById((I) entity.id, repository)) {
 
-            def violation = new Violation()
+            def violation = new Violation(
 
-            violation.field   = "id"
-            violation.entity  = entity.class.simpleName
-            violation.message = "Id either null or no ${entity.class.simpleName} exists id: ${entity.id}"
+                    "id",
+                    entity.class.simpleName,
+                    "Id either null or no ${entity.class.simpleName} exists id: ${entity.id}"
+            )
 
             throw new ValidationException(violation)
         }
 
-        validate(entity, true)
+        Utility.validate(entity)
 
         log.info("Persisting updated ${entity.class.simpleName} to storage")
 
@@ -149,11 +193,14 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
 
         log.info("Deleting entity with id: ${id}")
 
+        if (id == null)
+            throw new IllegalArgumentException("Argument id must not be null")
+
         E entity = findById(id, repository)
 
         if (entity == null) {
 
-            log.info("No entity with id ${id} was found")
+            log.info("No entity found for id: ${id}")
 
             throw new NoSuchEntityException(id)
         }
@@ -163,27 +210,59 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
         return entity
     }
 
-    static <E extends NamedEntity, I extends Serializable> E findByName(String name, NamedEntityRepository<E, I> repository) {
+    static <E extends ModelEntity, I extends Serializable> void deleteByIds(IdBatch<I> ids, ModelEntityRepository<E, I> repository) {
 
-        log.info("Finding entity by name: ${name}")
+        if (ids == null || ids.ids.empty)
+            throw new IllegalArgumentException("Set of ids must be not be null or empty")
 
-        E entity = repository.findByName(name)
+        int size = ids.size()
 
-        if (entity == null)
-            throw new NoSuchEntityException("No entity found with name ${name}")
+        log.info("Deleting ${size} entities by id")
 
-        return entity
+        repository.deleteByIdIn(ids.ids)
     }
 
-    static <E extends NamedEntity, I extends Serializable> Iterable<E> findByNameContaining(String name, NamedEntityRepository<E, I> repository) {
+    static <E extends ModelEntity, I extends Serializable> long count(CrudRepository<E, I> repository) {
 
-        log.info("Searching for entities containing name: ${name}")
+        log.info("Counting entities")
 
-        def entities = repository.findByNameContaining(name)
+        long count = repository.count()
 
-        log.info("Found ${entities.size()} entities corresponding to search: ${name}")
+        log.info("Found ${count} entities")
 
-        return entities
+        return count
+    }
+
+    protected static <E extends ModelEntity, I extends Serializable> boolean existsById(
+            I                    id,
+            CrudRepository<E, I> repository) {
+
+        log.info("Determining if entity is present with id: ${id}")
+
+        if (id == null)
+            throw new IllegalArgumentException("Argument id must not be null")
+
+        def exists = repository.existsById(id)
+
+        def msg = exists ?
+                "There is an entity for id: ${id}" :
+                "There is no entity for id: ${id}"
+
+        log.info(msg)
+
+        return exists
+    }
+
+    protected static PageRequest getPageRequest(int page, int size, Optional<Boolean> sorted, Optional<String> property) {
+
+        return sorted.present && sorted.get() && property.present ?
+                new PageRequest(page, size, Sort.Direction.ASC, property.get()) :
+                new PageRequest(page, size)
+    }
+
+    long count() {
+
+        return count(repository)
     }
 
     T findById(ID id) {
@@ -191,10 +270,14 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
         findById(id, repository)
     }
 
+    Iterable<T> findAll(int page, int size, Optional<Boolean> sorted, Optional<String> property) {
 
-    Iterable<T> findAll() {
+        findAll(repository, page, size, sorted, property)
+    }
 
-        findAll(repository)
+    Iterable<T> findAllSorted(int page, int size, Sort.Direction direction, String... properties) {
+
+        findAllSorted(repository, page, size, direction, properties)
     }
 
     T save(T entity) {
@@ -202,7 +285,7 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
         save(entity, repository)
     }
 
-    Iterable<T> saveAll(Iterable<T> entities) {
+    void saveAll(EntityBatch<T> entities) {
 
         saveAll(entities, repository)
     }
@@ -217,35 +300,8 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
         deleteById(id, repository)
     }
 
-    /**
-     * Validates an entity via hibernate validation. If
-     * the entity does not pass validation, a {@code ValidationException}
-     * is thrown and handled by the global exception handler.
-     *
-     * @see ValidationException
-     *
-     * @param entity Entity to validate.
-     * @param update Boolean value indicating whether or not the entity
-     *        it to be validated as an update or a new entry.
-     */
-    protected static <E extends ModelEntity> void validate(E entity, boolean update) {
+    void deleteByIds(IdBatch<ID> ids) {
 
-        def violations = validator.validate(entity)
-
-        if (update) {
-
-            // TODO - Check other stuff if necessary
-        }
-
-        if (violations.size() != 0)
-            throw new ValidationException<T>(violations)
-    }
-
-    protected static <E extends ModelEntity> void validate(Iterable<E> entities, boolean update) {
-
-        for (E entity in entities)
-            validate(entity, update)
-
-        // TODO - Capture exact violation?
+        deleteByIds(ids, repository)
     }
 }
