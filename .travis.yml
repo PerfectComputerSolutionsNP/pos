@@ -8,6 +8,9 @@ jdk:
 services:
   - docker
 
+tags:
+  enabled: false
+
 script:
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   - ./ci/database.sh

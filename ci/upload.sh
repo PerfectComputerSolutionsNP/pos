@@ -1,28 +1,25 @@
 set -e
 
-tag() {
+git config --global user.email "${GITHUB_EMAIL}"
+git config --global user.name "Perfect Computer Solutions"
 
-  # TODO - Tag docker images / make a new GitHub release
-  :
-}
+version="v0.0.0"
 
-upload() {
+git tag -a -m "Releasing $version from Travis CI"
 
-  if [ $TRAVIS_BRANCH == "master" ] && [ $TRAVIS_PULL_REQUEST == "false" ]; then
+git push origin $version
 
-    echo "Building docker images"
+if [ $TRAVIS_BRANCH == "master" ] && [ $TRAVIS_PULL_REQUEST == "false" ]; then
 
-    docker build -t perfectcomputersolutionsnp/pos-api src/server
-    docker build -t perfectcomputersolutionsnp/pos-gui src/client
+  echo "Building docker images"
 
-    echo "Pushing docker images"
+  docker build -t perfectcomputersolutionsnp/pos-api src/server:$version
+  docker build -t perfectcomputersolutionsnp/pos-gui src/client:$version
 
-    docker push perfectcomputersolutionsnp/pos-api
-    docker push perfectcomputersolutionsnp/pos-gui
-  else
-    echo "Not pushing image to docker because branch '$TRAVIS_BRANCH' is not master branch"
-  fi
-}
+  echo "Pushing docker images"
 
-tag
-upload
+  docker push perfectcomputersolutionsnp/pos-api
+  docker push perfectcomputersolutionsnp/pos-gui
+else
+  echo "Not pushing image to docker because branch '$TRAVIS_BRANCH' is not master branch"
+fi
