@@ -7,13 +7,24 @@ if [ $TRAVIS_BRANCH != "master" ] || [ $TRAVIS_PULL_REQUEST == "true" ]; then
   # exit 0
 fi
 
-# TODO - Fetch latest version, bump it
 
-version="v0.0.0"
 text="Automated release from Travis CI"
 branch="master"
 repo_full_name=$(git config --get remote.origin.url | sed 's/.*:\/\/github.com\///;s/.git$//')
 token="${GITHUB_TOKEN}"
+
+result=$(curl -X GET \
+  https://api.github.com/repos/$repo_full_name/releases/latest \
+  -H 'Accept: application/vnd.github.v3+json' \
+  -H 'Content-Type: application/json' \
+  -H 'cache-control: no-cache')
+
+version=$(echo $result |  jq '.["name"]' | tr -d '"')
+
+old=`echo "$version" | awk -F '\\.' '{print $NF}'`
+new=$(( $old + 1 ))
+
+version="${version/%.0/.$new}"
 
 generate_post_data() {
   cat <<EOF
