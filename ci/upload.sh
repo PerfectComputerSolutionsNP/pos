@@ -7,7 +7,6 @@ if [ $TRAVIS_BRANCH != "master" ] || [ $TRAVIS_PULL_REQUEST == "true" ]; then
   # exit 0
 fi
 
-
 text="Automated release from Travis CI"
 branch="master"
 repo_full_name=$(git config --get remote.origin.url | sed 's/.*:\/\/github.com\///;s/.git$//')
@@ -21,10 +20,12 @@ result=$(curl -X GET \
 
 version=$(echo $result |  jq '.["name"]' | tr -d '"')
 
-old=`echo "$version" | awk -F '\\.' '{print $NF}'`
+old=$(echo "$version" | awk -F '\\.' '{print $NF}')
 new=$(( $old + 1 ))
 
-version="${version/%.0/.$new}"
+echo "Lastest version found: $version"
+
+version="${version%.*}.$new"
 
 generate_post_data() {
   cat <<EOF
