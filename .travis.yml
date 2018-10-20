@@ -11,6 +11,10 @@ services:
 tags:
   enabled: false
 
+branches:
+  except:
+    - /^v\d+\.\d+\.\d+$/
+
 script:
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   - ./ci/database.sh
