@@ -5,7 +5,7 @@ git config --global user.name "Perfect Computer Solutions"
 
 version="v0.0.0"
 
-git tag -a -m "Releasing $version from Travis CI"
+git tag -a -m "Releasing $version from Travis CI" $version
 
 git push origin $version
 
