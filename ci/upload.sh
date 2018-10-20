@@ -1,10 +1,10 @@
 #!/bin/bash
 set -e
 
-if [ $TRAVIS_BRANCH != "master" ] || [ $TRAVIS_PULL_REQUEST == "true" ]; then
+if [ $TRAVIS_BRANCH != "master" ] || [ $TRAVIS_PULL_REQUEST != "false" ]; then
 
   echo "Not pushing image to docker because branch '$TRAVIS_BRANCH' is not master branch"
-  # exit 0
+  exit 0
 fi
 
 text="Automated release from Travis CI"
@@ -23,7 +23,7 @@ version=$(echo $result |  jq '.["name"]' | tr -d '"')
 old=$(echo "$version" | awk -F '\\.' '{print $NF}')
 new=$(( $old + 1 ))
 
-echo "Lastest version found: $version"
+echo "Latest version found: $version"
 
 version="${version%.*}.$new"
 
