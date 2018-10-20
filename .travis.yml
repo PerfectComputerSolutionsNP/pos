@@ -10,14 +10,17 @@ branches:
     - /^v\d+\.\d+\.\d+$/
 
 services:
+  - mysql
   - docker
 
 tags:
   enabled: false
 
+before_install:
+  - mysql -e 'CREATE DATABASE IF NOT EXISTS ${DB_NAME};'
+
 script:
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-  - ./ci/database.sh
   - ./ci/server.sh
   - ./ci/client.sh
 
