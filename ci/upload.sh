@@ -32,8 +32,8 @@ curl --data "$(generate_post_data)" "https://api.github.com/repos/$repo_full_nam
 
 # Docker release
 echo "Building docker images"
-docker build -t perfectcomputersolutionsnp/pos-api src/server:$version
-docker build -t perfectcomputersolutionsnp/pos-gui src/client:$version
+docker build -t perfectcomputersolutionsnp/pos-api:$version src/server
+docker build -t perfectcomputersolutionsnp/pos-gui:$version src/client
 
 echo "Pushing docker images"
 docker push perfectcomputersolutionsnp/pos-api:$version
