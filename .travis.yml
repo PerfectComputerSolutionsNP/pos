@@ -5,15 +5,17 @@ language: java
 jdk:
   - oraclejdk8
 
+branches:
+  only:
+    - master
+    - server
+    - client
+
 services:
   - docker
 
 tags:
   enabled: false
-
-branches:
-  except:
-    - /^v\d+\.\d+\.\d+$/
 
 script:
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
