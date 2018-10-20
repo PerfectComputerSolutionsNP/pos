@@ -13,7 +13,7 @@ repo_full_name=$(git config --get remote.origin.url | sed 's/.*:\/\/github.com\/
 token="${GITHUB_TOKEN}"
 
 result=$(curl -X GET \
-  https://api.github.com/repos/$repo_full_name/releases/latest \
+  https://api.github.com/repos/$TRAVIS_REPO_SLUG/releases/latest \
   -H 'Accept: application/vnd.github.v3+json' \
   -H 'Content-Type: application/json' \
   -H 'cache-control: no-cache')
