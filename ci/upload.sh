@@ -7,7 +7,7 @@ set -e
 if [ $TRAVIS_BRANCH != "master" ] || [ $TRAVIS_PULL_REQUEST != "false" ]; then
 
   echo "Not pushing image to docker because branch '$TRAVIS_BRANCH' is not master branch"
-  exit 0
+  # exit 0
 fi
 
 # Message for the JSON payload
