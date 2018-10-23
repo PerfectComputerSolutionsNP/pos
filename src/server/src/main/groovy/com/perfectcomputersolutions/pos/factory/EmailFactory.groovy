@@ -1,7 +1,7 @@
 package com.perfectcomputersolutions.pos.factory
 
 import com.perfectcomputersolutions.pos.model.Email
-import com.perfectcomputersolutions.pos.utility.Utility
+import com.perfectcomputersolutions.pos.payload.SimpleMessage
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -65,5 +65,14 @@ class EmailFactory {
         ]
 
         return email(to, subject, template, variables)
+    }
+
+    def getEmail(SimpleMessage message) {
+
+        getEmail(
+                message.to,
+                message.subject,
+                message.text
+        )
     }
 }

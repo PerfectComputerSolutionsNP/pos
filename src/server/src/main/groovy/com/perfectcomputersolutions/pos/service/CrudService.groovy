@@ -4,16 +4,17 @@ import com.perfectcomputersolutions.pos.exception.CaughtException
 import com.perfectcomputersolutions.pos.exception.MalformedRequestException
 import com.perfectcomputersolutions.pos.exception.NoSuchEntityException
 import com.perfectcomputersolutions.pos.exception.ValidationException
+import com.perfectcomputersolutions.pos.payload.Batch
 import com.perfectcomputersolutions.pos.repository.ModelEntityRepository
-import com.perfectcomputersolutions.pos.payload.IdBatch
 import com.perfectcomputersolutions.pos.utility.Violation
-import com.perfectcomputersolutions.pos.payload.EntityBatch
 import com.perfectcomputersolutions.pos.model.ModelEntity
 import com.perfectcomputersolutions.pos.utility.Utility
+import org.hibernate.exception.ConstraintViolationException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.DataAccessException
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.data.repository.CrudRepository
@@ -51,7 +52,7 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
             return optional.get()
 
         else
-            throw new NoSuchEntityException(id)
+            throw new NoSuchEntityException("Could not find an entity with the id: ${id}")
     }
 
     static <E extends ModelEntity, I extends Serializable> Iterable<E> findAll(
@@ -61,12 +62,13 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
             Optional<Boolean> sorted,
             Optional<String> property) {
 
-        log.info("Finding all entities")
+        log.info("Finding all entities for page ${page} with page size ${size}")
 
         if (sorted.present && !property.present)
             throw new MalformedRequestException("If the sorted parameter is declared, the property parameter must also be declared")
 
-        def entities = repository.findAll(getPageRequest(page, size, sorted, property))
+        def request  = getPageRequest(page, size, sorted, property)
+        def entities = repository.findAll(request)
 
         log.info("Found ${entities.size()} entities")
 
@@ -131,19 +133,19 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
         return result
     }
 
-    static <E extends ModelEntity, I extends Serializable> void saveAll(EntityBatch<E> entities, CrudRepository<E, I> repository) {
+    static <E extends ModelEntity, I extends Serializable> void saveAll(Batch<E> batch, CrudRepository<E, I> repository) {
 
-        int size = entities.size()
+        int size = batch.size()
 
         log.info("Creating ${size} new entities")
 
-        Utility.validate(entities.entities)
+        Utility.validate(batch)
 
         log.info("Persisting ${size} new entities")
 
         try {
 
-            repository.saveAll(entities)
+            repository.saveAll(batch)
 
             log.info("Successfully saved ${size} entities")
 
@@ -193,33 +195,45 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
 
         log.info("Deleting entity with id: ${id}")
 
-        if (id == null)
-            throw new IllegalArgumentException("Argument id must not be null")
-
         E entity = findById(id, repository)
 
-        if (entity == null) {
+        try {
 
-            log.info("No entity found for id: ${id}")
+            repository.deleteById(id)
 
-            throw new NoSuchEntityException(id)
+        } catch (DataIntegrityViolationException ex) {
+
+            def message
+
+            switch (ex.cause) {
+
+                case ConstraintViolationException:
+                    message = "A constraint failed. Make sure no child entity's foreign key references this entity"
+                    break
+
+                default:
+                    message = "Could not execute query, please make sure request is valid by the standard specified in the documentation."
+                    break
+            }
+
+            throw new CaughtException(message, ex)
         }
-
-        repository.deleteById(id)
 
         return entity
     }
 
-    static <E extends ModelEntity, I extends Serializable> void deleteByIds(IdBatch<I> ids, ModelEntityRepository<E, I> repository) {
+    static <E extends ModelEntity, I extends Serializable> void deleteByIds(Batch<I> ids, ModelEntityRepository<E, I> repository) {
 
-        if (ids == null || ids.ids.empty)
+        if (ids == null || ids.batch.empty)
             throw new IllegalArgumentException("Set of ids must be not be null or empty")
 
         int size = ids.size()
 
         log.info("Deleting ${size} entities by id")
 
-        repository.deleteByIdIn(ids.ids)
+        // TODO - Exception handling? Check list of ids for nulls??
+
+        repository.deleteByIdIn(ids.batch)
     }
 
     static <E extends ModelEntity, I extends Serializable> long count(CrudRepository<E, I> repository) {
@@ -253,7 +267,11 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
         return exists
     }
 
-    protected static PageRequest getPageRequest(int page, int size, Optional<Boolean> sorted, Optional<String> property) {
+    protected static PageRequest getPageRequest(
+            int               page,
+            int               size,
+            Optional<Boolean> sorted,
+            Optional<String> property) {
 
         return sorted.present && sorted.get() && property.present ?
                 new PageRequest(page, size, Sort.Direction.ASC, property.get()) :
@@ -285,7 +303,7 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
         save(entity, repository)
     }
 
-    void saveAll(EntityBatch<T> entities) {
+    void saveAll(Batch<T> entities) {
 
         saveAll(entities, repository)
     }
@@ -300,7 +318,7 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
         deleteById(id, repository)
     }
 
-    void deleteByIds(IdBatch<ID> ids) {
+    void deleteByIds(Batch<ID> ids) {
 
         deleteByIds(ids, repository)
     }

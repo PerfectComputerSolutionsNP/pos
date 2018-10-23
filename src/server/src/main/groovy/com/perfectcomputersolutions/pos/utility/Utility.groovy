@@ -82,12 +82,12 @@ class Utility {
 
     static UserDetails getCurrentUserDetails() {
 
-        def securityContext = SecurityContextHolder.getContext()
-        def authentication  = securityContext.getAuthentication()
+        def authentication = SecurityContextHolder.getContext()
+                                                  .getAuthentication()
 
         if (authentication != null) {
 
-            def principal = authentication.getPrincipal()
+            def principal = authentication.principal
 
             return principal instanceof UserDetails ? (UserDetails) principal : null
         }

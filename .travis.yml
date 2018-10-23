@@ -5,25 +5,37 @@ language: java
 jdk:
   - oraclejdk8
 
+branches:
+  except:
+    - /^v\d+\.\d+\.\d+$/
+
+tags:
+  enabled: false
+
 services:
+  - mysql
   - docker
+
+# TODO - Get DB_NAME into string some how
+# before_install:
+#   - mysql -e 'CREATE DATABASE IF NOT EXISTS pos;'
 
 script:
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-  - ./ci/database.sh
   - ./ci/server.sh
   - ./ci/client.sh
 
 after_success:
   - ./ci/upload.sh
 
-# TODO - cache node_module for client code to decrease build time
-
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -rf $HOME/.gradle/caches/*/plugin-resolution/
 
+# TODO - cache node_module for client code to decrease build time
+
 cache:
   directories:
+    # - node_modules
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/

@@ -1,9 +1,8 @@
 package com.perfectcomputersolutions.pos.controller
 
-import com.perfectcomputersolutions.pos.payload.EntityBatch
+import com.perfectcomputersolutions.pos.payload.Batch
 import com.perfectcomputersolutions.pos.model.ModelEntity
 import com.perfectcomputersolutions.pos.service.CrudService
-import com.perfectcomputersolutions.pos.payload.IdBatch
 import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -51,7 +50,7 @@ abstract class CrudController<T extends ModelEntity, ID extends Serializable> {
     }
 
     static <E extends ModelEntity, I extends Serializable> ResponseEntity saveAll(
-            EntityBatch<E>    entities,
+            Batch<E>    entities,
             CrudService<E, I> service) {
 
         service.saveAll(entities)
@@ -92,7 +91,7 @@ abstract class CrudController<T extends ModelEntity, ID extends Serializable> {
     }
 
     static <E extends ModelEntity, I extends Serializable> ResponseEntity deleteByIds(
-            IdBatch<I>        ids,
+            Batch<I> ids,
             CrudService<E, I> service) {
 
         service.deleteByIds(ids)

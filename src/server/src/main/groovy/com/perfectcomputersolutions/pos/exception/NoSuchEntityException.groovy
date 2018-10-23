@@ -8,9 +8,4 @@ final class NoSuchEntityException<T extends ModelEntity, ID extends Serializable
 
         super(msg)
     }
-
-    NoSuchEntityException(ID id) {
-
-        super("No entity for id: " + id)
-    }
 }

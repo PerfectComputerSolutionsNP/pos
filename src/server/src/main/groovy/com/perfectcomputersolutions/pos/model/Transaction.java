@@ -1,6 +1,8 @@
 package com.perfectcomputersolutions.pos.model;
 
 import javax.persistence.Entity;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
@@ -20,12 +22,15 @@ public class Transaction extends ModelEntity {
     @NotNull
     public Date date;
 
+    @Min(0)
     @NotNull
     long paid;
 
+    @Min(0)
     @NotNull
     long cost;
 
+    @NotEmpty
     @NotNull
     String name;
 }

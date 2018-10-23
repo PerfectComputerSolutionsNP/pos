@@ -1,14 +1,16 @@
 package com.perfectcomputersolutions.pos.service
 
+import com.perfectcomputersolutions.pos.exception.CaughtException
 import com.perfectcomputersolutions.pos.factory.EmailFactory
 import com.perfectcomputersolutions.pos.model.Email
+import com.perfectcomputersolutions.pos.payload.Batch
 import com.perfectcomputersolutions.pos.repository.EmailRepository
-import com.perfectcomputersolutions.pos.payload.IdBatch
 import com.perfectcomputersolutions.pos.payload.SimpleMessage
 import com.perfectcomputersolutions.pos.utility.Utility
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.mail.MailException
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.MimeMessageHelper
 import org.springframework.mail.javamail.MimeMessagePreparator
@@ -34,10 +36,13 @@ class EmailService {
 
     def findAll(int page, int size) {
 
-        Optional<Boolean> sorted  = Optional.of(true)
-        Optional<String> property = Optional.of("created")
-
-        CrudService.findAll(repository, page, size, sorted, property)
+        CrudService.findAll(
+                repository,
+                page,
+                size,
+                Optional.of(true),
+                Optional.of("created")
+        )
     }
 
     def findById(Long id) {
@@ -50,12 +55,16 @@ class EmailService {
         CrudService.deleteById(id, repository)
     }
 
-    def deleteByIds(IdBatch<Long> ids) {
+    def deleteByIds(Batch<Long> ids) {
 
         CrudService.deleteByIds(ids, repository)
     }
 
-    private void sendAsync(Email email) {
+    private void deliver(Email email) {
+
+        log.info("Sending email to: ${email.to}")
+
+        Utility.validate(email)
 
         MimeMessagePreparator preparator = { msg ->
 
@@ -66,34 +75,29 @@ class EmailService {
             helper.setText(email.text, true)
         }
 
-        // TODO - Try, catch?
+        try {
 
-        sender.send(preparator)
+            sender.send(preparator)
 
-        CrudService.save(email, repository)
+            CrudService.save(email, repository)
+
+            log.info("Successfully sent email to ${email.to}")
+
+        } catch (MailException ex) {
+
+            throw new CaughtException("Could not send email", ex)
+        }
     }
 
     @Async
-    void send(Email email) {
+    final void send(Email email) {
 
-        log.info("Sending email to: ${email.to}")
-
-        Utility.validate(email)
-
-        sendAsync(email)
-
-        log.info("Successfully sent email to ${email.to}")
+        deliver(email)
     }
 
     @Async
-    void send(SimpleMessage message) {
+    final void send(SimpleMessage message) {
 
-        def email = factory.getEmail(
-                message.to,
-                message.subject,
-                message.text
-        )
-
-        send(email)
+        deliver(factory.getEmail(message))
     }
 }
