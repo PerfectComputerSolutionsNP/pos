@@ -1,8 +1,7 @@
 package com.perfectcomputersolutions.pos.controller
 
-import com.perfectcomputersolutions.pos.payload.EntityBatch
+import com.perfectcomputersolutions.pos.payload.Batch
 import com.perfectcomputersolutions.pos.model.ModelEntity
-import com.perfectcomputersolutions.pos.payload.IdBatch
 import io.swagger.annotations.ApiOperation
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -61,7 +60,7 @@ abstract class UnprivilegedCrudController<T extends ModelEntity, ID extends Seri
 
     @PostMapping("/batch")
     @ApiOperation(value = "Persist several entities to storage. This operation does not requires any role.")
-    def saveAll(@RequestBody EntityBatch<T> entities) {
+    def saveAll(@RequestBody Batch<T> entities) {
 
         saveAll(entities, service)
     }
@@ -82,7 +81,7 @@ abstract class UnprivilegedCrudController<T extends ModelEntity, ID extends Seri
 
     @DeleteMapping("/batch")
     @ApiOperation(value = "Delete several entities by their ids. This operation does not requires any role.")
-    def deleteByIds(@RequestBody IdBatch<ID> ids) {
+    def deleteByIds(@RequestBody Batch<ID> ids) {
 
         deleteByIds(ids, service)
     }

@@ -1,8 +1,7 @@
 package com.perfectcomputersolutions.pos.controller
 
-import com.perfectcomputersolutions.pos.payload.EntityBatch
+import com.perfectcomputersolutions.pos.payload.Batch
 import com.perfectcomputersolutions.pos.model.ModelEntity
-import com.perfectcomputersolutions.pos.payload.IdBatch
 import io.swagger.annotations.ApiOperation
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.PathVariable
@@ -34,7 +33,7 @@ abstract class MidPrivilegeCrudController<T extends ModelEntity, ID extends Seri
     @Override
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "Persist several entities to storage. This operation requires the ADMIN role.")
-    def final saveAll(@RequestBody EntityBatch<T> entities) {
+    def final saveAll(@RequestBody Batch<T> entities) {
 
         super.saveAll(entities)
     }
@@ -58,7 +57,7 @@ abstract class MidPrivilegeCrudController<T extends ModelEntity, ID extends Seri
     @Override
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "Delete several entities by their id. This operation requires the ADMIN role.")
-    def final deleteByIds(@RequestBody IdBatch<ID> ids) {
+    def final deleteByIds(@RequestBody Batch<ID> ids) {
 
         super.deleteByIds(ids)
     }

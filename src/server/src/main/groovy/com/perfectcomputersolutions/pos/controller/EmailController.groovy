@@ -1,7 +1,7 @@
 package com.perfectcomputersolutions.pos.controller
 
+import com.perfectcomputersolutions.pos.payload.Batch
 import com.perfectcomputersolutions.pos.service.EmailService
-import com.perfectcomputersolutions.pos.payload.IdBatch
 import com.perfectcomputersolutions.pos.payload.SimpleMessage
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiOperation
@@ -84,7 +84,7 @@ class EmailController {
     @DeleteMapping("/batch")
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "Delete several emails by id. This operation requires the ADMIN role.")
-    def deleteByIds(@RequestBody IdBatch<Long> ids) {
+    def deleteByIds(@RequestBody Batch<Long> ids) {
 
         service.deleteByIds(ids)
 

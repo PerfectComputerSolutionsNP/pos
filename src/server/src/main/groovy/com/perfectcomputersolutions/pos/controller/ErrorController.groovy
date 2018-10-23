@@ -6,14 +6,12 @@ import com.perfectcomputersolutions.pos.exception.MalformedRequestException
 import com.perfectcomputersolutions.pos.exception.ThrownException
 import com.perfectcomputersolutions.pos.exception.NoSuchEntityException
 import com.perfectcomputersolutions.pos.exception.ValidationException
-import io.swagger.annotations.Api
 import org.hibernate.HibernateException
 import org.hibernate.exception.DataException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.dao.DataAccessException
 import org.springframework.http.HttpStatus
-import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 
@@ -36,6 +34,8 @@ class ErrorController {
 
     static final String VIOLATIONS = "violations"
 
+//    @Value('${administrator.email}')
+//    String adminEmail
 
     @ExceptionHandler(Exception.class)
     def handleException(HttpServletRequest req, Exception ex) {
@@ -71,7 +71,7 @@ class ErrorController {
                     break
 
                 default:
-                    status = INTERNAL_SERVER_ERROR
+                    status = BAD_REQUEST
                     break
             }
 
@@ -95,7 +95,7 @@ class ErrorController {
                 case IOException:
 
                 default:
-                    status = INTERNAL_SERVER_ERROR
+                    status = BAD_REQUEST
                     break
             }
 

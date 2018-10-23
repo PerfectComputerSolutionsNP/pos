@@ -13,7 +13,7 @@ tags:
   enabled: false
 
 services:
-  # - mysql
+  - mysql
   - docker
 
 # TODO - Get DB_NAME into string some how
