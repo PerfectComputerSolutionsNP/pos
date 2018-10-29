@@ -12,7 +12,6 @@ import com.perfectcomputersolutions.pos.utility.Utility
 import org.hibernate.exception.ConstraintViolationException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.DataAccessException
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.data.domain.PageRequest
@@ -32,8 +31,6 @@ import org.springframework.data.repository.PagingAndSortingRepository
 abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
 
     private static final Logger log = LoggerFactory.getLogger(CrudService.class)
-
-    @Autowired EmailService emailer
 
     abstract ModelEntityRepository<T, ID> getRepository()
 

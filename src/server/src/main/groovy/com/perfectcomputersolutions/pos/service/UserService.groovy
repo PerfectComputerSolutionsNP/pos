@@ -16,6 +16,7 @@ class UserService extends CrudService<User, Long> {
 
     private static final Logger log = LoggerFactory.getLogger(UserService.class)
 
+    @Autowired EmailService    emailSender
     @Autowired EmailFactory    emailFactory
     @Autowired UserRepository  repository
     @Autowired PasswordEncoder encoder
@@ -77,7 +78,7 @@ class UserService extends CrudService<User, Long> {
         def subject = "Registration confirmation"
         def email   = emailFactory.getEmail(user, user.email, subject, "email/user-registered")
 
-        emailer.send(email)
+        emailSender.deliver(email)
 
         return user
     }

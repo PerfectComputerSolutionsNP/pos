@@ -47,7 +47,5 @@ class HttpRequestInterceptor extends HandlerInterceptorAdapter {
         log.info("${request.method} request to ${request.requestURL} ended at ${end}")
         log.info("Request duration: ${diff} milliseconds")
         log.info("Returning status code ${response.status} to client")
-
-        // TODO - Persist transaction execution time for statistics by endpoint?
     }
 }

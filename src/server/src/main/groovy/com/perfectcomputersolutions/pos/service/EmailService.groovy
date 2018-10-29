@@ -15,7 +15,13 @@ import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.MimeMessageHelper
 import org.springframework.mail.javamail.MimeMessagePreparator
 import org.springframework.scheduling.annotation.Async
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
+import org.springframework.web.context.request.RequestContextHolder
+import org.springframework.web.context.request.ServletRequestAttributes
+import org.springframework.web.servlet.HandlerExceptionResolver
+
+import javax.servlet.http.HttpServletRequest
 
 // https://www.baeldung.com/spring-email
 // https://www.youtube.com/watch?v=9DLX8PMXaw0
@@ -27,6 +33,8 @@ import org.springframework.stereotype.Service
 class EmailService {
 
     // TODO - Put a limit on how many emails can be sent per time frame to avoid potential spam if hacked
+    // Use a circular buffer or a token bucket
+    // https://stackoverflow.com/questions/1407113/throttling-method-calls-to-m-requests-in-n-seconds
 
     private static final Logger log = LoggerFactory.getLogger(EmailService.class)
 
@@ -60,7 +68,8 @@ class EmailService {
         CrudService.deleteByIds(ids, repository)
     }
 
-    private void deliver(Email email) {
+    @Async
+    void deliver(Email email) {
 
         log.info("Sending email to: ${email.to}")
 
@@ -87,17 +96,5 @@ class EmailService {
 
             throw new CaughtException("Could not send email", ex)
         }
-    }
-
-    @Async
-    final void send(Email email) {
-
-        deliver(email)
-    }
-
-    @Async
-    final void send(SimpleMessage message) {
-
-        deliver(factory.getEmail(message))
     }
 }

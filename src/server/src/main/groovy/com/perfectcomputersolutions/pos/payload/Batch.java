@@ -13,7 +13,7 @@ public class Batch<T> implements Iterable<T> {
 
     @NotNull
     @NotEmpty
-    @ApiModelProperty(notes = "Set of values.")
+    @ApiModelProperty(notes = "Set of values to be submitted or returned.")
     private Set<T> batch;
 
     @Override

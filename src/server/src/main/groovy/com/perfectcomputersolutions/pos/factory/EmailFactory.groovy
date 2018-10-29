@@ -49,7 +49,10 @@ class EmailFactory {
         return email
     }
 
-    def getEmail(String to, String subject, String text) {
+    def getEmail(
+            String to,
+            String subject,
+            String text) {
 
         return email(to, subject, "email/simple-message", ["text" : text])
     }

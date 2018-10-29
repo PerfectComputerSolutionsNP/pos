@@ -18,6 +18,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.security.web.access.AccessDeniedHandler
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
@@ -30,6 +31,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    // https://developer.okta.com/blog/2018/07/30/10-ways-to-secure-spring-boot
 
     @Autowired private JwtAuthenticationEntryPoint unauthorizedHandler
     @Autowired private JwtUserDetailsService       jwtUserDetailsService
@@ -130,7 +133,6 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
                 "/configuration/ui",
                 "/swagger-resources",
                 "/configuration/security",
-                "/swagger-ui.html",
                 "/webjars/**",
                 "/swagger-resources/configuration/ui",
                 "/swagger-resources/configuration/security",

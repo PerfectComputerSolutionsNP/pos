@@ -7,7 +7,11 @@ import com.perfectcomputersolutions.pos.exception.ValidationException
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Component
+import org.springframework.web.context.request.RequestAttributes
+import org.springframework.web.context.request.RequestContextHolder
+import org.springframework.web.context.request.ServletRequestAttributes
 
+import javax.servlet.http.HttpServletRequest
 import javax.validation.Validation
 import javax.validation.Validator
 
@@ -18,8 +22,6 @@ import javax.validation.Validator
 class Utility {
 
     private static final Validator validator = Validation.buildDefaultValidatorFactory().getValidator()
-
-    // TODO - Write function to verify a Date is in Greenwich Mean Time
 
     static Set<Violation> violations(Object entity) {
 
@@ -94,5 +96,4 @@ class Utility {
 
         return null
     }
-
 }
