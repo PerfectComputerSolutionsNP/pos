@@ -1,6 +1,13 @@
 <app-two-page [left]=3 [right]=9>
 
   <div left>Users</div>
-  <div right>Selected User</div>
+  <div left>
+
+    <button type="button btn-lg" class=" list-group btn btn-outline-dark col-xs-12 col-sm-11" *ngFor="let item of p.content"> {{item.username}} </button>
+  </div>
+
+
+
+  <div right><app-user-registration></app-user-registration></div>
 
 </app-two-page>
