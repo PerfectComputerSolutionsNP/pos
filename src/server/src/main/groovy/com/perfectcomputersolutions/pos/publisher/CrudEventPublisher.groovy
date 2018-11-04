@@ -8,6 +8,7 @@ import com.perfectcomputersolutions.pos.event.SaveAllEvent
 import com.perfectcomputersolutions.pos.event.SaveEvent
 import com.perfectcomputersolutions.pos.event.UpdateEvent
 import com.perfectcomputersolutions.pos.model.ModelEntity
+import com.perfectcomputersolutions.pos.payload.Batch
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Component
 
@@ -20,9 +21,9 @@ class CrudEventPublisher<T extends ModelEntity, ID extends Serializable> extends
         super(publisher)
     }
 
-    def findById(T entity, Type type) {
+    def findById(ID id, T entity, Type type) {
 
-        publish(new FindByIdEvent(entity, type))
+        publish(new FindByIdEvent(id, entity, type))
     }
 
     def findAll(Iterable<T> entities, Type type) {
@@ -30,28 +31,28 @@ class CrudEventPublisher<T extends ModelEntity, ID extends Serializable> extends
         publish(new FindAllEvent(entities, type))
     }
 
-    def save(T entity, Type type) {
+    def save(T input, T output, Type type) {
 
-        publish(new SaveEvent(entity, type))
+        publish(new SaveEvent(input, output, type))
     }
 
-    def saveAll(Type type) {
+    def saveAll(Batch<T> entities, Type type) {
 
-        publish(new SaveAllEvent(type))
+        publish(new SaveAllEvent(entities, type))
     }
 
-    def update(T entity, Type type) {
+    def update(ID id, T input, T output, Type type) {
 
-        publish(new UpdateEvent(entity, type))
+        publish(new UpdateEvent(id, input, output, type))
     }
 
-    def deleteById(T entity, Type type) {
+    def deleteById(ID id, T entity, Type type) {
 
-        publish(new DeleteByIdEvent(entity, type))
+        publish(new DeleteByIdEvent(id, entity, type))
     }
 
-    def deleteByIds(Type type) {
+    def deleteByIds(Batch<ID> ids, Type type) {
 
-        publish(new DeleteByIdsEvent(type))
+        publish(new DeleteByIdsEvent(ids, type))
     }
 }

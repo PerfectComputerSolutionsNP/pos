@@ -53,7 +53,7 @@ class CategoryEventListener {
     @AsyncEventListener
     def update(UpdateEvent<Category> event) {
 
-        log.info("UPDATED A CATEGORY: ${event.entity}")
+        log.info("UPDATED A CATEGORY: ${event.output}")
     }
 
     @AsyncEventListener

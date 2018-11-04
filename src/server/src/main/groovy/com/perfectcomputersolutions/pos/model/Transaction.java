@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
@@ -13,6 +14,7 @@ import java.util.Set;
  * ModelEntity that represents a transaction made in the POS system.
  */
 @Entity
+@Table(name = "TRANSACTION")
 public class Transaction extends ModelEntity implements Payable {
 
     @ManyToMany(mappedBy = "transactions")

@@ -18,21 +18,21 @@ abstract class InventoryController<T extends NamedEntity, ID extends Serializabl
 
     @GetMapping("/exists")
     @ApiOperation(value = "Determine if an entity exists by name. This operation does not requires any role.", authorizations = [@Authorization(value = "Bearer")])
-    def final existsByName(@RequestParam String name) {
+    def existsByName(@RequestParam String name) {
 
         existsByName(name, service)
     }
 
     @GetMapping("/name")
     @ApiOperation(value = "Find an entity by it's name. This operation does not requires any role.", authorizations = [@Authorization(value = "Bearer")])
-    def final findByName(@RequestParam String name) {
+    def findByName(@RequestParam String name) {
 
         findByName(name, service)
     }
 
     @GetMapping("/search")
     @ApiOperation(value = "Search for entities that contain a give name. This operation does not requires any role.", authorizations = [@Authorization(value = "Bearer")])
-    def final search(
+    def search(
             @RequestParam String            name,
             @RequestParam int               page,
             @RequestParam int               size,

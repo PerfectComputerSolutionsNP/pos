@@ -8,16 +8,18 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 
-@Entity(name = "product")
+@Entity()
+@Table(name = "PRODUCT")
 public class Product extends NamedEntity implements Payable {
 
-    @ManyToMany(cascade = { CascadeType.ALL })
+    @ManyToMany(cascade = {CascadeType.ALL})
     @JoinTable(
             name = "transaction_product",
             joinColumns = { @JoinColumn(name = "product_id") },

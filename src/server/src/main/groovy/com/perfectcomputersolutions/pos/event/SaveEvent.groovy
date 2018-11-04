@@ -6,15 +6,14 @@ import java.lang.reflect.Type
 
 class SaveEvent<T extends ModelEntity> extends GenericEvent<T> {
 
-    T entity
+    final T input
+    final T output
 
-    SaveEvent(T entity, Type type) {
+    SaveEvent(T input, T output, Type type) {
 
         super(type)
 
-        if (entity == null)
-            throw new IllegalArgumentException("Entity argument must not be null")
-
-        this.entity = entity
+        this.input  = Objects.requireNonNull(input, "Input must not be null")
+        this.output = Objects.requireNonNull(output, "Output bust not be null")
     }
 }

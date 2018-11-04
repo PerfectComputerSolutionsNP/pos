@@ -6,14 +6,15 @@ import java.lang.reflect.Type
 
 class UpdateEvent<T extends ModelEntity> extends GenericEvent<T> {
 
-    T entity
+    final Serializable id
+    final T            input
+    final T            output
 
-    UpdateEvent(T entity, Type type) {
+    UpdateEvent(Serializable id, T input, T output, Type type) {
         super(type)
 
-        if (entity == null)
-            throw new IllegalAccessException("Entity must not be null")
-
-        this.entity = entity
+        this.id     = Objects.requireNonNull(id, "Id must not be null")
+        this.input  = Objects.requireNonNull(input, "Input entity must not be null")
+        this.output = Objects.requireNonNull(output, "Output entity must not be null")
     }
 }

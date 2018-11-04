@@ -6,14 +6,13 @@ import java.lang.reflect.Type
 
 class FindByIdEvent<T extends ModelEntity> extends GenericEvent<T> {
 
-    T entity
+    final Serializable id
+    final T            entity
 
-    FindByIdEvent(T entity, Type type) {
+    FindByIdEvent(Serializable id, T entity, Type type) {
         super(type)
 
-        if (entity == null)
-            throw new IllegalArgumentException("Entity must not be null")
-
-        this.entity = entity
+        this.id     = Objects.requireNonNull(id, "Id must not be null")
+        this.entity = Objects.requireNonNull(entity, "Entity must not be null")
     }
 }

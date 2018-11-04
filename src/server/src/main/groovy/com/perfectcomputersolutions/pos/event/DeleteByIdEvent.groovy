@@ -6,14 +6,13 @@ import java.lang.reflect.Type
 
 class DeleteByIdEvent<T extends ModelEntity> extends GenericEvent<T> {
 
-    T entity
+    Serializable id
+    T            entity
 
-    DeleteByIdEvent(T entity, Type type) {
+    DeleteByIdEvent(Serializable id, T entity, Type type) {
         super(type)
 
-        if (entity == null)
-            throw new IllegalAccessException("")
-
-        this.entity = entity
+        this.id     = Objects.requireNonNull(id, "Id must not be null")
+        this.entity = Objects.requireNonNull(entity, "Entity must not be null")
     }
 }

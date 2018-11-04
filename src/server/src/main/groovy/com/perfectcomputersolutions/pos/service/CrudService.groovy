@@ -299,7 +299,7 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
 
         T result = findById(id, repository)
 
-        publisher.findById(result, type)
+        publisher.findById(id, result, type)
 
         return result
     }
@@ -326,7 +326,7 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
 
         T result = save(entity, repository)
 
-        publisher.save(result, type)
+        publisher.save(entity, result, type)
 
         return result
     }
@@ -335,14 +335,14 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
 
         saveAll(entities, repository)
 
-        publisher.saveAll(type)
+        publisher.saveAll(entities, type)
     }
 
     T update(ID id, T entity) {
 
         T result = update(id, entity, repository)
 
-        publisher.update(entity, type)
+        publisher.update(id, result, entity, type)
 
         return result
     }
@@ -351,7 +351,7 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
 
         T result = deleteById(id, repository)
 
-        publisher.deleteById(result, type)
+        publisher.deleteById(id, result, type)
 
         return result
     }
@@ -360,6 +360,6 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
 
         deleteByIds(ids, repository)
 
-        publisher.deleteByIds(type)
+        publisher.deleteByIds(ids, type)
     }
 }
