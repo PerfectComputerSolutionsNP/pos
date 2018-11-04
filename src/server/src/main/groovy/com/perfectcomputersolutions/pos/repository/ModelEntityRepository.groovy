@@ -23,5 +23,5 @@ interface ModelEntityRepository<T extends ModelEntity, ID extends Serializable>
     // https://stackoverflow.com/questions/36763440/how-do-you-handle-with-bulk-deleting-by-an-array-of-ids-in-spring-data-jpa
 
     @Transactional
-    void deleteByIdIn(Set<ID> ids)
+    void deleteByIdIn(Collection<ID> ids)
 }

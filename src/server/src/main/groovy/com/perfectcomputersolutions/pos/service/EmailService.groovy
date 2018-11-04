@@ -1,11 +1,10 @@
 package com.perfectcomputersolutions.pos.service
 
 import com.perfectcomputersolutions.pos.exception.CaughtException
-import com.perfectcomputersolutions.pos.factory.EmailFactory
-import com.perfectcomputersolutions.pos.model.Email
+import com.perfectcomputersolutions.pos.factory.NotificationFactory
+import com.perfectcomputersolutions.pos.model.Notification
 import com.perfectcomputersolutions.pos.payload.Batch
 import com.perfectcomputersolutions.pos.repository.EmailRepository
-import com.perfectcomputersolutions.pos.payload.SimpleMessage
 import com.perfectcomputersolutions.pos.utility.Utility
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -15,13 +14,7 @@ import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.MimeMessageHelper
 import org.springframework.mail.javamail.MimeMessagePreparator
 import org.springframework.scheduling.annotation.Async
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
-import org.springframework.web.context.request.RequestContextHolder
-import org.springframework.web.context.request.ServletRequestAttributes
-import org.springframework.web.servlet.HandlerExceptionResolver
-
-import javax.servlet.http.HttpServletRequest
 
 // https://www.baeldung.com/spring-email
 // https://www.youtube.com/watch?v=9DLX8PMXaw0
@@ -38,9 +31,9 @@ class EmailService {
 
     private static final Logger log = LoggerFactory.getLogger(EmailService.class)
 
-    @Autowired JavaMailSender  sender
-    @Autowired EmailRepository repository
-    @Autowired EmailFactory    factory
+    @Autowired JavaMailSender      sender
+    @Autowired EmailRepository     repository
+    @Autowired NotificationFactory factory
 
     def findAll(int page, int size) {
 
@@ -69,7 +62,7 @@ class EmailService {
     }
 
     @Async
-    void deliver(Email email) {
+    void deliver(Notification email) {
 
         log.info("Sending email to: ${email.to}")
 
@@ -88,7 +81,7 @@ class EmailService {
 
             sender.send(preparator)
 
-            CrudService.save(email, repository)
+            // TODO - Save this information to storage who was sent what?
 
             log.info("Successfully sent email to ${email.to}")
 

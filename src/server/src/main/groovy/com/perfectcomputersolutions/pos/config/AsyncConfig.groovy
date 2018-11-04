@@ -13,6 +13,9 @@ import java.util.concurrent.Executor
 @Configuration
 class AsyncConfig implements AsyncConfigurer {
 
+    // https://stackoverflow.com/questions/23732089/how-to-enable-request-scope-in-async-task-executor
+
+    // https://wiki.sei.cmu.edu/confluence/display/java/TPS03-J.+Ensure+that+tasks+executing+in+a+thread+pool+do+not+fail+silently
     // TODO - https://www.baeldung.com/spring-security-async-principal-propagation
 
     // https://www.baeldung.com/spring-async

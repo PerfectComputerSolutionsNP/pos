@@ -1,6 +1,6 @@
 package com.perfectcomputersolutions.pos.controller
 
-import com.perfectcomputersolutions.pos.factory.EmailFactory
+import com.perfectcomputersolutions.pos.factory.NotificationFactory
 import com.perfectcomputersolutions.pos.payload.Batch
 import com.perfectcomputersolutions.pos.service.EmailService
 import com.perfectcomputersolutions.pos.payload.SimpleMessage
@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController
 class EmailController {
 
     @Autowired EmailService service
-    @Autowired EmailFactory factory
+    @Autowired NotificationFactory factory
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")

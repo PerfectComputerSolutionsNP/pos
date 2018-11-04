@@ -17,6 +17,11 @@ class AsyncExceptionHandler implements AsyncUncaughtExceptionHandler {
     @Override
     void handleUncaughtException(Throwable throwable, Method method, Object... params) {
 
+        // Get the method that was called, its parameter types, the values
+        // and log that to standard error. This give us a little bit of context
+        // as to why the exception was thrown. We then send the exception to
+        // the remote Sentry server.
+
         def types = method.parameterTypes
         def sj    = new StringJoiner("\n", "", "")
         def msg   = "Asyncronous call to method ${method.toString()}() threw ${throwable.class.simpleName} on thread: ${Thread.currentThread().id}"
@@ -35,7 +40,7 @@ class AsyncExceptionHandler implements AsyncUncaughtExceptionHandler {
 
     private void sendToSentry(String msg, Throwable throwable) {
 
-        // TODO - Send context (the current HTTP request) if possible to provide more information
+        // TODO - Send the context (HTTP request that started the thread) if possible to provide more information
 
         def eventBuilder = new EventBuilder()
                 .withMessage(msg)

@@ -7,11 +7,7 @@ import com.perfectcomputersolutions.pos.exception.ValidationException
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Component
-import org.springframework.web.context.request.RequestAttributes
-import org.springframework.web.context.request.RequestContextHolder
-import org.springframework.web.context.request.ServletRequestAttributes
 
-import javax.servlet.http.HttpServletRequest
 import javax.validation.Validation
 import javax.validation.Validator
 
@@ -20,6 +16,8 @@ import javax.validation.Validator
  */
 @Component
 class Utility {
+
+    // https://stackoverflow.com/questions/22678891/how-to-get-user-id-from-customuser-on-spring-security
 
     private static final Validator validator = Validation.buildDefaultValidatorFactory().getValidator()
 
@@ -82,18 +80,29 @@ class Utility {
         }
     }
 
-    static UserDetails getCurrentUserDetails() {
+    static Optional<UserDetails> getCurrentUserDetails() {
 
-        def authentication = SecurityContextHolder.getContext()
-                                                  .getAuthentication()
+        def principal      = null
+        def authentication = SecurityContextHolder.context
+                                                  .authentication
 
         if (authentication != null) {
 
-            def principal = authentication.principal
-
-            return principal instanceof UserDetails ? (UserDetails) principal : null
+            principal = authentication.principal
+            principal = principal instanceof UserDetails ? (UserDetails) principal : null
         }
 
-        return null
+        return Optional.of(principal)
+    }
+
+    static Optional<String> getCurrentUsername() {
+
+        def username = null
+        def details  = currentUserDetails
+
+        if (details.present)
+            username = details.get().username
+
+        return Optional.of(username)
     }
 }

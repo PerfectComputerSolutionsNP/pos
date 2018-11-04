@@ -47,14 +47,14 @@ public class JwtUser implements UserDetails {
             boolean enabled,
             Date lastPasswordResetDate) {
 
-        this.id = id;
-        this.username = username;
-        this.firstname = firstname;
-        this.lastname = lastname;
-        this.email = email;
-        this.password = password;
-        this.authorities = authorities;
-        this.enabled = enabled;
+        this.id                    = id;
+        this.username              = username;
+        this.firstname             = firstname;
+        this.lastname              = lastname;
+        this.email                 = email;
+        this.password              = password;
+        this.authorities           = authorities;
+        this.enabled               = enabled;
         this.lastPasswordResetDate = lastPasswordResetDate;
     }
 

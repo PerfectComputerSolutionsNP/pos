@@ -4,7 +4,10 @@ insert into category (id, name) values
   (3, 'Soap'),
   (4, 'Service'),
   (5, 'Food'),
-  (6, 'Electronics');
+  (6, 'Electronics'),
+  (7, 'Shirt'),
+  (8, 'Detergent'),
+  (9, 'Laundry Bags');
 
 insert into product(category_id, name, description, cost) values
   (1, 'T-Shirt',     'A basic T-Shirt',     15000),
@@ -14,4 +17,20 @@ insert into product(category_id, name, description, cost) values
   (2, 'Clorox',      'Clorox bleach',       5000),
   (3, 'Tide',        'Good detergent',      8000),
   (3, 'No-Name',     'Bar detergent',       6000),
-  (4, 'Cookies',     'Chips-A-Hoy',         3000);
+  (4, 'Cookies',     'Chips-A-Hoy',         3000),
+  (5, 'Meat',        'Chicken',             2000),
+  (5, 'Rice',        'Carolina',            250000),
+  (6, 'Television',  'LG',                  3500000),
+  (6, 'Radio',       'Radio-Bemba',         123400),
+  (7, 'Shirt',       'White shirts',        25000),
+  (7, 'Pedro',       'Color shirt',         20000),
+  (8, 'Sun Products','150 oz',              18000000),
+  (8, 'Wisk',        '150 oz',              125000),
+  (8, 'Snuggle',     '150 oz',              125000),
+  (8, 'Sunlight',    '150 oz',              125000),
+  (8, 'Arm & Hammer','150 oz',              125000),
+  (9, 'Juan',        'Green',                 5000),
+  (9, 'Chips-A-Hoy', 'Blue',                  5000),
+  (9, 'Chipotle',    'Red',                   5000),
+  (9, 'Small',       'White',                 5000),
+  (9, 'Large',       'White',                 5000);

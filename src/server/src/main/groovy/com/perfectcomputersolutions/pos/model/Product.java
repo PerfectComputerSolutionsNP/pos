@@ -1,17 +1,29 @@
 package com.perfectcomputersolutions.pos.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity(name = "product")
-public class Product extends NamedEntity {
+public class Product extends NamedEntity implements Payable {
+
+    @ManyToMany(cascade = { CascadeType.ALL })
+    @JoinTable(
+            name = "transaction_product",
+            joinColumns = { @JoinColumn(name = "product_id") },
+            inverseJoinColumns = { @JoinColumn(name = "transaction_id") }
+    )
+    Set<Transaction> transactions = new HashSet<>();
 
     @NotNull
     @ManyToOne
@@ -27,17 +39,10 @@ public class Product extends NamedEntity {
     @Min(0)
     @NotNull
     @ApiModelProperty(notes = "The cost of the product in mills. A mill is 1/1000 of a United States dollar")
-    public Long cost;
+    public long cost;
 
-    @JsonProperty
-    public Long getCents() {
-
-        return cost / 10;
-    }
-
-    @JsonProperty
-    public Long getDollars() {
-
-        return cost / 1000;
+    @Override
+    public long getCost() {
+        return cost;
     }
 }

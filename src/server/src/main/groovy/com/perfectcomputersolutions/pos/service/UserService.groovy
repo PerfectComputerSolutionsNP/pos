@@ -1,8 +1,9 @@
 package com.perfectcomputersolutions.pos.service
 
 import com.perfectcomputersolutions.pos.exception.ValidationException
-import com.perfectcomputersolutions.pos.factory.EmailFactory
+import com.perfectcomputersolutions.pos.factory.NotificationFactory
 import com.perfectcomputersolutions.pos.model.User
+import com.perfectcomputersolutions.pos.publisher.CrudEventPublisher
 import com.perfectcomputersolutions.pos.repository.UserRepository
 import com.perfectcomputersolutions.pos.utility.Violation
 import org.slf4j.Logger
@@ -16,10 +17,10 @@ class UserService extends CrudService<User, Long> {
 
     private static final Logger log = LoggerFactory.getLogger(UserService.class)
 
-    @Autowired EmailService    emailSender
-    @Autowired EmailFactory    emailFactory
-    @Autowired UserRepository  repository
-    @Autowired PasswordEncoder encoder
+    @Autowired EmailService        emailService
+    @Autowired NotificationFactory notificationFactory
+    @Autowired UserRepository      repository
+    @Autowired PasswordEncoder     encoder
 
     boolean existsByUsername(String username) {
 
@@ -74,12 +75,6 @@ class UserService extends CrudService<User, Long> {
             ))
         }
 
-        def user    = (User) super.save(entity)
-        def subject = "Registration confirmation"
-        def email   = emailFactory.getEmail(user, user.email, subject, "email/user-registered")
-
-        emailSender.deliver(email)
-
-        return user
+        return (User) super.save(entity)
     }
 }

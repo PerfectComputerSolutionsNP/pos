@@ -6,17 +6,13 @@ import io.swagger.annotations.ApiModelProperty;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -27,7 +23,7 @@ import javax.validation.constraints.Size;
 @Table(name = "USER")
 public class User extends PersonEntity {
 
-    // TODO - notifier, join with Transaction table (lazy association)
+    // TODO - Do not serialize password, but still require it via Jackson annotations
 
     // https://springframework.guru/spring-boot-restful-api-documentation-with-swagger-2/
     // https://stackoverflow.com/questions/17393812/json-and-java-circular-reference
@@ -43,7 +39,7 @@ public class User extends PersonEntity {
     @Size(min = 4, max = 100)
     @Column(name = "PASSWORD", length = 100)
     @ApiModelProperty(notes = "User's password should be a string between 4 and 100 characters inclusive.")
-    private String password;
+    public String password;
 
     @NotNull
     @Column(name = "ENABLED")

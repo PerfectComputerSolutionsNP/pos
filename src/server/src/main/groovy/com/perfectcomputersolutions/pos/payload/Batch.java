@@ -6,26 +6,29 @@ import io.swagger.annotations.ApiModelProperty;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
 public class Batch<T> implements Iterable<T> {
 
+    // TODO - Why does'nt Set<T> work?
+
     @NotNull
     @NotEmpty
     @ApiModelProperty(notes = "Set of values to be submitted or returned.")
-    private Set<T> batch;
+    private List<T> batch;
 
     @Override
     public String toString() {
         return Utility.serialize(this);
     }
 
-    public Set<T> getBatch() {
+    public List<T> getBatch() {
         return batch;
     }
 
-    public void setBatch(Set<T> batch) {
+    public void setBatch(List<T> batch) {
         this.batch = batch;
     }
 

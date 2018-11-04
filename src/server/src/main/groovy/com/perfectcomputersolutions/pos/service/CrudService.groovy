@@ -1,10 +1,12 @@
 package com.perfectcomputersolutions.pos.service
 
+import com.google.common.reflect.TypeToken
 import com.perfectcomputersolutions.pos.exception.CaughtException
 import com.perfectcomputersolutions.pos.exception.MalformedRequestException
 import com.perfectcomputersolutions.pos.exception.NoSuchEntityException
 import com.perfectcomputersolutions.pos.exception.ValidationException
 import com.perfectcomputersolutions.pos.payload.Batch
+import com.perfectcomputersolutions.pos.publisher.CrudEventPublisher
 import com.perfectcomputersolutions.pos.repository.ModelEntityRepository
 import com.perfectcomputersolutions.pos.utility.Violation
 import com.perfectcomputersolutions.pos.model.ModelEntity
@@ -12,6 +14,7 @@ import com.perfectcomputersolutions.pos.utility.Utility
 import org.hibernate.exception.ConstraintViolationException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.DataAccessException
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.data.domain.PageRequest
@@ -30,7 +33,16 @@ import org.springframework.data.repository.PagingAndSortingRepository
  */
 abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
 
+    // https://github.com/google/guava/wiki/ReflectionExplained
+
+    // TODO - https://www.baeldung.com/spring-annotation-bean-pre-processor
+
     private static final Logger log = LoggerFactory.getLogger(CrudService.class)
+
+    @Autowired CrudEventPublisher<T, ID> publisher
+
+    def final typeToken = new TypeToken<T>(this.class) {}
+    def final type      = typeToken.type
 
     abstract ModelEntityRepository<T, ID> getRepository()
 
@@ -92,6 +104,9 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
     }
 
     static <E extends ModelEntity, I extends Serializable> E save(E entity, CrudRepository<E, I> repository) {
+
+        if (entity == null)
+            throw new IllegalArgumentException("Entity must not be null")
 
         log.info("Creating new ${entity.class.simpleName}")
 
@@ -282,41 +297,69 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
 
     T findById(ID id) {
 
-        findById(id, repository)
+        T result = findById(id, repository)
+
+        publisher.findById(result, type)
+
+        return result
     }
 
     Iterable<T> findAll(int page, int size, Optional<Boolean> sorted, Optional<String> property) {
 
-        findAll(repository, page, size, sorted, property)
+        def results = findAll(repository, page, size, sorted, property)
+
+        publisher.findAll(results, type)
+
+        return results
     }
 
     Iterable<T> findAllSorted(int page, int size, Sort.Direction direction, String... properties) {
 
-        findAllSorted(repository, page, size, direction, properties)
+        def results = findAllSorted(repository, page, size, direction, properties)
+
+        publisher.findAll(results, type)
+
+        return results
     }
 
     T save(T entity) {
 
-        save(entity, repository)
+        T result = save(entity, repository)
+
+        publisher.save(result, type)
+
+        return result
     }
 
     void saveAll(Batch<T> entities) {
 
         saveAll(entities, repository)
+
+        publisher.saveAll(type)
     }
 
     T update(ID id, T entity) {
 
-        update(id, entity, repository)
+        T result = update(id, entity, repository)
+
+        publisher.update(entity, type)
+
+        return result
     }
 
     T deleteById(ID id) {
 
-        deleteById(id, repository)
+        T result = deleteById(id, repository)
+
+        publisher.deleteById(result, type)
+
+        return result
     }
 
     void deleteByIds(Batch<ID> ids) {
 
         deleteByIds(ids, repository)
+
+        publisher.deleteByIds(type)
     }
 }
