@@ -3,6 +3,8 @@ import { User }                    from "../../model/user.model";
 import { APIService }              from "../../api.service";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { config }                  from "../../service/config.service";
+import {Page} from '../../model/page.model';
+import {Authority} from '../../model/authority.model';
 
 @Component({
   selector: 'app-user-registration',
@@ -10,6 +12,17 @@ import { config }                  from "../../service/config.service";
   styleUrls: ['./user-registration.component.css']
 })
 export class UserRegistrationComponent implements OnInit {
+
+
+  getAuthority() {
+
+    const role : Authority = {
+
+      id : 0,
+      name : 'admin'
+    }
+
+  }
 
   newUser: any;
   // // headers= new HttpHeaders().set('Authorization', 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTUzOTA2NTg5MiwiaWF0IjoxNTM4NDYxMDkyfQ.LdK2UHQ6rNXWbqee8GLFPZJ5F3pnVxQMN6A_ZL4xzMnQ-NMJtkbUezGqVQGyd36N36XaeRgKtoXgyXtWk35g8A');
@@ -36,7 +49,7 @@ export class UserRegistrationComponent implements OnInit {
 
 
   model : any = {};
-
+  a : any;
   onSubmit() {
 
     const data    : User = {
@@ -59,6 +72,9 @@ export class UserRegistrationComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.a = this.getAuthority();
+
+    console.log(this.a);
   }
 
 }

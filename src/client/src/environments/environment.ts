@@ -1,6 +1,6 @@
 const api = {
   protocol : 'http',
-  host     : 'localhost',
+  host     : 'api.pos.jabaridash.com',
   port     : '8080'
 
 };

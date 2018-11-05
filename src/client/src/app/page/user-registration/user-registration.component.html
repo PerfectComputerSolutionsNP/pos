@@ -41,6 +41,12 @@
               <div *ngIf="password.errors.minlength">Password must be at least 6 characters</div>
             </div>
           </div>
+
+          <label class="checkbox-inline"> <input type="checkbox" value="" *ngFor="let i of a" > {{i}}  </label>
+
+
+
+
           <div class="form-group">
             <button class="btn btn-primary">Register</button>
           </div>

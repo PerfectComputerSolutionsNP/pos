@@ -11,6 +11,7 @@ export const config = {
       product   : `${environment.apiBaseUrl}/product`,
       category  : `${environment.apiBaseUrl}/category`,
       auth      : `${environment.apiBaseUrl}/auth`,
+      role      : `${environment.apiBaseUrl}/role`,
     }
 
   }

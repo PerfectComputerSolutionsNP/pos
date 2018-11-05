@@ -3,16 +3,16 @@
   <div left>Category
 
 
-    <div class="pre-scrollable">
+    <div>
       <button type="button btn-lg" class=" list-group btn btn-outline-dark col-xs-12 col-sm-11" *ngFor="let item of p.content"> {{item.name}} </button>
     </div>
 
   </div>
   <div right>Products
 
-  <div class="pre-scrollable">
+  <div>
     <!--<li *ngFor="let item of p.content"> {{item.name}}</li>-->
-    <button   type="button btn-lg"  class="btn btn-dark col-xs-2 col-sm-2"  *ngFor="let item of p.content" >   {{ item.name }}   </button>
+    <button   type="button btn-lg"  class="btn btn-dark col-xs-4 col-sm-1" data-toggle="tooltip"  *ngFor="let item of p1.content" >   {{ item.name }}   </button>
 
   </div>
   </div>

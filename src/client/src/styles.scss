@@ -7,6 +7,10 @@ body {
 
 .btn{
   margin: 5px;
+  text-overflow : ellipsis !important;
+  display       : inline-block !important;
+  overflow      : hidden !important;
+  white-space   : nowrap !important;
 }
 
 .full-height {
@@ -21,6 +25,8 @@ body {
   border-width  : thin;
   border-radius : 5px;
   box-shadow    : 5px 5px #36454f;
+  overflow      : auto;
+  size          : letter;
 
   background-color: white;
 }
@@ -28,7 +34,9 @@ body {
 .page {
 
   margin:2%;
+
 }
+
 
 .center {
 
