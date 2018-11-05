@@ -31,7 +31,7 @@ class NotificationFactory {
         return engine.process(template, context)
     }
 
-    private Notification notification(String to, String subject, String template, Map<String, ?> variables) {
+    Notification getNotification(String to, String subject, String template, Map<String, ?> variables) {
 
         log.info("Building email for ${to} from template: ${template}")
 
@@ -42,7 +42,6 @@ class NotificationFactory {
         email.subject  = subject
         email.template = template
         email.text     = text
-        email.created  = new Timestamp(System.currentTimeMillis())
 
         log.info("Successfully generated email from template: ${template}")
 
@@ -54,7 +53,16 @@ class NotificationFactory {
             String subject,
             String text) {
 
-        return notification(to, subject, "email/simple-message", ["text": text])
+        return getNotification(to, subject, "email/simple-message", ["text": text])
+    }
+
+    def getEmail(SimpleMessage message) {
+
+        getEmail(
+                message.to,
+                message.subject,
+                message.text
+        )
     }
 
     def getEmail(
@@ -67,15 +75,6 @@ class NotificationFactory {
                 (Introspector.decapitalize(object.class.simpleName)) : object
         ]
 
-        return notification(to, subject, template, variables)
-    }
-
-    def getEmail(SimpleMessage message) {
-
-        getEmail(
-                message.to,
-                message.subject,
-                message.text
-        )
+        return getNotification(to, subject, template, variables)
     }
 }

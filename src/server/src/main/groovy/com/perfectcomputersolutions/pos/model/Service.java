@@ -9,21 +9,14 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 
-@Entity()
-@Table(name = "PRODUCT")
-public class Product extends NamedEntity implements Payable {
-
-    @ManyToMany(
-            cascade  = {CascadeType.ALL},
-            mappedBy = "products"
-    )
-    Set<Transaction> transactions = new HashSet<>();
+@Entity
+@Table(name = "SERVICE")
+class Service extends NamedEntity implements Payable {
 
     @NotNull
     @ManyToOne
@@ -31,18 +24,19 @@ public class Product extends NamedEntity implements Payable {
     @ApiModelProperty(notes = "Category that the product belongs to")
     public Category category;
 
+    @ManyToMany(
+            mappedBy = "services",
+            cascade  = {CascadeType.ALL}
+    )
+    Set<Transaction> transactions = new HashSet<>();
+
     @NotNull
     @NotEmpty
     @ApiModelProperty(notes = "A detailed string that describes the product")
     public String description;
 
-    @Min(0)
-    @NotNull
-    @ApiModelProperty(notes = "The cost of the product in mills. A mill is 1/1000 of a United States dollar")
-    public long cost;
-
     @Override
     public long getCost() {
-        return cost;
+        return 0;
     }
 }

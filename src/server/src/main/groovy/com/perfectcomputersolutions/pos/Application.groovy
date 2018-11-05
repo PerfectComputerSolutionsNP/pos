@@ -19,6 +19,5 @@ class Application implements CommandLineRunner {
   @Override
   void run(String... args) throws Exception {
 
-    // Do stuff once application is fully initialized
   }
 }

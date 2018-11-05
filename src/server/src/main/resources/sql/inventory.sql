@@ -9,6 +9,12 @@ insert into category (id, name) values
   (8, 'Detergent'),
   (9, 'Laundry Bags');
 
+insert into service(category_id, name, description) values
+  (4, 'Wash', 'Wash some clothes'),
+  (4, 'Dry',  'Dry some clothes'),
+  (4, 'Fold', 'Fold some clothes'),
+  (4, 'Iron', 'Iron some clothes');
+
 insert into product(category_id, name, description, cost) values
   (1, 'T-Shirt',     'A basic T-Shirt',     15000),
   (1, 'Dress Shirt', 'A basic dress-Shirt', 20000),

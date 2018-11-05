@@ -5,8 +5,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -24,6 +27,14 @@ import javax.validation.constraints.Size;
 public class User extends PersonEntity {
 
     // TODO - Do not serialize password, but still require it via Jackson annotations
+
+    @ManyToMany(cascade = {CascadeType.ALL})
+    @JoinTable(
+            name = "user_notification",
+            joinColumns = { @JoinColumn(name = "user_id") },
+            inverseJoinColumns = { @JoinColumn(name = "notification_id") }
+    )
+    Set<Notification> notifications = new HashSet<>();
 
     // https://springframework.guru/spring-boot-restful-api-documentation-with-swagger-2/
     // https://stackoverflow.com/questions/17393812/json-and-java-circular-reference
