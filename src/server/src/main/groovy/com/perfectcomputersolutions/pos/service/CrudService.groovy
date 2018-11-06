@@ -6,7 +6,6 @@ import com.perfectcomputersolutions.pos.exception.MalformedRequestException
 import com.perfectcomputersolutions.pos.exception.NoSuchEntityException
 import com.perfectcomputersolutions.pos.exception.ValidationException
 import com.perfectcomputersolutions.pos.payload.Batch
-import com.perfectcomputersolutions.pos.publisher.CrudEventPublisher
 import com.perfectcomputersolutions.pos.repository.ModelEntityRepository
 import com.perfectcomputersolutions.pos.utility.Violation
 import com.perfectcomputersolutions.pos.model.ModelEntity
@@ -14,7 +13,6 @@ import com.perfectcomputersolutions.pos.utility.Utility
 import org.hibernate.exception.ConstraintViolationException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.DataAccessException
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.data.domain.PageRequest
@@ -38,8 +36,6 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
     // TODO - https://www.baeldung.com/spring-annotation-bean-pre-processor
 
     private static final Logger log = LoggerFactory.getLogger(CrudService.class)
-
-    @Autowired CrudEventPublisher<T, ID> publisher
 
     def final typeToken = new TypeToken<T>(this.class) {}
     def final type      = typeToken.type
@@ -292,74 +288,46 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
 
     long count() {
 
-        return count(repository)
+        count(repository)
     }
 
     T findById(ID id) {
 
-        T result = findById(id, repository)
-
-        publisher.findById(id, result, type)
-
-        return result
+        findById(id, repository)
     }
 
     Iterable<T> findAll(int page, int size, Optional<Boolean> sorted, Optional<String> property) {
 
-        def results = findAll(repository, page, size, sorted, property)
-
-        publisher.findAll(results, type)
-
-        return results
+        findAll(repository, page, size, sorted, property)
     }
 
     Iterable<T> findAllSorted(int page, int size, Sort.Direction direction, String... properties) {
 
-        def results = findAllSorted(repository, page, size, direction, properties)
-
-        publisher.findAll(results, type)
-
-        return results
+        findAllSorted(repository, page, size, direction, properties)
     }
 
     T save(T entity) {
 
-        T result = save(entity, repository)
-
-        publisher.save(entity, result, type)
-
-        return result
+        save(entity, repository)
     }
 
     void saveAll(Batch<T> entities) {
 
         saveAll(entities, repository)
-
-        publisher.saveAll(entities, type)
     }
 
     T update(ID id, T entity) {
 
-        T result = update(id, entity, repository)
-
-        publisher.update(id, result, entity, type)
-
-        return result
+        update(id, entity, repository)
     }
 
     T deleteById(ID id) {
 
-        T result = deleteById(id, repository)
-
-        publisher.deleteById(id, result, type)
-
-        return result
+        deleteById(id, repository)
     }
 
     void deleteByIds(Batch<ID> ids) {
 
         deleteByIds(ids, repository)
-
-        publisher.deleteByIds(ids, type)
     }
 }

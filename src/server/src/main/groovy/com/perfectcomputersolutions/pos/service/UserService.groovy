@@ -3,7 +3,6 @@ package com.perfectcomputersolutions.pos.service
 import com.perfectcomputersolutions.pos.exception.ValidationException
 import com.perfectcomputersolutions.pos.factory.NotificationFactory
 import com.perfectcomputersolutions.pos.model.User
-import com.perfectcomputersolutions.pos.publisher.CrudEventPublisher
 import com.perfectcomputersolutions.pos.repository.UserRepository
 import com.perfectcomputersolutions.pos.utility.Violation
 import org.slf4j.Logger

@@ -56,15 +56,4 @@ class CategoryEventListener {
         log.info("UPDATED A CATEGORY: ${event.output}")
     }
 
-    @AsyncEventListener
-    def deleteById(DeleteByIdEvent<Category> event) {
-
-        log.info("DELETED CATEGORY: ${event.entity}")
-    }
-
-    @AsyncEventListener
-    def deleteByIds(DeleteByIdsEvent<Category> event) {
-
-        log.info("DELETED SEVERAL CATEGORIES")
-    }
 }
