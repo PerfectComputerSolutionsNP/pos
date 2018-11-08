@@ -27,10 +27,5 @@ public class Category extends NamedEntity {
                               "not necessary field when creating new categories")
     Set<Product> products;
 
-    @OneToMany(mappedBy = "category")
-    @ApiModelProperty(notes = "Set of products associated with this category. This is a " +
-            "not necessary field when creating new categories")
-    Set<Service> services;
-
 //    String description;
 }

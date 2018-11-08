@@ -1,5 +1,6 @@
 package com.perfectcomputersolutions.pos.utility;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -27,6 +28,7 @@ public class Auditable<U> {
     @LastModifiedDate
     private Timestamp lastModifiedDate;
 
+    @JsonIgnore
     public U getCreatedBy() {
         return createdBy;
     }
@@ -35,6 +37,7 @@ public class Auditable<U> {
         return createdDate;
     }
 
+    @JsonIgnore
     public U getLastModifiedBy() {
         return lastModifiedBy;
     }

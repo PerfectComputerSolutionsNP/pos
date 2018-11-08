@@ -1,4 +1,4 @@
-package com.perfectcomputersolutions.pos.publisher
+package com.perfectcomputersolutions.pos.utility
 
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Component

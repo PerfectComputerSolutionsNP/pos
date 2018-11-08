@@ -6,13 +6,8 @@ public interface Payable {
 
     long getCost();
 
-    default double getCents() {
-
-        return Money.millsToCents(getCost());
-    }
-
     default double getDollars() {
 
-        return Money.millsToDollars(getCost());
+        return Money.centsToDollars(getCost());
     }
 }

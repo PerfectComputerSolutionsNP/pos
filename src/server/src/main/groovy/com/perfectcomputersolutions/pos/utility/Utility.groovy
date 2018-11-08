@@ -44,6 +44,8 @@ class Utility {
 
     static void validate(Iterable<?> objects) {
 
+        // TODO - Validate the object at object level?
+
         def map = new HashMap<Integer, Set<Violation>>()
 
         Set<Violation> violations

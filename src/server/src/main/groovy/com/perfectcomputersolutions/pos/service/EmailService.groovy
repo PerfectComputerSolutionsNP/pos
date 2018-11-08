@@ -5,6 +5,7 @@ import com.perfectcomputersolutions.pos.factory.NotificationFactory
 import com.perfectcomputersolutions.pos.model.Notification
 import com.perfectcomputersolutions.pos.payload.Batch
 import com.perfectcomputersolutions.pos.repository.EmailRepository
+import com.perfectcomputersolutions.pos.repository.ModelEntityRepository
 import com.perfectcomputersolutions.pos.utility.Utility
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -34,32 +35,6 @@ class EmailService {
     @Autowired JavaMailSender      sender
     @Autowired EmailRepository     repository
     @Autowired NotificationFactory factory
-
-    def findAll(int page, int size) {
-
-        CrudService.findAll(
-                repository,
-                page,
-                size,
-                Optional.of(true),
-                Optional.of("created")
-        )
-    }
-
-    def findById(Long id) {
-
-        CrudService.findById(id, repository)
-    }
-
-    def deleteById(Long id) {
-
-        CrudService.deleteById(id, repository)
-    }
-
-    def deleteByIds(Batch<Long> ids) {
-
-        CrudService.deleteByIds(ids, repository)
-    }
 
     @Async
     void deliver(Notification email) {

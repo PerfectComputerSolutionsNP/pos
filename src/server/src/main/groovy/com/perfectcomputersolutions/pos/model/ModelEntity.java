@@ -3,6 +3,7 @@ package com.perfectcomputersolutions.pos.model;
 import com.perfectcomputersolutions.pos.utility.Auditable;
 import com.perfectcomputersolutions.pos.utility.Utility;
 import io.swagger.annotations.ApiModelProperty;
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.hibernate.annotations.AccessType;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -70,6 +71,22 @@ public class ModelEntity extends Auditable<String> {
     @Override
     public boolean equals(Object obj) {
 
+        // Considering that the id field must not be null, we must account
+        // for both cases. Typically, entities with an initialized id field
+        // are entities that have already been persisted and are now being
+        // retrieved from the database via some sort GET request and entities
+        // that do not have an id initialized are typically entities that are
+        // being inserted via a POST request. That being said, we will not find
+        // Collections of entities that have a mixture of both initialized and
+        // uninitialized id fields. Therefore, our equality check goes as follows:
+        //
+        // 1. Check object reference. If they are equal, return true.
+        // 2. Check type, if they are not the same, the objects cannot be true
+        // 3. If the types are the same, check if both ids are null.
+        //    3.1 If ids are null, perform a field-by-field equality check via reflection
+        //    3.2 If ids are not null, check the equality of the ids
+        //    3.3 If one id is null and the other is not, the objects cannot be equal
+
         if (this == obj)
             return true;
 
@@ -80,13 +97,24 @@ public class ModelEntity extends Auditable<String> {
 
             ModelEntity entity = (ModelEntity) obj;
 
-            return this.id.equals(entity.id);
+            // Equal by field
+            if (this.id == null && entity.id == null) {
+
+                return EqualsBuilder.reflectionEquals(this, entity);
+
+            // Equal by id
+            } else if (this.id != null && entity.id != null) {
+
+                return Objects.equals(this.id, entity.id);
+
+            } else {
+                return false;
+            }
 
         } catch (ClassCastException e) {
 
             return false;
         }
-
     }
 
     /**

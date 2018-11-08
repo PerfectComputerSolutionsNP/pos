@@ -4,61 +4,40 @@
     <body>
         <div th:replace="email/header :: header"></div>
 
-        <p>Dear [[${customer.firstname}]],</p>
+        <p>Dear [[${transaction.customer.firstname}]],</p>
 
         <p>
             Thank you for shopping at POS. The details of your transaction follow:
         </p>
 
         <div>
-            <h3>Products</h3>
+            <h3>Items</h3>
             <table>
                 <thead>
                 <tr>
                     <th>Name</th>
                     <th>Description</th>
-                    <th>Cost</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:if="${products.empty}">
-                    <td colspan="2"> No Products Available </td>
+                <tr th:if="${transaction.items.empty}">
+                    <td colspan="4"> No Items Available </td>
                 </tr>
-                <tr th:each="product : ${products}">
-                    <td><span th:text="${product.name}">Name</span></td>
-                    <td><span th:text="${product.description}">Description</span></td>
-                    <td><span th:text="${#numbers.formatCurrency(product.dollars)}">Cost</span></td>
+                <tr th:each="item : ${transaction.items}">
+                    <td><span th:text="${item.product.name}">Name</span></td>
+                    <td><span th:text="${item.product.description}">Description</span></td>
+                    <td><span th:text="${item.quantity}">Quantity</span></td>
+                    <td><span th:text="${item.dollarsString}">Price</span></td>
                 </tr>
                 </tbody>
             </table>
         </div>
 
         <div>
-            <h3>Services</h3>
-            <table>
-                <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Description</th>
-                    <th>Cost</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:if="${services.empty}">
-                    <td colspan="2"> No Services Available </td>
-                </tr>
-                <tr th:each="service : ${services}">
-                    <td><span th:text="${service.name}">Name</span></td>
-                    <td><span th:text="${service.description}">Description</span></td>
-                    <td><span th:text="${#numbers.formatCurrency(service.dollars)}">Cost</span></td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div>
-            <p>Subtotal: [[${#numbers.formatCurrency(dollars)}]]</p>
-            <p>Total: [[${#numbers.formatCurrency(1.0875 * dollars)}]]</p>
+            <p>Subtotal: [[${transaction.subtotalDollarsString}]]</p>
+            <p>Total: [[${transaction.totalDollarsString}]]</p>
         </div>
 
         <div th:replace="email/footer :: footer"></div>

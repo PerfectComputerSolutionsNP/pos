@@ -6,6 +6,8 @@ import com.perfectcomputersolutions.pos.model.NamedEntity
 import com.perfectcomputersolutions.pos.repository.NamedEntityRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 
 abstract class NamedEntityService<T extends NamedEntity, ID extends Serializable> extends CrudService<T, ID> {
 
@@ -63,7 +65,11 @@ abstract class NamedEntityService<T extends NamedEntity, ID extends Serializable
         if (sorted.present && !property.present)
             throw new MalformedRequestException("If the sorted parameter is declared, the property parameter must also be declared")
 
-        def entities = repository.findByNameContaining(name, getPageRequest(page, size, sorted, property))
+        def pageRequest = sorted.present && sorted.get() && property.present ?
+                new PageRequest(page, size, Sort.Direction.ASC, property.get()) :
+                new PageRequest(page, size)
+
+        def entities = repository.findByNameContaining(name, pageRequest)
 
         log.info("Found ${entities.size()} entities corresponding to search: ${name}")
 

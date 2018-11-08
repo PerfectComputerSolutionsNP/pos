@@ -1,8 +1,6 @@
 package com.perfectcomputersolutions.pos.listener
 
 import com.perfectcomputersolutions.pos.annotation.AsyncEventListener
-import com.perfectcomputersolutions.pos.event.DeleteByIdEvent
-import com.perfectcomputersolutions.pos.event.DeleteByIdsEvent
 import com.perfectcomputersolutions.pos.event.FindAllEvent
 import com.perfectcomputersolutions.pos.event.FindByIdEvent
 import com.perfectcomputersolutions.pos.event.SaveAllEvent
@@ -16,13 +14,6 @@ import org.springframework.stereotype.Component
 
 @Component
 class CategoryEventListener {
-
-    // TODO - To implement any other EventListener classes, follow the model of this class
-
-    // The parameter type of each function corresponds to the return type of the
-    // corresponding function in the CrudService
-    // Both AsyncEventListener or EventListener can be used. Async will use
-    // the default ThreadExecutor to spawn new threads
 
     private Logger log = LoggerFactory.getLogger(this.class)
 
@@ -41,7 +32,7 @@ class CategoryEventListener {
     @AsyncEventListener
     def save(SaveEvent<Category> event) {
 
-        log.info("SAVED A CATEGORY: ${event.entity}")
+        log.info("SAVED A CATEGORY: ${event.output}")
     }
 
     @AsyncEventListener

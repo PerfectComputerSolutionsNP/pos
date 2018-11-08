@@ -2,13 +2,18 @@ package com.perfectcomputersolutions.pos.utility
 
 class Money {
 
-    static double millsToCents(long mills) {
+    static double centsToDollars(long cents) {
 
-        return (double) mills / 10.0
+        return (double) cents / 100.0
     }
 
-    static double millsToDollars(long mills) {
+    static String toPriceStringDollars(double dollars) {
 
-        return (double) mills / 1000.0
+        return String.format("\$%.2f", dollars)
+    }
+
+    static String toPriceStringCents(long cents) {
+
+        return String.format("%d¢", cents)
     }
 }

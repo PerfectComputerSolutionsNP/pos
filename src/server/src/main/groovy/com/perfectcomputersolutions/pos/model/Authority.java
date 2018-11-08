@@ -17,9 +17,9 @@ import java.util.List;
 @Table(name = "AUTHORITY")
 public class Authority extends ModelEntity {
 
-    @Column(name = "NAME", length = 50)
     @NotNull
     @Enumerated(EnumType.STRING)
+    @Column(name = "NAME", length = 50)
     @ApiModelProperty(notes = "Name of the authority")
     private AuthorityName name;
 

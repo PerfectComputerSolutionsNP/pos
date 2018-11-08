@@ -116,18 +116,6 @@ abstract class CrudController<T extends ModelEntity, ID extends Serializable> {
         respond(body, HttpStatus.OK)
     }
 
-    static <E extends ModelEntity, I extends Serializable> ResponseEntity findAllSorted(
-            CrudService<E, I> service,
-            int               page,
-            int               size,
-            Sort.Direction    direction,
-            String...         properties) {
-
-        def body = service.findAllSorted(page, size, direction, properties)
-
-        respond(body, HttpStatus.OK)
-    }
-
     static <E extends ModelEntity, I extends Serializable> ResponseEntity findById(
             I                 id,
             CrudService<E, I> service) {
@@ -138,7 +126,7 @@ abstract class CrudController<T extends ModelEntity, ID extends Serializable> {
                 (ENTITY)  : service.findById(id)
         ]
 
-        respond(body, HttpStatus.OK)
+        return respond(body, HttpStatus.OK)
     }
 
     static respond(Object body, HttpStatus status) {

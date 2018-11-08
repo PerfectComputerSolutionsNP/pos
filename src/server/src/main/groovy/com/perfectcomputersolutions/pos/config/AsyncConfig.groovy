@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.core.task.SimpleAsyncTaskExecutor
 import org.springframework.scheduling.annotation.AsyncConfigurer
 import org.springframework.scheduling.annotation.EnableAsync
+import org.springframework.scheduling.concurrent.CustomizableThreadFactory
 
 import java.util.concurrent.Executor
 
@@ -25,7 +26,8 @@ class AsyncConfig implements AsyncConfigurer {
     @Override
     Executor getAsyncExecutor() {
 
-        def executor = new SimpleAsyncTaskExecutor()
+        def factory  = new CustomizableThreadFactory("jabari-kevyn-")
+        def executor = new SimpleAsyncTaskExecutor(factory)
 
         // TODO - Optimize, make dynamic?
 //        executor = new ThreadPoolTaskExecutor()

@@ -25,11 +25,7 @@ class TransactionEventListener {
         if (customer && transaction.notifyCustomer) {
 
             def variables = [
-                    "customer" : customer,
-                    "date"     : transaction.createdDate,
-                    "dollars"  : transaction.dollars,
-                    "products" : transaction.products,
-                    "services" : transaction.services
+                    "transaction" : transaction
             ]
 
             def email = notificationFactory.getNotification(
