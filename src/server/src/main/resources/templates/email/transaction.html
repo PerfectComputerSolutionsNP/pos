@@ -17,6 +17,7 @@
                 <tr>
                     <th>Name</th>
                     <th>Description</th>
+                    <th>Unit Price</th>
                     <th>Quantity</th>
                     <th>Price</th>
                 </tr>
@@ -28,6 +29,7 @@
                 <tr th:each="item : ${transaction.items}">
                     <td><span th:text="${item.product.name}">Name</span></td>
                     <td><span th:text="${item.product.description}">Description</span></td>
+                    <!--<td><span th:text="${item.product.dollars}">Quantity</span></td>-->
                     <td><span th:text="${item.quantity}">Quantity</span></td>
                     <td><span th:text="${item.dollarsString}">Price</span></td>
                 </tr>

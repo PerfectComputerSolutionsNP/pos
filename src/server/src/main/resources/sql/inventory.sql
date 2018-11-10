@@ -16,12 +16,22 @@ insert into kind(id, name) values
   (1, 'good'),
   (2, 'service');
 
-insert into product(category_id, name, description, cost, weighted, taxed, kind_id) values
-  (1, 'T-Shirt',     'A basic T-Shirt',     1500,  false, true,  2),
-  (1, 'Dress Shirt', 'A basic dress-Shirt', 2000,  false, true,  2),
-  (1, 'Jacket',      'Adidas track jacket', 5000,  false, true,  2),
-  (1, 'Pants',       'Track pants',         4000,  false, true,  2),
-  (2, 'Clorox',      'Clorox bleach',       500,   false, false, 1),
-  (3, 'Tide',        'Good detergent',      800,   false, false, 1),
-  (9, 'Chips-A-Hoy', 'Blue',                  500, false, false, 1),
-  (9, 'Chipotle',    'Red',                   500, false, false, 1);
+insert into product(category_id, name, description, cost, weighted, taxed) values
+  (1, 'T-Shirt',     'A basic T-Shirt',     1500,  false, true),
+  (1, 'Dress Shirt', 'A basic dress-Shirt', 2000,  false, true),
+  (1, 'Jacket',      'Adidas track jacket', 5000,  false, true),
+  (1, 'Pants',       'Track pants',         4000,  false, true),
+  (2, 'Clorox',      'Clorox bleach',       500,   false, false),
+  (3, 'Tide',        'Good detergent',      800,   false, false),
+  (9, 'Chips-A-Hoy', 'Blue',                  500, false, false),
+  (9, 'Chipotle',    'Red',                   500, false, false);
+
+# insert into product(category_id, name, description, cost, weighted, taxed, kind_id) values
+#   (1, 'T-Shirt',     'A basic T-Shirt',     1500,  false, true,  2),
+#   (1, 'Dress Shirt', 'A basic dress-Shirt', 2000,  false, true,  2),
+#   (1, 'Jacket',      'Adidas track jacket', 5000,  false, true,  2),
+#   (1, 'Pants',       'Track pants',         4000,  false, true,  2),
+#   (2, 'Clorox',      'Clorox bleach',       500,   false, false, 1),
+#   (3, 'Tide',        'Good detergent',      800,   false, false, 1),
+#   (9, 'Chips-A-Hoy', 'Blue',                  500, false, false, 1),
+#   (9, 'Chipotle',    'Red',                   500, false, false, 1);

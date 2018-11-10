@@ -19,8 +19,8 @@ public class Kind extends ModelEntity {
     @Enumerated(EnumType.STRING)
     private KindName name;
 
-    @OneToMany(mappedBy = "kind")
-    private List<Product> products;
+//    @OneToMany(mappedBy = "kind")
+//    private List<Product> products;
 
     public KindName getName() {
         return name;
@@ -30,11 +30,11 @@ public class Kind extends ModelEntity {
         this.name = name;
     }
 
-    public List<Product> getProducts() {
-        return products;
-    }
-
-    public void setProducts(List<Product> products) {
-        this.products = products;
-    }
+//    public List<Product> getProducts() {
+//        return products;
+//    }
+//
+//    public void setProducts(List<Product> products) {
+//        this.products = products;
+//    }
 }

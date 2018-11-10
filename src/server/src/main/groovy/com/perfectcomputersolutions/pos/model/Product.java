@@ -19,10 +19,10 @@ import java.util.Set;
 @Table(name = "PRODUCT")
 public class Product extends NamedEntity implements Payable {
 
-    @NotNull
-    @ManyToOne
-    @JoinColumn(name = "kind_id", nullable = false)
-    public Kind kind;
+//    @NotNull
+//    @ManyToOne
+//    @JoinColumn(name = "kind_id", nullable = false)
+//    public Kind kind;
 
     @NotNull
     @ManyToOne

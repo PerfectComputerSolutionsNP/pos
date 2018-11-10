@@ -71,12 +71,11 @@ public class Transaction extends ModelEntity implements Payable {
 
         for (Item item : items) {
 
-            if (item.isTaxed()) {
+            if (item.isTaxed())
+                cost += item.getCost();
+            else
                 cost += item.getCost();
 
-            } else {
-                cost += item.getCost();
-            }
         }
 
         return cost;
