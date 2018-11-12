@@ -15,6 +15,9 @@ import { ReactiveFormsModule } from "@angular/forms";
 import {AuthGuard} from "./guard/auth.guard";
 import {AuthenticationService} from "./service/authentication.service";
 import {JwtInterceptor} from "./service/jwt.interceptor";
+import { CategoryCreationFormComponent } from './page/category-creation-form/category-creation-form.component';
+import { ProductCreationFormComponent } from './page/product-creation-form/product-creation-form.component';
+import { ModalComponent } from './partial/modal/modal.component';
 
 
 @NgModule({
@@ -25,7 +28,10 @@ import {JwtInterceptor} from "./service/jwt.interceptor";
     FooterComponent,
     TwoPageComponent,
     OnePageComponent,
-    CardPageComponent
+    CardPageComponent,
+    CategoryCreationFormComponent,
+    ProductCreationFormComponent,
+    ModalComponent
   ],
   imports: [
     BrowserModule,
