@@ -1,3 +1,153 @@
-<app-one-page>
-  Sales
-</app-one-page>
+<app-two-page [left]=6 [right]=6>
+
+  <div left>
+    <h4>Sales Data</h4>
+
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">Items Sold</th>
+          <th scope="col">Total</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let transaction of transactions.content" (click)="selectTransaction(transaction)">
+          <td>{{transaction.id}}</td>
+          <td>{{transaction.items.length}}</td>
+          <td>{{transaction.totalString}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div right>
+
+    <div *ngIf="!currentTransaction" class="form-group">
+      <h4>Transaction Details:</h4>
+
+      <p>By clicking a transaction on the left, you can see more details about the transaction</p>
+    </div>
+
+    <div id="currentTransaction" *ngIf="currentTransaction" class="print-me">
+
+      <h4>Transaction Number<span>: {{currentTransaction.id}}</span></h4>
+
+      <div class="form-group">
+        <h5>Employee Details</h5>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{{currentTransaction.userId}}</td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="form-group" *ngIf="currentTransaction.customer">
+        <h5>Customer Details</h5>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th>First Name</th>
+              <th>Last Name</th>
+              <th>Email</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{{currentTransaction.customer.firstname}}</td>
+              <td>{{currentTransaction.customer.lastname}}</td>
+              <td>{{currentTransaction.customer.email}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="form-group" *ngIf="currentTransaction.pickupTime">
+        <h5>Pickup Details</h5>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th>
+                Pickup Time
+              </th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr>
+              <td>{{currentTransaction.pickupTime}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="form-group">
+        <h5>Item Details</h5>
+
+        <table class="table table-hover">
+          <thead>
+          <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Unit Price</th>
+            <th>Quantity</th>
+            <th>Weight</th>
+            <th>Price</th>
+          </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let item of currentTransaction.items">
+              <td>{{item.product.name}}</td>
+              <td>{{item.product.description}}</td>
+              <td>{{item.product.costString}}</td>
+              <td>{{item.quantity}}</td>
+              <td><span *ngIf="item.product.weighted">{{item.weight}}lbs</span></td>
+              <td>{{item.costString}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="form-group">
+        <h5>Cost Details</h5>
+
+        <table class="table">
+          <tbody>
+            <tr>
+              <td>Tax Rate:</td>
+              <td>{{currentTransaction.taxRate}}%</td>
+            </tr>
+
+            <tr>
+              <td>Subtotal:</td>
+              <td>{{currentTransaction.subtotalString}}</td>
+            </tr>
+
+            <tr>
+              <td>Total:</td>
+              <td>{{currentTransaction.totalString}}</td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+
+      <button class="btn btn-success dont-print-me" (click)="printTransaction()">Print</button>
+    </div>
+
+  </div>
+</app-two-page>

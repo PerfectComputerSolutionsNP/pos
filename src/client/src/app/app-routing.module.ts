@@ -1,7 +1,7 @@
 import { NgModule }                  from '@angular/core';
 import { Routes, RouterModule }      from "@angular/router";
-import { LoginOldComponent }         from "./page/login-old/login-old.component";
-import { UserRegistrationComponent } from "./page/user-registration/user-registration.component";
+import { LoginOldComponent }         from "./deprecated/login-old/login-old.component";
+import { UserRegistrationComponent } from "./page/users/user-registration/user-registration.component";
 import { NotFoundComponent }         from "./page/not-found/not-found.component";
 import { HomeComponent }             from "./page/home/home.component";
 import { LogoutComponent }           from "./page/logout/logout.component";
@@ -11,6 +11,7 @@ import { UsersComponent }            from "./page/users/users.component";
 import { InventoryComponent }        from "./page/inventory/inventory.component";
 import { LoginComponent }            from "./page/login/login.component";
 import { AuthGuard }                 from "./guard/auth.guard";
+import {CustomersComponent} from './page/customers/customers.component';
 
 const routes: Routes = [
 
@@ -30,6 +31,12 @@ const routes: Routes = [
     path         : 'users',
     component    : UsersComponent,
     data         : { title: "Users" },
+    canActivate  : [AuthGuard]
+  },
+  {
+    path         : 'customers',
+    component    : CustomersComponent,
+    data         : { title: "Customers" },
     canActivate  : [AuthGuard]
   },
   {

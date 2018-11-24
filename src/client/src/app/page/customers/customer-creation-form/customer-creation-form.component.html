@@ -1,0 +1,33 @@
+<div class="modal-header">
+  <h4>Create / Update Customer</h4>
+</div>
+
+<div class="modal-body">
+
+  <div class="form-group">
+    <label for="id">ID</label>
+    <input [(ngModel)]="id" id="id" name="id" class="form-control" placeholder="" disabled>
+  </div>
+
+  <div class="form-group">
+    <label for="firstname">First Name</label>
+    <input id="firstname" name="firstname" type="text" [(ngModel)]="firstname" class="form-control" placeholder="First Name" required>
+  </div>
+
+  <div class="form-group">
+    <label for="lastname">Last Name</label>
+    <input id="lastname" name="lastname" type="text" [(ngModel)]="lastname" class="form-control" placeholder="Last Name" required>
+  </div>
+
+  <div class="form-group">
+    <label for="email">Email</label>
+    <input id="email" name="email" type="email" [(ngModel)]="email" class="form-control" placeholder="Email" required>
+  </div>
+
+</div>
+
+<div class="modal-footer">
+  <button class="btn btn-outline-success" (click)="save()">Save</button>
+  <button *ngIf="id" class="btn btn-outline-danger" (click)="deleteCustomer(id)">Delete</button>
+  <button class="btn btn-danger" (click)="close()">Close</button>
+</div>

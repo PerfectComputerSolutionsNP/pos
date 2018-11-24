@@ -1,6 +1,6 @@
 const api = {
   protocol : 'http',
-  host     : '192.168.1.57',
+  host     : 'localhost',
   port     : '8080'
 
 };

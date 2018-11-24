@@ -6,12 +6,12 @@
 
       <ul class="navbar-nav mr-auto">
 
-        <li class="nav-item active">
+        <li class="nav-item">
           <a class="nav-link" href="/">Home<span class="sr-only">(current)</span></a>
         </li>
 
         <li class="nav-item">
-          <a class="nav-link" href="/inventory">Inventory</a>
+          <a class="nav-link" href="/inventory" *ngIf="authGuard.isAdmin()">Inventory</a>
         </li>
       </ul>
 
@@ -31,7 +31,11 @@
       <ul class="navbar-nav ml-auto">
 
         <li class="nav-item">
-          <a class="nav-link" href="/users">Manage Users</a>
+          <a class="nav-link" href="/users" *ngIf="authGuard.isAdmin()">Manage Users</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="/customers">Customers</a>
         </li>
 
         <li class="nav-item">
@@ -39,7 +43,7 @@
         </li>
 
         <li class="nav-item">
-          <a class="nav-link" href="/settings">Settings</a>
+          <a class="nav-link" href="/settings" *ngIf="authGuard.isAdmin()">Settings</a>
         </li>
 
         <li class="nav-item">

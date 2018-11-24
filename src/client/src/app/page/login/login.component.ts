@@ -3,6 +3,9 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 import {AuthenticationService} from "../../service/authentication.service";
+import {ApiService} from '../../service/api.service';
+import {HttpClient} from '@angular/common/http';
+import {config} from '../../service/config.service';
 
 
 @Component({templateUrl: './login.component.html'})
@@ -17,6 +20,7 @@ export class LoginComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private authenticationService: AuthenticationService,
+    private http : HttpClient
     // private alertService: AlertService
   ) {}
 
@@ -39,15 +43,14 @@ export class LoginComponent implements OnInit {
   onSubmit() {
     this.submitted = true;
 
+    // TODO - Throw an error?
+
     // stop here if form is invalid
     if (this.loginForm.invalid) {
       return;
     }
 
-
-
     this.loading = true;
-
 
     this.authenticationService.login(this.f.username.value, this.f.password.value)
       .pipe(first())

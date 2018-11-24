@@ -1,0 +1,109 @@
+<div class="modal-header">
+  <h4>Finalize Transaction</h4>
+  <button type="button" class="close" (click)="cancel()">
+    <i class="fa fa-2x fa-times-circle"></i>
+  </button>
+</div>
+
+<div class="modal-body">
+
+  <div class="form-group">
+    <button class="btn btn-primary" (click)="setCustomer()">Set Customer</button>
+  </div>
+
+  <div *ngIf="customer" class="form-group">
+    <h5>Customer Details</h5>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th></th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr>
+          <td>
+            {{customer.firstname}} {{customer.lastname}}
+         </td>
+          <td>
+            {{customer.email}}
+          </td>
+          <td><i class="fa fa-2x fa-times-circle" (click)="removeCustomer()"></i></td>
+        </tr>
+      </tbody>
+
+    </table>
+  </div>
+
+  <div>
+    <div class="form-group">
+      <input id="pickup" name="pickup" type="checkbox" [(ngModel)]="pickupLater">
+      <label for="pickup">Pickup Later</label>
+    </div>
+
+    <div class="form-group" *ngIf="pickupLater">
+      <h5>Pickup Details</h5>
+
+      <angular2-date-picker [(ngModel)]="pickupDate" [settings]="dateSetting"></angular2-date-picker>
+      <br>
+      <br>
+
+      <!--TODO - Find a better way to make space, perhaps using CSS? -->
+    </div>
+  </div>
+
+
+
+  <div class="form-group">
+    <h5>Item Details</h5>
+
+    <table class="table table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Name</th>
+        <th scope="col">Unit Price</th>
+        <th scope="col">Quantity</th>
+        <th scope="col">Price</th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <tr *ngFor="let item of transaction.items">
+        <td>{{item.product.name}}</td>
+        <td>{{"$" + (item.product.cents / 100)}}</td>
+        <td>{{item.quantity}}</td>
+        <td>{{"$" + item.getDollars()}}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="form-group">
+    <table>
+      <tbody>
+      <tr>
+        <td>Tax Rate:</td>
+        <td>{{transaction.taxRate}}%</td>
+      </tr>
+      <tr>
+        <td>Subtotal:</td>
+        <td>${{transaction.getSubtotal()}}</td>
+      </tr>
+      <tr>
+        <td>Total:</td>
+        <td>${{transaction.getTotal()}}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<div class="modal-footer">
+  <button class="btn btn-success btn-block" (click)="finalizeTransaction()">
+    Checkout<i class="fa fa-2x fa-shopping-cart"></i>
+  </button>
+</div>
