@@ -1,10 +1,12 @@
 package com.perfectcomputersolutions.pos.controller
 
+import com.perfectcomputersolutions.pos.factory.NotificationFactory
 import com.perfectcomputersolutions.pos.payload.Batch
 import com.perfectcomputersolutions.pos.service.EmailService
 import com.perfectcomputersolutions.pos.payload.SimpleMessage
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiOperation
+import io.swagger.annotations.Authorization
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
@@ -23,39 +25,17 @@ import org.springframework.web.bind.annotation.RestController
         description='Operations pertaining to emails. From here emails can be sent, viewed, or deleted by a user with ADMIN rights.')
 class EmailController {
 
-    @Autowired EmailService service
-
-    @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    @ApiOperation(value = "Find a sent email by id. This operation requires the ADMIN role.")
-    def findById(@PathVariable Long id) {
-
-        def body = [
-
-                (CrudController.CONTENT) : service.findById(id)
-        ]
-
-        CrudController.respond(body, HttpStatus.OK)
-    }
-
-    @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
-    @ApiOperation(value = "Find all (paginated) sent emails specifying page number and page size. This operation requires the ADMIN role.")
-    def findAll(
-            @RequestParam int page,
-            @RequestParam int size) {
-
-        def body = service.findAll(page, size)
-
-        CrudController.respond(body, HttpStatus.OK)
-    }
+    @Autowired EmailService        service
+    @Autowired NotificationFactory factory
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    @ApiOperation(value = "Send a simple email message. This operation requires the ADMIN role.")
+    @ApiOperation(value = "Send a simple email message. This operation requires the ADMIN role.", authorizations = [@Authorization(value = "Bearer")])
     def send(@RequestBody SimpleMessage message) {
 
-        service.send(message)
+        def email = factory.getEmail(message)
+
+        service.deliver(email)
 
         def body = [
 
@@ -64,35 +44,5 @@ class EmailController {
         ]
 
         CrudController.respond(body, HttpStatus.ACCEPTED)
-    }
-
-    @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    @ApiOperation(value = "Delete an email by id. This operation requires the ADMIN role.")
-    def deleteById(@PathVariable Long id) {
-
-        service.deleteById(id)
-
-        def body = [
-
-                (CrudController.MESSAGE) : "Email deleted"
-        ]
-
-        CrudController.respond(body, HttpStatus.OK)
-    }
-
-    @DeleteMapping("/batch")
-    @PreAuthorize("hasRole('ADMIN')")
-    @ApiOperation(value = "Delete several emails by id. This operation requires the ADMIN role.")
-    def deleteByIds(@RequestBody Batch<Long> ids) {
-
-        service.deleteByIds(ids)
-
-        def body = [
-
-                (CrudController.MESSAGE) : "Success"
-        ]
-
-        CrudController.respond(body, HttpStatus.OK)
     }
 }

@@ -43,6 +43,7 @@ class HttpConnectorConfig {
         connector.setPort(8080)
         connector.setSecure(false)
         connector.setRedirectPort(8443)
+
         return connector
     }
 }

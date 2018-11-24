@@ -45,6 +45,8 @@ class XssFilter implements Filter {
         def msg       = "Field '${field}' in header or request body contains executable code or forbidden HTML tags. Original: ${original}"
         def violation = new Violation(field, msg, HttpServletRequest.class.simpleName)
 
+        log.warn(msg)
+
         throw new ValidationException(violation)
     }
 
@@ -81,14 +83,16 @@ class XssFilter implements Filter {
 
         def req = (HttpServletRequest) request
 
-        log.info("Checking request for cross-site scripting attack")
+        log.debug("Checking request for cross-site scripting attack")
 
         def wrapper = new MultiReadHttpServletRequest(req)
 
-        processHeaders(wrapper)
+        // TODO - This causes issues because it is too strict some times.
+        // Perhaps only apply this filter to custom endpoints?
+//        processHeaders(wrapper)
         processBody(wrapper)
 
-        log.info("No cross-site scripting detected, forwarding request to next filter in filter chain")
+        log.debug("No cross-site scripting detected, forwarding request to next filter in filter chain")
 
         chain.doFilter(wrapper, response)
     }

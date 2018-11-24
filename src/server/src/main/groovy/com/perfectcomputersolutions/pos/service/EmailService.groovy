@@ -1,11 +1,9 @@
 package com.perfectcomputersolutions.pos.service
 
 import com.perfectcomputersolutions.pos.exception.CaughtException
-import com.perfectcomputersolutions.pos.factory.EmailFactory
-import com.perfectcomputersolutions.pos.model.Email
+import com.perfectcomputersolutions.pos.factory.NotificationFactory
+import com.perfectcomputersolutions.pos.model.Notification
 import com.perfectcomputersolutions.pos.payload.Batch
-import com.perfectcomputersolutions.pos.repository.EmailRepository
-import com.perfectcomputersolutions.pos.payload.SimpleMessage
 import com.perfectcomputersolutions.pos.utility.Utility
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -27,40 +25,16 @@ import org.springframework.stereotype.Service
 class EmailService {
 
     // TODO - Put a limit on how many emails can be sent per time frame to avoid potential spam if hacked
+    // Use a circular buffer or a token bucket
+    // https://stackoverflow.com/questions/1407113/throttling-method-calls-to-m-requests-in-n-seconds
 
     private static final Logger log = LoggerFactory.getLogger(EmailService.class)
 
-    @Autowired JavaMailSender  sender
-    @Autowired EmailRepository repository
-    @Autowired EmailFactory    factory
+    @Autowired JavaMailSender      sender
+    @Autowired NotificationFactory factory
 
-    def findAll(int page, int size) {
-
-        CrudService.findAll(
-                repository,
-                page,
-                size,
-                Optional.of(true),
-                Optional.of("created")
-        )
-    }
-
-    def findById(Long id) {
-
-        CrudService.findById(id, repository)
-    }
-
-    def deleteById(Long id) {
-
-        CrudService.deleteById(id, repository)
-    }
-
-    def deleteByIds(Batch<Long> ids) {
-
-        CrudService.deleteByIds(ids, repository)
-    }
-
-    private void deliver(Email email) {
+    @Async
+    void deliver(Notification email) {
 
         log.info("Sending email to: ${email.to}")
 
@@ -79,7 +53,7 @@ class EmailService {
 
             sender.send(preparator)
 
-            CrudService.save(email, repository)
+            // TODO - Save this information to storage who was sent what?
 
             log.info("Successfully sent email to ${email.to}")
 
@@ -87,17 +61,5 @@ class EmailService {
 
             throw new CaughtException("Could not send email", ex)
         }
-    }
-
-    @Async
-    final void send(Email email) {
-
-        deliver(email)
-    }
-
-    @Async
-    final void send(SimpleMessage message) {
-
-        deliver(factory.getEmail(message))
     }
 }

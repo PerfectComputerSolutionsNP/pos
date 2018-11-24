@@ -27,6 +27,10 @@ readonly result=$(curl -X GET \
 # Strip off last number, and increment by one
 # to bump the version up by one
 version=$(echo $result |  jq '.["name"]' | tr -d '"')
+
+# TODO - If condition for version is null? If true, set version to v0.0.0
+# otherwise, manually bump the version up
+
 old=$(echo "$version" | awk -F '\\.' '{print $NF}')
 new=$(( $old + 1 ))
 

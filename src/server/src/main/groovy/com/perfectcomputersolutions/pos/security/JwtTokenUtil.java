@@ -44,19 +44,24 @@ public class JwtTokenUtil implements Serializable {
     }
 
     public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
+
         final Claims claims = getAllClaimsFromToken(token);
+
         return claimsResolver.apply(claims);
     }
 
     private Claims getAllClaimsFromToken(String token) {
+
         return Jwts.parser()
-                .setSigningKey(secret)
-                .parseClaimsJws(token)
-                .getBody();
+                   .setSigningKey(secret)
+                   .parseClaimsJws(token)
+                   .getBody();
     }
 
     private Boolean isTokenExpired(String token) {
+
         final Date expiration = getExpirationDateFromToken(token);
+
         return expiration.before(clock.now());
     }
 
@@ -79,12 +84,12 @@ public class JwtTokenUtil implements Serializable {
         final Date expirationDate = calculateExpirationDate(createdDate);
 
         return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(subject)
-                .setIssuedAt(createdDate)
-                .setExpiration(expirationDate)
-                .signWith(SignatureAlgorithm.HS512, secret)
-                .compact();
+                   .setClaims(claims)
+                   .setSubject(subject)
+                   .setIssuedAt(createdDate)
+                   .setExpiration(expirationDate)
+                   .signWith(SignatureAlgorithm.HS512, secret)
+                   .compact();
     }
 
     public Boolean canTokenBeRefreshed(String token, Date lastPasswordReset) {

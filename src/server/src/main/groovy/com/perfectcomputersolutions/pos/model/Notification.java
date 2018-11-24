@@ -7,21 +7,17 @@ import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.sql.Timestamp;
+import java.util.List;
+import java.util.Set;
 
-@Entity(name = "email")
-public class Email extends ModelEntity {
-
-    @NotNull
-    @ApiModelProperty(
-            notes = "UTC timestamp at which the email was sent. "      +
-                    "This value should NOT be sent in a POST request " +
-                    "as it will be automatically generated")
-    private Timestamp created;
+//@Entity
+public class Notification extends ModelEntity {
 
     @NotNull
     @NotEmpty
@@ -86,13 +82,5 @@ public class Email extends ModelEntity {
 
     public void setTemplate(String template) {
         this.template = template;
-    }
-
-    public Timestamp getCreated() {
-        return created;
-    }
-
-    public void setCreated(Timestamp created) {
-        this.created = created;
     }
 }

@@ -8,7 +8,7 @@ import org.springframework.web.filter.CommonsRequestLoggingFilter
  * Configures logging for all HTTP requests.
  */
 @Configuration
-class LogConfig {
+class RequestLoggingConfig {
 
     // https://www.javadevjournal.com/spring/log-incoming-requests-spring/
 

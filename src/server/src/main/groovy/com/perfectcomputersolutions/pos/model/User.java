@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -15,7 +16,6 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -27,7 +27,10 @@ import javax.validation.constraints.Size;
 @Table(name = "USER")
 public class User extends PersonEntity {
 
-    // TODO - notifier, join with Transaction table (lazy association)
+    // TODO - Do not serialize password, but still require it via Jackson annotations
+
+    @OneToMany(mappedBy = "customer")
+    private Set<Transaction> transactions;
 
     // https://springframework.guru/spring-boot-restful-api-documentation-with-swagger-2/
     // https://stackoverflow.com/questions/17393812/json-and-java-circular-reference
@@ -53,7 +56,7 @@ public class User extends PersonEntity {
     )
     private Boolean enabled;
 
-    @NotNull
+//    @NotNull
     @Column(name = "LASTPASSWORDRESETDATE")
     @Temporal(TemporalType.TIMESTAMP)
     @ApiModelProperty(notes = "Timestamp to indicate the last time the user's password was changed (or created).")
@@ -67,6 +70,15 @@ public class User extends PersonEntity {
     @ApiModelProperty(notes = "List of authorities or privileges assigned to the user.")
     private List<Authority> authorities;
 
+    @JsonIgnore
+    public Set<Transaction> getTransactions() {
+        return transactions;
+    }
+
+    public void setTransactions(Set<Transaction> transactions) {
+        this.transactions = transactions;
+    }
+
     public String getUsername() {
         return username;
     }
@@ -75,10 +87,12 @@ public class User extends PersonEntity {
         this.username = username;
     }
 
+    @JsonIgnore
     public String getPassword() {
         return password;
     }
 
+    @JsonProperty
     public void setPassword(String password) {
         this.password = password;
     }
@@ -91,12 +105,10 @@ public class User extends PersonEntity {
         this.enabled = enabled;
     }
 
-    @JsonIgnore
     public List<Authority> getAuthorities() {
         return authorities;
     }
 
-    @JsonProperty
     public void setAuthorities(List<Authority> authorities) {
         this.authorities = authorities;
     }
