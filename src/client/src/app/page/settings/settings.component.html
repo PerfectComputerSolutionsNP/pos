@@ -1,6 +1,27 @@
 <app-two-page [left]=9 [right]=3>
 
-  <div left>Settings List</div>
-  <div right>Current Setting</div>
+  <div id="setting-detail" left>
+    <h4>Setting Details</h4>
+
+    <div [ngSwitch]="currentSetting">
+      <app-email-setting *ngSwitchCase="'Email'"></app-email-setting>
+      <app-money-setting *ngSwitchCase="'Money'"></app-money-setting>
+    </div>
+  </div>
+
+  <div right>
+
+    <h4>Options</h4>
+
+    <table class="table table-hover">
+
+      <tbody>
+        <tr *ngFor="let option of settings" (click)="currentSetting = option">
+          <td>{{option}}</td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
 
 </app-two-page>

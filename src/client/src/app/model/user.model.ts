@@ -1,24 +1,33 @@
 import {Authority} from "./authority.model";
+import {ModelEntity} from './entity.model';
 
-// let bcrypt: { genSaltSync; genSalt; hashSync; hash; compareSync; compare; getRounds };
-//
-// let hash = bcrypt.hash(this.password);
-//
-// bcrypt.genSaltSync(10, function (err, salt) {
-//   bcrypt.hash(this.password,salt,function(err, hash){});
+export class User extends ModelEntity<User> {
 
+  public id          : number;
+  public  username    : string;
+  public password    : string;
+  public firstname   : string;
+  public lastname    : string;
+  public email       : string;
+  public enabled     : boolean;
+  public lastPasswordResetDate : Date;
 
-export interface User {
+  public authorities: Array<Authority>;
 
-  id          : number;
-  username    : string;
-  password    : string;
-  firstname   : string;
-  lastname    : string;
-  email       : string;
-  enabled     : boolean;
-  lastPasswordResetDate;
+  clone(entity: User): User {
 
+    let user = new User();
 
-  authorities: Array<Authority>
+    user.id                    = entity.id;
+    user.username              = entity.username;
+    user.password              = entity.password;
+    user.firstname             = entity.firstname;
+    user.lastname              = entity.lastname;
+    user.email                 = entity.email;
+    user.enabled               = entity.enabled;
+    user.lastPasswordResetDate = entity.lastPasswordResetDate;
+    user.authorities           = entity.authorities;
+
+    return user;
+  }
 }

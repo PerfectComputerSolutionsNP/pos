@@ -1,0 +1,41 @@
+<app-one-page>
+
+  <div class="form-group">
+    <h4>Customers</h4>
+
+    <button class="btn btn-success" (click)="showCustomerForm()">Create Customer</button>
+  </div>
+
+  <div class="form-group">
+    <app-search-bar
+      [url]="searchUrl"
+      [paramName]="paramName"
+      [placeholder]="placeholder"
+      (eventEmitter)="getCustomers($event)"
+      #searchBar
+    ></app-search-bar>
+  </div>
+
+  <div class="form-group">
+    <table class="table table-hover">
+      <thead>
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">First Name</th>
+        <th scope="col">Last Name</th>
+        <th scope="col">Email</th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <tr *ngFor="let customer of customers.content" (click)="showCustomerForm(customer)">
+        <td>{{customer.id}}</td>
+        <td>{{customer.firstname}}</td>
+        <td>{{customer.lastname}}</td>
+        <td>{{customer.email}}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+</app-one-page>

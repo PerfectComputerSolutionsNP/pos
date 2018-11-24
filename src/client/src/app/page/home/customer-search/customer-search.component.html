@@ -1,0 +1,42 @@
+<div class="modal-header">
+  <h4>Customer Search</h4>
+</div>
+
+<div class="modal-body">
+
+  <div class="form-group">
+    <button class="btn btn-primary" (click)="showCreateCustomerForm()">Create Customer</button>
+  </div>
+
+  <app-search-bar
+    [url]="url"
+    [placeholder]="placeholder"
+    [paramName]="paramName"
+    (eventEmitter)="setCustomerList($event)"
+  >
+  </app-search-bar>
+
+  <div class="form-group" *ngIf="customers">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Email</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let c of customers" (click)="setCurrentCustomer(c)">
+          <td>{{c.firstname}}</td>
+          <td>{{c.lastname}}</td>
+          <td>{{c.email}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="modal-footer">
+  <button class="btn btn-danger" (click)="close()">Close</button>
+</div>

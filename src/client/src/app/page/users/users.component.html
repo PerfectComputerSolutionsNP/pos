@@ -1,6 +1,32 @@
-<app-two-page [left]=3 [right]=9>
+<app-one-page>
 
-  <div left>Users</div>
-  <div right>Selected User</div>
+  <h4>User Management</h4>
 
-</app-two-page>
+  <button class="btn btn-success" (click)="showUserForm()">Create User</button>
+
+  <table class="table table-hover">
+    <thead>
+    <tr>
+      <th scope="col">ID</th>
+      <th scope="col">Username</th>
+      <th scope="col">First Name</th>
+      <th scope="col">Last Name</th>
+      <th scope="col">Email</th>
+      <th scope="col">Roles</th>
+      <th scope="col">Enabled</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr *ngFor="let user of users.content" (click)="showUserForm(user)">
+      <td>{{user.id}}</td>
+      <td>{{user.username}}</td>
+      <td>{{user.firstname}}</td>
+      <td>{{user.lastname}}</td>
+      <td>{{user.email}}</td>
+      <td>{{formatAuthorityString(user)}}</td>
+      <td>{{user.enabled}}</td>
+    </tr>
+    </tbody>
+  </table>
+</app-one-page>

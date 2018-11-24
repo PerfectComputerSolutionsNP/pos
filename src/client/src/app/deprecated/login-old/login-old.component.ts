@@ -106,7 +106,7 @@ export class LoginOldComponent implements OnInit {
 
   showUserInformation() {
     $.ajax({
-      // url: "/user",
+      // url: "/customer",
       url        :         urls.user,
       type       :        "GET",
       contentType: "application/json; charset=utf-8",

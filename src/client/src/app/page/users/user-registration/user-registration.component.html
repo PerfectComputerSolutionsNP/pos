@@ -1,0 +1,68 @@
+<form name="form" (ngSubmit)="f.form.valid && onSubmit()" #f="ngForm" novalidate>
+
+  <div class="modal-header">
+    <h3>Create / Update User</h3>
+  </div>
+
+  <div class="modal-body">
+
+    <div class="form-group">
+      <label for="id">ID</label>
+      <input id="id" name="id" class="form-control" [(ngModel)]="id" disabled>
+    </div>
+
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input id="username" name="username" type="text" class="form-control" [(ngModel)]="username" [ngClass]="{ 'is-invalid': f.submitted && username.invalid }" required />
+      <div *ngIf="f.submitted && username.invalid" class="invalid-feedback">
+        <div *ngIf="username.errors.required">Username is required</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="firstname">First Name</label>
+      <input id="firstname" name="firstname" type="text" class="form-control" [(ngModel)]="firstname" [ngClass]="{ 'is-invalid': f.submitted && firstname.invalid }" required />
+      <div *ngIf="f.submitted && firstname.invalid" class="invalid-feedback">
+        <div *ngIf="firstname.errors.required">First Name is required</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="lastname">Last Name</label>
+      <input id="lastname" name="lastname" type="text" class="form-control" [(ngModel)]="lastname" [ngClass]="{ 'is-invalid': f.submitted && lastname.invalid }" required />
+      <div *ngIf="f.submitted && lastname.invalid" class="invalid-feedback">
+        <div *ngIf="lastname.errors.required">Last Name is required</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input id="email" name="email" type="email" class="form-control" [(ngModel)]="email" [ngClass]="{ 'is-invalid': f.submitted && email.invalid }" required email />
+      <div *ngIf="f.submitted && email.invalid" class="invalid-feedback">
+        <div *ngIf="email.errors.required">Email is required</div>
+        <div *ngIf="email.errors.email">Email must be a valid email address</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input id="password" type="password" class="form-control" name="password" [(ngModel)]="password" [ngClass]="{ 'is-invalid': f.submitted && password.invalid }" required minlength="6" />
+      <div *ngIf="f.submitted && password.invalid" class="invalid-feedback">
+        <div *ngIf="password.errors.required">Password is required</div>
+        <div *ngIf="password.errors.minlength">Password must be at least 6 characters</div>
+      </div>
+    </div>
+
+    <div class="form-check">
+      <input id="enabled" name="enabled" [(ngModel)]="enabled" type="checkbox" class="form-check-input">
+      <label for="enabled" class="form-check-label">Enabled</label>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <div class="form-group">
+      <button class="btn btn-success">Save</button>
+    </div>
+  </div>
+
+</form>

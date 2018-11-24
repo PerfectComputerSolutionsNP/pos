@@ -1,8 +1,6 @@
-import {Category} from './category.model';
-
 export class Page {
 
- content         : Array<Category>;
+ content         : Array<any>;
  first           : boolean;
  last            : boolean;
  number          : number;
@@ -10,5 +8,4 @@ export class Page {
  size            : number;
  totalElements   : number;
  totalPages      : number;
-
 }

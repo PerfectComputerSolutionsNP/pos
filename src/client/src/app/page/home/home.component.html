@@ -1,6 +1,64 @@
-<app-two-page [left]=4 [right]=8>
+<app-two-page [left]=5 [right]=7>
 
-  <div left>Transaction</div>
-  <div right>Product Selection</div>
+  <div class="main-container" left>
+
+    <div class="right-container">
+
+      <div id="top" class="half-containers">
+        <h4>Transaction Details</h4>
+
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Unit Price</th>
+              <th>Quantity</th>
+              <th>Weight</th>
+              <th>Price</th>
+              <th></th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let item of getItems()">
+              <td>{{item.product.name}}</td>
+              <td>{{"$" + (item.product.cents / 100)}}</td>
+              <td><input [disabled]="item.product.weighted" class="quantity-input" type="number" min=1 [(ngModel)]="item.quantity" (ngModelChange)="computeCosts()"></td>
+              <td>
+                <input *ngIf="item.product.weighted" class="quantity-input" [(ngModel)]="item.weight" (ngModelChange)="computeCosts()">
+              </td>
+              <td>{{"$" + item.getDollars()}}</td>
+              <td><i class="fa fa-times-circle" (click)="removeItem(item.product.id)" ></i></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div id="bottom" class="half-containers">
+
+        <div>
+          <h4>Subtotal: ${{subtotal}}</h4><br>
+        </div>
+
+        <button id="purchase-button" class="btn btn-success btn-lg" (click)="purchase()" [disabled]="items.size < 1">
+          Purchase <i class="fa fa-2x fa-shopping-cart" aria-hidden="true"></i>
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div right>
+
+    <h4>Product Selection</h4>
+
+    <hr>
+
+    <div>
+      <button (click)="addProduct(item)" type="button btn-lg" class="btn btn-dark col-xs-2 col-sm-2" *ngFor="let item of products.content" >{{item.name}}</button>
+    </div>
+
+  </div>
 
 </app-two-page>
