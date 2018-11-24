@@ -47,8 +47,6 @@ class CrudEventPublisherAspect {
     )
     def findAll(JoinPoint jp, Object entities) {
 
-        // NOTE - Must cast inside method, not out outside. Idk why. Maybe because of generic type
-
         def target = (CrudService) jp.target
         def type   = target.type
         entities   = (Iterable<ModelEntity>) entities

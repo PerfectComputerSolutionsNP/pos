@@ -2,27 +2,19 @@ package com.perfectcomputersolutions.pos.model;
 
 import io.swagger.annotations.ApiModelProperty;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.util.HashSet;
-import java.util.Set;
+import java.math.BigDecimal;
 
 @Entity()
 @Table(name = "PRODUCT")
 public class Product extends NamedEntity implements Payable {
-
-//    @NotNull
-//    @ManyToOne
-//    @JoinColumn(name = "kind_id", nullable = false)
-//    public Kind kind;
 
     @NotNull
     @ManyToOne
@@ -36,12 +28,13 @@ public class Product extends NamedEntity implements Payable {
     private String description;
 
     @Min(0)
-    @ApiModelProperty(notes = "The cost of the product in mills. A mill is 1/1000 of a United States dollar")
-    private long cost;
+    @ApiModelProperty(notes = "Long value that specifies the cost of the product in cents")
+    private long cents;
 
     @ApiModelProperty(notes = "Boolean value to indicate whether or not the cost should be calculated as a flat cost or by weight")
     private boolean weighted;
 
+    @ApiModelProperty(notes = "Boolean flag to indicate whether or not tax should be applied to this product")
     private boolean taxed = true;
 
     public boolean isWeighted() {
@@ -76,12 +69,19 @@ public class Product extends NamedEntity implements Payable {
         this.description = description;
     }
 
-    @Override
-    public long getCost() {
-        return cost;
+    public long getCents() {
+        return cents;
     }
 
-    public void setCost(long cost) {
-        this.cost = cost;
+    public void setCents(long cents) {
+        this.cents = cents;
     }
+
+    @Override
+    @Transient
+    public BigDecimal getCost() {
+
+        return new BigDecimal(cents).movePointLeft(2);
+    }
+
 }

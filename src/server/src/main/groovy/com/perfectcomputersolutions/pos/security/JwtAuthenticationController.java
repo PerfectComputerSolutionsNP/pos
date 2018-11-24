@@ -51,32 +51,36 @@ public class JwtAuthenticationController {
 
         authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
 
-        // Reload password post-security so we can generate the token
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
-        final String token = jwtTokenUtil.generateToken(userDetails);
+        final JwtUser user  = (JwtUser)userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
+        final String  token = jwtTokenUtil.generateToken(user);
 
-        // Return the token
-        return ResponseEntity.ok(new JwtAuthenticationResponse(token));
+        return ResponseEntity.ok(new JwtAuthenticationResponse(token, user));
     }
 
     @RequestMapping(value = "${jwt.route.authentication.refresh}", method = RequestMethod.GET)
     @ApiOperation(value = "Gets and refreshes the current user's authentication token. This operation does not requires any role.")
     public ResponseEntity<?> refreshAndGetAuthenticationToken(HttpServletRequest request) {
-        String authToken = request.getHeader(tokenHeader);
+
+        String authToken   = request.getHeader(tokenHeader);
         final String token = authToken.substring(7);
-        String username = jwtTokenUtil.getUsernameFromToken(token);
-        JwtUser user = (JwtUser) userDetailsService.loadUserByUsername(username);
+        String username    = jwtTokenUtil.getUsernameFromToken(token);
+        JwtUser user       = (JwtUser) userDetailsService.loadUserByUsername(username);
 
         if (jwtTokenUtil.canTokenBeRefreshed(token, user.getLastPasswordResetDate())) {
+
             String refreshedToken = jwtTokenUtil.refreshToken(token);
-            return ResponseEntity.ok(new JwtAuthenticationResponse(refreshedToken));
+
+            return ResponseEntity.ok(new JwtAuthenticationResponse(refreshedToken, user));
+
         } else {
+
             return ResponseEntity.badRequest().body(null);
         }
     }
 
     @ExceptionHandler({JwtAuthenticationException.class})
     public ResponseEntity<String> handleAuthenticationException(JwtAuthenticationException e) {
+
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
     }
 
@@ -84,6 +88,7 @@ public class JwtAuthenticationController {
      * Authenticates the user. If something is wrong, an {@link JwtAuthenticationException} will be thrown
      */
     private void authenticate(String username, String password) {
+
         Objects.requireNonNull(username);
         Objects.requireNonNull(password);
 
@@ -91,9 +96,9 @@ public class JwtAuthenticationController {
 
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
 
-        } catch (DisabledException e) {
+        } catch (DisabledException exception) {
 
-            throw new JwtAuthenticationException("User is disabled!", e);
+            throw new JwtAuthenticationException("User is disabled!", exception);
 
         } catch (BadCredentialsException e) {
 

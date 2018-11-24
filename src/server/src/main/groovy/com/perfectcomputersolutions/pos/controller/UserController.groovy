@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
@@ -57,4 +58,17 @@ class UserController extends PrivilegedCrudController<User, Long> {
 
         respond(body, HttpStatus.OK)
     }
+
+    @GetMapping('/username/{username}')
+    @PreAuthorize("hasRole('ADMIN')")
+    def findByUsername(@PathVariable String username) {
+
+        def body = [
+                (MESSAGE) : "User found",
+                (CONTENT) : service.findByUsername(username)
+        ]
+
+        respond(body, HttpStatus.OK)
+    }
+
 }

@@ -81,8 +81,6 @@ class ErrorController {
                     break
             }
 
-            message = ex.message
-
         // All other exceptions that were anticipated, caught, and possibly
         // re-thrown should be an instance of the CaughtException class
         } else if (ex instanceof CaughtException) {
@@ -104,8 +102,6 @@ class ErrorController {
                     break
             }
 
-            message = ex.message
-
         // All other exceptions are either thrown by the
         // framework during the lifecycle of a request, and
         // therefore cannot be caught within a try-catch block,
@@ -123,21 +119,18 @@ class ErrorController {
                 case HttpMessageConversionException:
                 case DataException:
                     status  = BAD_REQUEST
-                    message = ex.message
                     break
 
                 case AccessDeniedException:
                     status  = FORBIDDEN
-                    message = ex.message
                     break
 
                 default:
                     status  = INTERNAL_SERVER_ERROR
-                    message = "An unexpected error occurred, please contact your administrator at: ${adminEmail}"
             }
         }
 
-        body.put("message",   message)
+        body.put("message",   ex.message)
         body.put("timestamp", new Timestamp(System.currentTimeMillis()))
         body.put("status",    status.value())
         body.put("reason",    status.reasonPhrase)

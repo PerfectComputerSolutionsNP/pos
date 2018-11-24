@@ -35,7 +35,7 @@ class NoNullArgsAspect {
         def names  = method.parameterNames
         def args   = jp.args
 
-        log.info("Checking that all arguments passed to ${method.toLongString()} are not null")
+        log.debug("Checking that all arguments passed to ${method.toLongString()} are not null")
 
         // TODO - This is a VERY BAD Exception, and developers should be notified, change Exception type to FatalException or something
 

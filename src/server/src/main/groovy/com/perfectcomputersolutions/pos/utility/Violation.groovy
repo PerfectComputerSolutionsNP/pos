@@ -1,6 +1,7 @@
 package com.perfectcomputersolutions.pos.utility
 
 import org.apache.commons.lang3.StringUtils
+import org.slf4j.LoggerFactory
 
 import javax.validation.ConstraintViolation
 
@@ -18,6 +19,8 @@ class Violation {
     String field
     String message
     String entity
+
+    def static log = LoggerFactory.getLogger(Violation.class)
 
     Violation(ConstraintViolation<?> violation) {
 
@@ -65,6 +68,8 @@ class Violation {
                     entity  == violation.entity
 
         } catch(ClassCastException ex) {
+
+            log.error("An unexpected ClassCastException occurred. This indicates a bug somewhere in the code", ex)
 
             return false
         }

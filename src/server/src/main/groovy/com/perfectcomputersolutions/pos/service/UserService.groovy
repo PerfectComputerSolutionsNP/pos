@@ -1,5 +1,6 @@
 package com.perfectcomputersolutions.pos.service
 
+import com.perfectcomputersolutions.pos.exception.NoSuchEntityException
 import com.perfectcomputersolutions.pos.exception.ValidationException
 import com.perfectcomputersolutions.pos.factory.NotificationFactory
 import com.perfectcomputersolutions.pos.model.User
@@ -10,6 +11,8 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+
+import java.sql.Timestamp
 
 @Service
 class UserService extends CrudService<User, Long> {
@@ -51,29 +54,55 @@ class UserService extends CrudService<User, Long> {
         return exists
     }
 
+    User findByUsername(String username) {
+
+        log.info("Retrieving user by username: '${username}'")
+
+        if (!existsByUsername(username))
+            throw new NoSuchEntityException("No user exists for username: ${username}")
+
+        return repository.findByUsername(username)
+    }
+
     @Override
-    User save(User entity) {
+    User update(Long id, User user) {
 
-        entity.password = encoder.encode(entity.password)
+        def original = findById(id)
+        def password = encoder.encode(user.password)
 
-        if (repository.existsByUsername(entity.username)) {
+        if (password != original.password) {
+
+            user.lastPasswordResetDate = new Timestamp(System.currentTimeMillis())
+            user.password              = password
+        }
+
+        return (User) super.update(id, user)
+    }
+
+
+    @Override
+    User save(User user) {
+
+        user.password = encoder.encode(user.password)
+
+        if (repository.existsByUsername(user.username)) {
 
             throw new ValidationException(new Violation(
                     "username",
-                    "A user already exists with username: ${entity.username}",
-                    entity.class.simpleName
+                    "A user already exists with username: ${user.username}",
+                    user.class.simpleName
             ))
         }
 
-        if (repository.existsByEmail(entity.email)) {
+        if (repository.existsByEmail(user.email)) {
 
             throw new ValidationException(new Violation(
                     "email",
-                    "A user already exists with email: ${entity.email}",
-                    entity.class.simpleName
+                    "A user already exists with email: ${user.email}",
+                    user.class.simpleName
             ))
         }
 
-        return (User) super.save(entity)
+        return (User) super.save(user)
     }
 }

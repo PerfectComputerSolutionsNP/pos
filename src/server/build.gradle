@@ -48,7 +48,7 @@ configurations {
 dependencies {
 
     // Groovy
-    compile 'org.codehaus.groovy:groovy-all:2.4.7'
+    compile 'org.codehaus.groovy:groovy-all:2.4.15'
 
     // Spring
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-logging',   version: '2.1.0.RELEASE'

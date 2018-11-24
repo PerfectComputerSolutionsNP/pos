@@ -13,16 +13,11 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Set;
 
-@Entity
+//@Entity
 public class Notification extends ModelEntity {
-
-    @ManyToMany(mappedBy = "notifications")
-    public Set<User> users;
-
-    @ManyToMany(mappedBy = "notifications")
-    public Set<Customer> customers;
 
     @NotNull
     @NotEmpty

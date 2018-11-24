@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+    <body>
+        <div th:replace="email/header :: header"></div>
+
+        <p>Dear [[${customer.firstname}]],</p>
+
+        <p>
+            You will no longer receive email notifications. If you would like to re-subscribe
+            to receive email notifications please click <a th:href="@{__${link}__}" target="_blank">here.</a>
+        </p>
+
+        <div th:replace="email/footer :: footer"></div>
+    </body>
+
+</html>
+

@@ -20,6 +20,6 @@ class JpaConfig {
 
                 return Utility.currentUsername
             }
-        };
+        }
     }
 }

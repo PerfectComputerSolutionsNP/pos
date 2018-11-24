@@ -29,17 +29,17 @@
                 <tr th:each="item : ${transaction.items}">
                     <td><span th:text="${item.product.name}">Name</span></td>
                     <td><span th:text="${item.product.description}">Description</span></td>
-                    <!--<td><span th:text="${item.product.dollars}">Quantity</span></td>-->
+                    <td><span th:text="${item.product.costString}">Unit Price</span></td>
                     <td><span th:text="${item.quantity}">Quantity</span></td>
-                    <td><span th:text="${item.dollarsString}">Price</span></td>
+                    <td><span th:text="${item.costString}">Price</span></td>
                 </tr>
                 </tbody>
             </table>
         </div>
 
         <div>
-            <p>Subtotal: [[${transaction.subtotalDollarsString}]]</p>
-            <p>Total: [[${transaction.totalDollarsString}]]</p>
+            <p>Subtotal: [[${transaction.subtotalString}]]</p>
+            <p>Total: [[${transaction.totalString}]]</p>
         </div>
 
         <div th:replace="email/footer :: footer"></div>

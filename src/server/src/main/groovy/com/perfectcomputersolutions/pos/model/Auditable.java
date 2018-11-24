@@ -1,6 +1,7 @@
-package com.perfectcomputersolutions.pos.utility;
+package com.perfectcomputersolutions.pos.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiModelProperty;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -17,15 +18,19 @@ import java.util.Date;
 public class Auditable<U> {
 
     @CreatedBy
+    @ApiModelProperty(notes = "Username of user that created this record")
     private U createdBy;
 
     @CreatedDate
+    @ApiModelProperty(notes = "Timestamp that indicates the last time this record was modified")
     private Timestamp createdDate;
 
     @LastModifiedBy
+    @ApiModelProperty(notes = "Username of last user to modify this record")
     private U lastModifiedBy;
 
     @LastModifiedDate
+    @ApiModelProperty(notes = "Timestamp that indicates the last time this record was modified")
     private Timestamp lastModifiedDate;
 
     @JsonIgnore

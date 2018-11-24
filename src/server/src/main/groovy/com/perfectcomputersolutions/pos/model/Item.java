@@ -1,14 +1,16 @@
 package com.perfectcomputersolutions.pos.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.perfectcomputersolutions.pos.utility.Money;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "item")
@@ -18,17 +20,21 @@ public class Item extends ModelEntity implements Payable {
     @ManyToOne
     @JsonBackReference
     @JoinColumn(name = "transaction_id", nullable = false)
-    public Transaction transaction;
+    @ApiModelProperty(notes = "The transaction that this item belongs to")
+    private Transaction transaction;
 
     @NotNull
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
+    @ApiModelProperty(notes = "The product that this item consists of")
     private Product product;
 
     @Min(1)
+    @ApiModelProperty(notes = "Positive integer value that specifies the quantity of the product")
     private int quantity;
 
-    private double weight;
+    @ApiModelProperty(notes = "Positive real number that indicates the weight of the item")
+    private BigDecimal weight;
 
     public Transaction getTransaction() {
         return transaction;
@@ -54,11 +60,11 @@ public class Item extends ModelEntity implements Payable {
         this.quantity = quantity;
     }
 
-    public double getWeight() {
+    public BigDecimal getWeight() {
         return weight;
     }
 
-    public void setWeight(double weight) {
+    public void setWeight(BigDecimal weight) {
         this.weight = weight;
     }
 
@@ -66,20 +72,11 @@ public class Item extends ModelEntity implements Payable {
         return product.isTaxed();
     }
 
-    public long getCost() {
+    @Transient
+    public BigDecimal getCost() {
 
-        // TODO - If weighted?
-
-        return quantity * product.getCost();
-    }
-
-    public String getCostString() {
-
-        return Money.toPriceStringCents(getCost());
-    }
-
-    public String getDollarsString() {
-
-        return Money.toPriceStringDollars(getDollars());
+        return product.isWeighted() ?
+                product.getCost().multiply(weight) :
+                product.getCost().multiply(new BigDecimal(quantity));
     }
 }

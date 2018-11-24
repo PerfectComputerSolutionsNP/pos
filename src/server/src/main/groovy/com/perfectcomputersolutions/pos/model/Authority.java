@@ -1,6 +1,7 @@
 package com.perfectcomputersolutions.pos.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.Column;
@@ -35,10 +36,12 @@ public class Authority extends ModelEntity {
         this.name = name;
     }
 
+    @JsonIgnore
     public List<User> getUsers() {
         return users;
     }
 
+    @JsonProperty
     public void setUsers(List<User> users) {
         this.users = users;
     }

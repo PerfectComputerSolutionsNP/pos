@@ -1,13 +1,23 @@
 package com.perfectcomputersolutions.pos.model;
 
-import com.perfectcomputersolutions.pos.utility.Money;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public interface Payable {
 
-    long getCost();
+    int SCALE = 2;
 
-    default double getDollars() {
+    RoundingMode ROUNDING_MODE = RoundingMode.CEILING;
 
-        return Money.centsToDollars(getCost());
+    BigDecimal getCost();
+
+    default String toDollarString(BigDecimal value) {
+
+        return "$" + value.setScale(SCALE, ROUNDING_MODE).toPlainString();
+    }
+
+    default String getCostString() {
+
+        return toDollarString(getCost());
     }
 }

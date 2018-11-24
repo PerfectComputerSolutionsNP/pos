@@ -9,6 +9,7 @@ import com.perfectcomputersolutions.pos.exception.NoSuchEntityException
 import com.perfectcomputersolutions.pos.exception.ValidationException
 import com.perfectcomputersolutions.pos.payload.Batch
 import com.perfectcomputersolutions.pos.repository.ModelEntityRepository
+import com.perfectcomputersolutions.pos.utility.Utility
 import com.perfectcomputersolutions.pos.utility.Violation
 import com.perfectcomputersolutions.pos.model.ModelEntity
 import org.hibernate.exception.ConstraintViolationException
@@ -42,7 +43,7 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
 
     abstract ModelEntityRepository<T, ID> getRepository()
 
-    private boolean existsById(ID id) {
+    protected boolean existsById(ID id) {
 
         // We have this requireNotNull() call because this function is called from within
         // this class. Therefore, because of how proxying with beans works, the pointcut will
@@ -62,6 +63,12 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
         log.info(msg)
 
         return exists
+    }
+
+    protected requireExistsById(ID id, String message) {
+
+        if (!existsById(id))
+            throw new NoSuchEntityException(message)
     }
 
     long count() {
@@ -115,6 +122,8 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
         log.info("Creating new ${entity.class.simpleName}")
 
         if (entity.id != null) {
+
+            log.info(entity.toString())
 
             def violation = new Violation(
                     "id",
@@ -175,7 +184,7 @@ abstract class CrudService<T extends ModelEntity, ID extends Serializable> {
 
         if (id != entity.id) {
 
-            def msg = "Path variable id ${id} does not match entity id ${entity.id}"
+            def msg = "Path variable id '${id}' does not match entity id '${entity.id}'"
 
             log.error(msg)
 

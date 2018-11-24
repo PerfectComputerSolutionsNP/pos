@@ -1,30 +1,15 @@
 package com.perfectcomputersolutions.pos.model;
 
-import com.perfectcomputersolutions.pos.utility.Auditable;
 import com.perfectcomputersolutions.pos.utility.Utility;
 import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.hibernate.annotations.AccessType;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.Access;
 import javax.persistence.Column;
-import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.PreUpdate;
-import javax.persistence.Temporal;
-import java.util.Date;
 import java.util.Objects;
-
-import static javax.persistence.AccessType.PROPERTY;
-import static javax.persistence.TemporalType.TIMESTAMP;
 
 /**
 * Superclass for all database entities. This class contains base

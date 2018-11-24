@@ -22,7 +22,7 @@ class TransactionEventListener {
         def transaction = transactionService.findById(event.output.id)
         def customer    = transaction.customer
 
-        if (customer && transaction.notifyCustomer) {
+        if (customer) {
 
             def variables = [
                     "transaction" : transaction
