@@ -72,6 +72,8 @@ export class HomeComponent implements OnInit {
 
   ngOnInit() {
 
+    console.log(window.location.hostname)
+
     this.getProducts();
   }
 

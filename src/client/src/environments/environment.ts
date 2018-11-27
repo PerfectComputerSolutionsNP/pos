@@ -1,6 +1,7 @@
 const api = {
   protocol : 'http',
-  host     : 'localhost',
+  // host     : 'localhost',
+  host     : window.location.hostname,
   port     : '8080'
 
 };
