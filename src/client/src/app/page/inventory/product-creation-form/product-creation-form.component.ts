@@ -9,14 +9,16 @@ import {UtilityService} from '../../../service/utility.service';
 @Component({
   selector: 'app-product-creation-form',
   templateUrl: './product-creation-form.component.html',
-  styleUrls: ['./product-creation-form.component.css']
+  styleUrls: ['./product-creation-form.component.scss']
 })
 export class ProductCreationFormComponent extends Product implements OnInit {
+
+  // TODO - Add support to get list of categories so that creating a product works!!!
 
   @Input()  public product:      Product           = new Product();
   @Output() public eventEmitter: EventEmitter<any> = new EventEmitter();
 
-  constructor(private http: HttpClient, private api: ApiService) {
+  constructor(private http: HttpClient, private api: ApiService, private utility : UtilityService) {
     super();
   }
 
@@ -45,7 +47,7 @@ export class ProductCreationFormComponent extends Product implements OnInit {
 
       this.eventEmitter.emit("submit");
 
-    }, UtilityService.logError);
+    }, error => this.utility.alertError(error));
   }
 
   close() {
@@ -62,7 +64,7 @@ export class ProductCreationFormComponent extends Product implements OnInit {
 
         this.eventEmitter.emit("remove");
       })
-      .catch(UtilityService.logError);
+      .catch(error => this.utility.alertError(error));
   }
 
 }

@@ -2,6 +2,7 @@
 
   <div class="modal-header">
     <h3>Create / Update User</h3>
+    <button type="button" class="close" (click)="close()">&times;</button>
   </div>
 
   <div class="modal-body">
@@ -61,7 +62,9 @@
 
   <div class="modal-footer">
     <div class="form-group">
-      <button class="btn btn-success">Save</button>
+      <button class="btn btn-outline-success">Save</button>
+      <button class="btn btn-outline-danger" *ngIf="id" (click)="remove()">Delete</button>
+      <button class="btn btn-danger" (click)="close()">Close</button>
     </div>
   </div>
 

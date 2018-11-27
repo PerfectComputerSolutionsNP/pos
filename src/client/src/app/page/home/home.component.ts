@@ -10,6 +10,8 @@ import {UtilityService} from '../../service/utility.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {CategoryCreationFormComponent} from '../inventory/category-creation-form/category-creation-form.component';
 import {CompleteTransactionComponent} from './complete-transaction/complete-transaction.component';
+import {Customer} from '../../model/customer.model';
+import {CustomerSearchComponent} from './customer-search/customer-search.component';
 
 @Component({
   selector: 'app-home',
@@ -19,9 +21,45 @@ import {CompleteTransactionComponent} from './complete-transaction/complete-tran
 
 export class HomeComponent implements OnInit {
 
-  items    : Map<number, Item> = new Map<number, Item>();
-  products : Page = new Page;
-  subtotal : number = 0;
+  customer    : Customer;
+
+  pickupDateString : string = new Date().toDateString();
+
+  pickupLater : boolean = false;
+  items       : Map<number, Item> = new Map<number, Item>();
+  products    : Page   = new Page;
+  subtotal    : number = 0;
+  total       : number = 0;
+  tax         : number = 0;
+  taxRate     : number = 8.75;
+  tender      : number = 0;
+  change      : number = 0;
+
+  dateSetting = {
+    timePicker: true,
+    format: 'MMM, dd yyyy hh:mm a'
+  };
+
+  paymentOptions  = [
+    {
+      id : 1,
+      name : "cash"
+    },
+    {
+      id : 2,
+      name : "credit"
+    },
+    {
+      id : 3,
+      name : "debit"
+    },
+    {
+      id : 4,
+      name : "purchase-order"
+    }
+  ];
+
+  paymentType = this.paymentOptions[0];
 
   constructor(private http: HttpClient, private api : ApiService, private modalService: NgbModal) { }
 
@@ -41,8 +79,17 @@ export class HomeComponent implements OnInit {
 
     let transaction = new Transaction();
 
-    transaction.taxRate = 8.75;
-    transaction.items   = this.getItems();
+    transaction.tender     = this.tender;
+    transaction.taxRate    = this.taxRate;
+    transaction.items      = this.getItems();
+
+    if (this.pickupLater)
+      transaction.pickupTime = new Date(this.pickupDateString);
+
+    if (this.customer) {
+      transaction.customer       = this.customer;
+      transaction.notifyCustomer = true;
+    }
 
     transaction.cost = transaction.items
       .map(item => item.getCost())
@@ -82,15 +129,52 @@ export class HomeComponent implements OnInit {
     return i;
   }
 
-  computeCosts() {
+  computeSubtotalDollars() {
 
     let sum : number = 0;
 
-    this.items.forEach((val, key) => {
-      sum += val.getDollars()
+    this.items.forEach((item, key) => {
+      sum += item.getUntaxedDollars()
     });
 
     this.subtotal = sum;
+  }
+
+  computeTotalDollars() {
+
+    let sum : number = 0;
+
+    this.items.forEach((item, id) => sum+= item.getTaxedDollars(this.taxRate));
+
+   this.total = sum;
+  }
+
+  computeTax() {
+
+    let tax : number = 0;
+
+    this.items.forEach(item => {
+
+      if (item.product.taxed)
+        tax += item.getTax(this.taxRate);
+    });
+
+    this.tax = tax;
+  }
+
+  computeChange() {
+
+    this.change = this.paymentType.name === 'cash' ?
+      this.tender - this.total :
+      this.total;
+  }
+
+  computeAll() {
+
+    this.computeSubtotalDollars();
+    this.computeTotalDollars();
+    this.computeTax();
+    this.computeChange();
   }
 
   addProduct(product : Product) {
@@ -108,7 +192,7 @@ export class HomeComponent implements OnInit {
 
     this.items.set(product.id, item);
 
-    this.computeCosts();
+    this.computeAll();
   }
 
   getProductWeight() {
@@ -124,13 +208,36 @@ export class HomeComponent implements OnInit {
   removeItem(id : number) {
 
     this.items.delete(id);
-    this.computeCosts();
+    this.computeAll();
   }
 
   reset() {
 
     this.items.clear();
-    this.computeCosts();
+    this.computeAll();
   }
 
+  formValid() {
+
+    return this.items.size < 1;
+  }
+
+  setCustomer() {
+
+    let modalRef = this.modalService.open(CustomerSearchComponent);
+
+    modalRef.componentInstance.eventEmitter.subscribe( (customer : Customer) => {
+
+      if (customer)
+        this.customer = customer;
+
+      modalRef.close();
+    });
+
+  }
+
+  removeCustomer() {
+
+    this.customer = null;
+  }
 }

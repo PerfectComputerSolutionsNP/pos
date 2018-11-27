@@ -38,6 +38,6 @@
 
 <div class="modal-footer">
   <button type="button" class="btn btn-outline-success" (click)="submit()">Save</button>
-  <button type="button" class="btn btn-outline-danger" (click)="remove()">Delete</button>
+  <button type="button" class="btn btn-outline-danger" *ngIf="id" (click)="remove()">Delete</button>
   <button type="button" class="btn btn-danger" (click)="close()">Close</button>
 </div>

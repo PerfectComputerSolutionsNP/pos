@@ -5,10 +5,12 @@
     <div class="right-container">
 
       <div id="top" class="half-containers">
+
         <h4>Transaction Details</h4>
 
-        <table class="table table-hover">
-          <thead>
+        <div class="form-group">
+          <table class="table table-hover">
+            <thead>
             <tr>
               <th>Name</th>
               <th>Unit Price</th>
@@ -17,30 +19,95 @@
               <th>Price</th>
               <th></th>
             </tr>
-          </thead>
+            </thead>
 
-          <tbody>
+            <tbody>
             <tr *ngFor="let item of getItems()">
               <td>{{item.product.name}}</td>
               <td>{{"$" + (item.product.cents / 100)}}</td>
-              <td><input [disabled]="item.product.weighted" class="quantity-input" type="number" min=1 [(ngModel)]="item.quantity" (ngModelChange)="computeCosts()"></td>
+              <td><input [disabled]="item.product.weighted" class="quantity-input" type="number" min=1 [(ngModel)]="item.quantity" (ngModelChange)="computeSubtotalDollars()"></td>
               <td>
-                <input *ngIf="item.product.weighted" class="quantity-input" [(ngModel)]="item.weight" (ngModelChange)="computeCosts()">
+                <span *ngIf="item.product.weighted">
+                  <input class="quantity-input" [(ngModel)]="item.weight" (ngModelChange)="computeSubtotalDollars()">
+                  <label>lbs</label>
+                </span>
               </td>
-              <td>{{"$" + item.getDollars()}}</td>
+              <td>{{"$" + item.getUntaxedDollars()}}</td>
               <td><i class="fa fa-times-circle" (click)="removeItem(item.product.id)" ></i></td>
             </tr>
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
+
       </div>
 
       <div id="bottom" class="half-containers">
 
-        <div>
-          <h4>Subtotal: ${{subtotal}}</h4><br>
+        <!--<div class="form-group">-->
+          <!--<button class="btn btn-primary" (click)="setCustomer()">Select Customer</button>-->
+        <!--</div>-->
+
+        <!--<div *ngIf="customer" class="form-group">-->
+          <!--<table>-->
+            <!--<tr>-->
+              <!--<th>Customer ID</th>-->
+              <!--<th></th>-->
+            <!--</tr>-->
+            <!--<tbody>-->
+            <!--<tr>-->
+              <!--<td>{{customer.id}}</td>-->
+            <!--</tr>-->
+            <!--</tbody>-->
+          <!--</table>-->
+        <!--</div>-->
+
+        <!--<div class="form-group">-->
+          <!--<input id="pickup-later" name="pickup-later" type="checkbox" [(ngModel)]="pickupLater">-->
+          <!--<label for="pickup-later">Pickup later</label>-->
+        <!--</div>-->
+
+        <!--<div class="form-group" *ngIf="pickupLater">-->
+          <!--<angular2-date-picker [(ngModel)]="pickupDateString" [settings]="dateSetting"></angular2-date-picker>-->
+          <!--<br>-->
+          <!--<br>-->
+        <!--</div>-->
+
+
+        <!-- TODO - Payment type needs to be implemented in back-end first, not point in displaying yet -->
+        <!--<div class="form-group">-->
+          <!--<label for="payment-type">Payment type</label>-->
+          <!--<select id="payment-type" name="payment-type" class="form-control" [(ngModel)]="paymentType">-->
+            <!--<option [value]=option *ngFor="let option of paymentOptions">{{option.name}}</option>-->
+          <!--</select>-->
+        <!--</div>-->
+
+        <div class="form-group">
+          <label>Tender</label>
+          <input class="form-control" type="number" placeholder="Enter the cash amount given by customer" [disabled]="paymentType.name != 'cash'" [(ngModel)]="tender" (ngModelChange)="computeAll()">
         </div>
 
-        <button id="purchase-button" class="btn btn-success btn-lg" (click)="purchase()" [disabled]="items.size < 1">
+        <div class="form-group">
+          <table class="table">
+            <tr>
+              <th>Tax Rate</th>
+              <th>Tax</th>
+              <th>Subtotal</th>
+              <th>Total</th>
+              <th>Change</th>
+            </tr>
+            <tbody>
+              <tr>
+                <td>{{taxRate}}%</td>
+                <td>${{tax}}</td>
+                <td>${{total}}</td>
+                <td>${{subtotal}}</td>
+                <td>${{change}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <button id="purchase-button" class="btn btn-success btn-lg" (click)="purchase()" [disabled]="formValid()">
           Purchase <i class="fa fa-2x fa-shopping-cart" aria-hidden="true"></i>
         </button>
       </div>

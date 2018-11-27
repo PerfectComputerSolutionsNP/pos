@@ -23,9 +23,22 @@ export class Item extends ModelEntity<Item> {
       this.quantity * this.product.cents;
   }
 
-  getDollars() : number {
+  getUntaxedDollars() : number {
 
     return this.getCost() / 100;
   }
 
+  getTaxedDollars(taxRate : number) {
+
+    let untaxed : number = this.getUntaxedDollars();
+
+    return this.product.taxed ?
+      (1 + (taxRate / 100)) * untaxed :
+      untaxed;
+  }
+
+  getTax(taxRate : number) {
+
+    return this.getTaxedDollars(taxRate) - this.getUntaxedDollars();
+  }
 }

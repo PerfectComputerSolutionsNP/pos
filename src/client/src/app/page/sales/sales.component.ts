@@ -13,15 +13,18 @@ import {Transaction} from '../../model/transaction.model';
 })
 export class SalesComponent implements OnInit {
 
+  // TODO - Implement pagination!!!!
+
   transactions       : Page = new Page;
   currentTransaction : Transaction;
 
-  constructor(private http: HttpClient, private api : ApiService) { }
+  constructor(private http: HttpClient, private api : ApiService, private utility : UtilityService) { }
 
   getTransactions() {
-    this.api.httpGetAll(config.api.endpoint.transaction, 0, 10)
+
+    this.api.httpGetAll(config.api.endpoint.transaction, 0, 150)
       .then(data => {this.transactions = data})
-      .catch(UtilityService.logError);
+      .catch(error => this.utility.alertError(error));
   }
 
   ngOnInit() {
@@ -42,6 +45,10 @@ export class SalesComponent implements OnInit {
     window.print();
 
     document.title = title;
+  }
+
+  dateString(s : string) {
+    return new Date(s).toDateString();
   }
 
 }

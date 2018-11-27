@@ -18,6 +18,8 @@ export class Transaction extends ModelEntity<Transaction> {
   public total          : number      = null;
   public subTotal       : number      = null;
   public notifyCustomer : boolean     = null;
+  public createdDate    : string      = null;
+  public tender         : number      = null;
 
   constructor() {
     super()
@@ -32,10 +34,16 @@ export class Transaction extends ModelEntity<Transaction> {
     return t;
   }
 
+  getCost() {
+
+    let total : number = 0;
+
+  }
+
   getDollars() : number {
 
     return this.items
-      .map(item => item.getDollars())
+      .map(item => item.getUntaxedDollars())
       .reduce((total, sum) => total + sum);
   }
 
@@ -48,4 +56,5 @@ export class Transaction extends ModelEntity<Transaction> {
 
     return (1 + (this.taxRate / 100)) * this.getDollars();
   }
+
 }

@@ -40,7 +40,12 @@ export class UsersComponent implements OnInit {
 
     let modalRef = this.modalService.open(UserRegistrationComponent);
 
-    modalRef.componentInstance.customer = user;
+    modalRef.componentInstance.user = user;
+
+    modalRef.componentInstance.eventEmitter.subscribe(user => {
+
+      modalRef.close()
+    })
   }
 
   formatAuthorityString(user : User) : string {
@@ -51,5 +56,6 @@ export class UsersComponent implements OnInit {
 
     return authorities.toString()
   }
+
 
 }

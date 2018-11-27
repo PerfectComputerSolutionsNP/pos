@@ -5,6 +5,7 @@ import {HttpClient} from '@angular/common/http';
 import {config} from '../../../service/config.service';
 import {ApiService} from '../../../service/api.service';
 import {UtilityService} from '../../../service/utility.service';
+import {ToastrService} from 'ngx-toastr';
 
 @Component({
   selector: 'app-category-creation-form',
@@ -16,7 +17,11 @@ export class CategoryCreationFormComponent extends Category implements OnInit {
   @Input()  public category:     Category;
   @Output() public eventEmitter: EventEmitter<any> = new EventEmitter();
 
-  constructor(private http: HttpClient, private api : ApiService) {
+  constructor(
+    private http    : HttpClient,
+    private api     : ApiService,
+    private utility : UtilityService,
+    private toastr  : ToastrService) {
     super();
   }
 
@@ -50,11 +55,16 @@ export class CategoryCreationFormComponent extends Category implements OnInit {
   deleteCategory(id : number) {
 
     this.api.httpDelete(config.api.endpoint.category, id)
-      .then(result => this.close())
-      .catch(UtilityService.logError)
+      .then(result => this.close(id))
+      .catch((error) => {
+        this.utility.alertError(error)
+      })
   }
 
-  close() {
+  close(id : number) {
+
+    if (id)
+      this.toastr.success(`Category successfully deleted`, "Success!");
 
     this.eventEmitter.emit(null);
   }

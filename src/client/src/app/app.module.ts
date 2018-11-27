@@ -27,6 +27,9 @@ import {AngularDateTimePickerModule} from 'angular2-datetimepicker';
 import { AlertDialogComponent } from './partial/alert-dialog/alert-dialog.component';
 import { SearchBarComponent } from './partial/search-bar/search-bar.component';
 import { CustomerSearchComponent } from './page/home/customer-search/customer-search.component';
+import {UtilityService} from './service/utility.service';
+import {ToastrModule} from 'ngx-toastr';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -55,12 +58,15 @@ import { CustomerSearchComponent } from './page/home/customer-search/customer-se
     FormsModule,
     AppRoutingModule,
     ReactiveFormsModule,
-    AngularDateTimePickerModule
+    AngularDateTimePickerModule,
+    BrowserAnimationsModule,
+    ToastrModule.forRoot()
   ],
   providers: [
     ApiService,
     AuthGuard,
     AuthenticationService,
+    UtilityService,
     {
       provide  : HTTP_INTERCEPTORS,
       useClass : JwtInterceptor,

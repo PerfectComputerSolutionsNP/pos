@@ -14,7 +14,7 @@ export class CustomerCreationFormComponent extends Customer implements OnInit {
   @Input()  customer : Customer;
   @Output() eventEmitter: EventEmitter<any> = new EventEmitter();
 
-  constructor(private api : ApiService) {
+  constructor(private api : ApiService, private utility : UtilityService) {
     super();
   }
 
@@ -33,7 +33,7 @@ export class CustomerCreationFormComponent extends Customer implements OnInit {
     let customer = this.clone(this);
 
     let success = (result) => this.close(result.entity);
-    let error   = UtilityService.logError;
+    let error   = error => this.utility.alertError(error);
     let always  = this.close;
 
     if (!customer.id) {
@@ -55,7 +55,7 @@ export class CustomerCreationFormComponent extends Customer implements OnInit {
 
     this.api.httpDelete(config.api.endpoint.customer, id)
       .then((result) => this.close(null))
-      .catch(UtilityService.logError);
+      .catch(error => this.utility.alertError(error));
   }
 
   close(customer : Customer) {

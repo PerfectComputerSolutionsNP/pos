@@ -24,7 +24,7 @@ export class CustomersComponent implements OnInit {
 
   customers : Page = new Page();
 
-  constructor(private api : ApiService, private modalService: NgbModal) { }
+  constructor(private api : ApiService, private modalService: NgbModal, private utility : UtilityService) { }
 
   ngOnInit() {
 
@@ -48,7 +48,9 @@ export class CustomersComponent implements OnInit {
   getAllCustomer() {
     this.api.httpGetAll(config.api.endpoint.customer, 0, 150)
       .then(response => this.customers = response)
-      .catch(UtilityService.logError)
+      .catch((error) => {
+        this.utility.alertError(error);
+      })
   }
 
   getCustomers(event : any) {

@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import { User }                    from "../../../model/user.model";
 import { ApiService }              from "../../../service/api.service";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
@@ -13,9 +13,11 @@ import {UtilityService} from '../../../service/utility.service';
 })
 export class UserRegistrationComponent extends User implements OnInit {
 
-  @Input() user : User;
+  // TODO - Add form validation
 
-  newUser: any;
+  @Input()  user         : User;
+  @Output() eventEmitter : EventEmitter<User> = new EventEmitter<User>();
+
   authorities : Array<Authority>;
 
   getAuthority() {
@@ -36,7 +38,7 @@ export class UserRegistrationComponent extends User implements OnInit {
   }
 
   // // headers= new HttpHeaders().set('Authorization', 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTUzOTA2NTg5MiwiaWF0IjoxNTM4NDYxMDkyfQ.LdK2UHQ6rNXWbqee8GLFPZJ5F3pnVxQMN6A_ZL4xzMnQ-NMJtkbUezGqVQGyd36N36XaeRgKtoXgyXtWk35g8A');
-  constructor(private api: ApiService, private http: HttpClient) {
+  constructor(private api: ApiService, private http: HttpClient, private utility : UtilityService) {
     super();
   }
 
@@ -46,7 +48,14 @@ export class UserRegistrationComponent extends User implements OnInit {
 
     this.api.httpPost(config.api.endpoint.users, user)
       .then(response => console.log(response))
-      .catch(UtilityService.logError)
+      .catch(error => this.utility.alertError(error))
+  }
+
+  remove() {
+
+    // TODO - Implement
+
+    console.log("DELETING ID: " + this.id);
   }
 
   ngOnInit() {
@@ -66,4 +75,8 @@ export class UserRegistrationComponent extends User implements OnInit {
     this.getAuthority();
   }
 
+  close () {
+
+    this.eventEmitter.emit(null);
+  }
 }

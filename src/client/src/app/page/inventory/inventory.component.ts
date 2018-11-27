@@ -8,6 +8,7 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ProductCreationFormComponent} from './product-creation-form/product-creation-form.component';
 import {CategoryCreationFormComponent} from './category-creation-form/category-creation-form.component';
 import {Observable} from 'rxjs';
+import {ToastrService} from 'ngx-toastr';
 
 @Component({
   selector: 'app-inventory',
@@ -24,7 +25,10 @@ export class InventoryComponent implements OnInit {
 
   // TODO - Implement dynamic pagination
 
-  constructor(private http: HttpClient, private modalService: NgbModal) {}
+  constructor(
+    private http         : HttpClient,
+    private modalService : NgbModal,
+    private toastr       : ToastrService) {}
 
   categories: Page = new Page;
   products:   Page = new Page;
@@ -48,6 +52,9 @@ export class InventoryComponent implements OnInit {
     modalRef.componentInstance.category = category;
     modalRef.componentInstance.eventEmitter.subscribe((result) => {
 
+      if (result)
+        this.toastr.success("Category successfully added to inventory", "Success!");
+
       this.getCategories();
 
       modalRef.close();
@@ -62,7 +69,9 @@ export class InventoryComponent implements OnInit {
     modalRef.componentInstance.eventEmitter.subscribe((result) => {
 
       if (result)
-        this.getProducts();
+        this.toastr.success("Product successfully added to inventory", "Success!");
+
+      this.getProducts();
 
       modalRef.close();
     });

@@ -10,6 +10,7 @@ import {ProductCreationFormComponent} from '../../inventory/product-creation-for
 import {AlertDialogComponent} from '../../../partial/alert-dialog/alert-dialog.component';
 import {CustomerSearchComponent} from '../customer-search/customer-search.component';
 import {AuthenticationService} from '../../../service/authentication.service';
+import {ToastrService} from 'ngx-toastr';
 
 @Component({
   selector: 'app-complete-transaction',
@@ -20,12 +21,16 @@ export class CompleteTransactionComponent implements OnInit {
 
   // https://cuppalabs.github.io/components/datepicker/#Settings
 
+  // TODO - SET DEFAULT DATE FOR DATE PICKER!!!
+
   @Input()  transaction  : Transaction;
   @Output() eventEmitter : EventEmitter<any> = new EventEmitter();
 
   pickupLater : boolean = false;
   pickupDate  : Date    = new Date();
   customer    : Customer;
+  tender      : number;
+
 
   dateSetting = {
     timePicker: true,
@@ -33,8 +38,10 @@ export class CompleteTransactionComponent implements OnInit {
   };
 
   constructor(
-    private api : ApiService,
-    private modalService: NgbModal) { }
+    private api          : ApiService,
+    private modalService : NgbModal,
+    private utility      : UtilityService,
+    private toastr       : ToastrService) { }
 
   ngOnInit() {
   }
@@ -61,7 +68,7 @@ export class CompleteTransactionComponent implements OnInit {
   finalizeTransaction() {
 
     if (this.pickupLater)
-      this.transaction.pickupTime = this.pickupDate;
+      this.transaction.pickupTime = new Date(this.pickupDate);
 
     if (this.customer) {
 
@@ -81,23 +88,12 @@ export class CompleteTransactionComponent implements OnInit {
     this.transaction.user = user;
 
     this.api.httpPost(config.api.endpoint.transaction, this.transaction)
-      .then((response) => this.finalizeTransactionCallback(response, this.modalService))
-      .catch(UtilityService.logError)
-  }
+      .then((response) => {
 
-  finalizeTransactionCallback(response : any, modalService : NgbModal) {
-
-    let modalRef = modalService.open(AlertDialogComponent);
-
-    modalRef.componentInstance.headingText     = "Transaction Complete!";
-    modalRef.componentInstance.messageText     = "Your transaction is being processed";
-
-    modalRef.componentInstance.eventEmitter.subscribe(result => {
-
-      modalRef.close();
-
-      this.eventEmitter.emit("complete");
-    })
+        this.eventEmitter.emit("complete");
+        this.toastr.success("Transaction is being processed", "Transaction Complete!");
+      })
+      .catch(error => this.utility.alertError(error))
   }
 
   cancel() {

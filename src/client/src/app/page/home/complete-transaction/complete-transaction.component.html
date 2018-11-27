@@ -1,8 +1,6 @@
 <div class="modal-header">
   <h4>Finalize Transaction</h4>
-  <button type="button" class="close" (click)="cancel()">
-    <i class="fa fa-2x fa-times-circle"></i>
-  </button>
+  <button type="button" class="close" (click)="cancel()">&times;</button>
 </div>
 
 <div class="modal-body">
@@ -31,7 +29,7 @@
           <td>
             {{customer.email}}
           </td>
-          <td><i class="fa fa-2x fa-times-circle" (click)="removeCustomer()"></i></td>
+          <td><i class="fa fa-times-circle" (click)="removeCustomer()"></i></td>
         </tr>
       </tbody>
 
@@ -56,7 +54,6 @@
   </div>
 
 
-
   <div class="form-group">
     <h5>Item Details</h5>
 
@@ -75,7 +72,7 @@
         <td>{{item.product.name}}</td>
         <td>{{"$" + (item.product.cents / 100)}}</td>
         <td>{{item.quantity}}</td>
-        <td>{{"$" + item.getDollars()}}</td>
+        <td>{{"$" + item.getUntaxedDollars()}}</td>
       </tr>
       </tbody>
     </table>
@@ -104,6 +101,6 @@
 
 <div class="modal-footer">
   <button class="btn btn-success btn-block" (click)="finalizeTransaction()">
-    Checkout<i class="fa fa-2x fa-shopping-cart"></i>
+    Checkout<i class="fa fa2x- fa-shopping-cart"></i>
   </button>
 </div>
