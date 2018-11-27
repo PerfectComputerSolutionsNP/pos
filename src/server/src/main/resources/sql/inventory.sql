@@ -26,10 +26,10 @@ insert into product(category_id, name, description, cents, weighted, taxed) valu
   (1, 'Dress Shirt', 'A basic dress-Shirt', 2000,  false, true),
   (1, 'Jacket',      'Adidas track jacket', 5000,  false, true),
   (1, 'Pants',       'Track pants',         4000,  true, true),
-  (2, 'Clorox',      'Clorox bleach',       500,   false, false),
-  (3, 'Tide',        'Good detergent',      800,   false, false),
-  (9, 'Chips-A-Hoy', 'Blue',                  500, false, false),
-  (9, 'Chipotle',    'Red',                   500, false, false);
+  (2, 'Clorox',      'Clorox bleach',       500,   false, true),
+  (3, 'Tide',        'Good detergent',      800,   false, true),
+  (9, 'Chips-A-Hoy', 'Blue',                  500, false, true),
+  (9, 'Chipotle',    'Red',                   500, false, true);
 
 # insert into product(category_id, name, description, cost, weighted, taxed, kind_id) values
 #   (1, 'T-Shirt',     'A basic T-Shirt',     1500,  false, true,  2),
